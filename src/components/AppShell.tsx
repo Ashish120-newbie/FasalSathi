@@ -1,4 +1,4 @@
-import { Bell, BookOpen, Calculator, ClipboardList, Home, Leaf, Menu, PhoneCall, Sprout, X, Bot, Sparkles } from 'lucide-react';
+import { Bell, BookOpen, Calculator, ClipboardList, Home, Menu, PhoneCall, Sprout, X, Bot, Sparkles } from 'lucide-react';
 import { useState, type ReactNode } from 'react';
 import type { ChatContext } from '@/data/types';
 import { ChatAssistant } from '@/components/ChatAssistant';
@@ -35,8 +35,15 @@ export function AppShell({ activeView, onNavigate, children, pendingReviews, cha
       <header className="sticky top-0 z-30 border-b border-forest-100 bg-white/95 backdrop-blur safe-bottom">
         <div className="mx-auto flex h-16 max-w-3xl items-center justify-between px-4">
           <button className="flex items-center gap-2" onClick={() => onNavigate('home')} aria-label="Go to home">
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-forest-600 text-white shadow-sm"><Leaf size={23} strokeWidth={2.5} /></div>
-            <div className="text-left leading-none"><div className="font-display text-lg font-extrabold text-forest-800">Fasal<span className="text-amber-500">Sathi</span></div><div className="mt-1 text-[10px] font-semibold uppercase tracking-[0.16em] text-forest-400">{t.appTagline}</div></div>
+            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-forest-600 shadow-sm">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                <path d="M12 3C7.5 6.5 4.5 10.5 4.5 14.5a7.5 7.5 0 0 0 15 0c0-4-3-8-7.5-11.5z" fill="#ffffff" fillOpacity="0.96" />
+                <path d="M12 6.5v11.5" stroke="#f59e0b" strokeWidth="1.4" strokeLinecap="round" />
+                <path d="M12 9.5c1.6 0 2.8 0.9 3.8 2.2" stroke="#f59e0b" strokeWidth="1.4" strokeLinecap="round" fill="none" />
+                <path d="M12 9.5c-1.6 0-2.8 0.9-3.8 2.2" stroke="#f59e0b" strokeWidth="1.4" strokeLinecap="round" fill="none" />
+              </svg>
+            </div>
+            <div className="text-left leading-none"><div className="font-display text-lg font-extrabold text-forest-800">Fasal<span className="text-amber-500">Sathi</span></div><div className="mt-1 text-[10px] font-semibold uppercase tracking-[0.16em] text-forest-400"><span className="block leading-tight">Fasal Ki Pehchan</span><span className="block leading-tight">Sahi Samadhan</span></div></div>
           </button>
           <div className="flex items-center gap-1">
             <LanguageSelector />
