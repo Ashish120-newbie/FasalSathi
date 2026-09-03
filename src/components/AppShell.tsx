@@ -1,10 +1,11 @@
-import { Bell, BookOpen, Calculator, ClipboardList, Home, Menu, PhoneCall, Sprout, Store, X, Bot } from 'lucide-react';
+import { Bell, BookOpen, Calculator, ClipboardList, Home, Menu, PhoneCall, Sprout, Store, X, Bot, LogOut } from 'lucide-react';
 import { useState, type ReactNode } from 'react';
 import type { ChatContext } from '@/data/types';
 import { ChatAssistant } from '@/components/ChatAssistant';
 import { LanguageSelector } from '@/components/LanguageSelector';
 import { NotificationPanel } from '@/components/NotificationPanel';
 import { useLang } from '@/lib/lang';
+import { useAuth } from '@/lib/auth';
 
 export type View = 'home' | 'calculator' | 'schemes' | 'history' | 'helpline' | 'queue' | 'marketplace';
 
@@ -21,6 +22,7 @@ interface AppShellProps {
 
 export function AppShell({ activeView, onNavigate, children, pendingReviews, chatContext, chatOpen, onOpenChat, onCloseChat }: AppShellProps) {
   const { t } = useLang();
+  const { profile, signOut } = useAuth();
   const [menuOpen, setMenuOpen] = useState(false);
   const [notifOpen, setNotifOpen] = useState(false);
 
@@ -107,6 +109,18 @@ export function AppShell({ activeView, onNavigate, children, pendingReviews, cha
                 <p className="font-bold text-forest-800">{t.commonWorksOffline}</p>
                 <p className="mt-1">{t.commonWorksOfflineDesc}</p>
               </div>
+              {profile && (
+                <div className="rounded-lg border border-forest-100 px-4 py-3">
+                  <p className="text-sm font-semibold text-forest-800">{profile.display_name ?? 'Farmer'}</p>
+                  {profile.mobile && <p className="mt-0.5 text-xs text-forest-400">+91 {profile.mobile}</p>}
+                  <button
+                    onClick={() => { signOut(); setMenuOpen(false); }}
+                    className="mt-3 flex w-full items-center justify-center gap-2 rounded-lg border border-error-200 bg-error-50 px-4 py-2 text-sm font-semibold text-error-700 hover:bg-error-100 transition-colors"
+                  >
+                    <LogOut size={16} /> Logout
+                  </button>
+                </div>
+              )}
             </div>
           </aside>
         </div>

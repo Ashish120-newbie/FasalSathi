@@ -1,12 +1,12 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { Loader2, AlertCircle, Check, Phone, Mail, Lock, User, MapPin, Sprout, Globe, ChevronRight } from 'lucide-react';
+import { Loader2, AlertCircle, Check, Phone, Mail, Lock, User, MapPin, Sprout, Globe } from 'lucide-react';
 import { useAuth, type FarmerProfileData } from '@/lib/auth';
 import { useLang } from '@/lib/lang';
 import { crops, cropName } from '@/data/crops';
 import type { CropId } from '@/data/types';
 import { languages, type Language } from '@/data/i18n';
 import { getAllStates, getDistricts } from 'india-state-district';
-import { LocationSelector, type LocationSelection } from '@/components/LocationSelector';
+import type { LocationSelection } from '@/components/LocationSelector';
 
 type AuthTab = 'login' | 'signup';
 type LoginMode = 'password' | 'otp';

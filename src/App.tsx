@@ -1,5 +1,6 @@
 import { useMemo, useState } from 'react';
 import { AppShell, type View } from '@/components/AppShell';
+import { AuthScreen } from '@/screens/AuthScreen';
 import { DiagnosisScreen } from '@/screens/DiagnosisScreen';
 import { ScanScreen } from '@/screens/ScanScreen';
 import { CalculatorScreen } from '@/screens/CalculatorScreen';
@@ -12,6 +13,8 @@ import { loadScans, seedScans, updateScan } from '@/data/storage';
 import { cropName, stageLabel } from '@/data/crops';
 import type { ScanRecord, ChatContext } from '@/data/types';
 import { useLang } from '@/lib/lang';
+import { useAuth } from '@/lib/auth';
+import { Loader2 } from 'lucide-react';
 
 function App() {
   const [view, setView] = useState<View>('home');
@@ -20,6 +23,7 @@ function App() {
   const [chatOpen, setChatOpen] = useState(false);
   const [chatContext, setChatContext] = useState<ChatContext | undefined>(undefined);
   const { lang } = useLang();
+  const { session, loading } = useAuth();
 
   const pendingReviews = useMemo(() => scans.filter((scan) => scan.escalated && scan.officerReview?.status === 'pending').length, [scans]);
 
@@ -63,6 +67,18 @@ function App() {
       recommendation: scan.result.recommendation,
       source: scan.result.source,
     };
+  }
+
+  if (loading) {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-background">
+        <Loader2 size={32} className="animate-spin text-forest-500" />
+      </div>
+    );
+  }
+
+  if (!session) {
+    return <AuthScreen />;
   }
 
   const screen = activeScan

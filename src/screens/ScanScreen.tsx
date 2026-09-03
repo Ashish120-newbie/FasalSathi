@@ -5,9 +5,16 @@ import { cropById, cropName, crops, growthStages, stageLabel } from '@/data/crop
 import type { CropId, GrowthStage, ScanRecord } from '@/data/types';
 import { addScan } from '@/data/storage';
 import { useLang } from '@/lib/lang';
+import { useAuth } from '@/lib/auth';
 import { supabase } from '@/lib/supabase';
 
 interface ScanScreenProps { onResult: (scan: ScanRecord) => void; }
+
+function getGreeting(name?: string | null): string {
+  const hour = new Date().getHours();
+  const part = hour < 12 ? 'Good morning' : hour < 17 ? 'Good afternoon' : 'Good evening';
+  return name ? `${part}, ${name}` : `${part}, farmer`;
+}
 
 function compressImage(file: File, maxDim: number): Promise<string> {
   return new Promise((resolve, reject) => {
@@ -55,6 +62,7 @@ const ERROR_CODE_TO_KEY: Record<string, string> = {
 
 export function ScanScreen({ onResult }: ScanScreenProps) {
   const { t, lang } = useLang();
+  const { profile } = useAuth();
   const [cropId, setCropId] = useState<CropId>('wheat');
   const [growthStage, setGrowthStage] = useState<GrowthStage>('vegetative');
   const [imageDataUrl, setImageDataUrl] = useState('');
@@ -159,7 +167,7 @@ export function ScanScreen({ onResult }: ScanScreenProps) {
   return (
     <section className="screen-container animate-fade-in px-4">
       <div className="pt-8">
-        <p className="text-[13px] font-medium text-forest-400">{t.scanGreeting}</p>
+        <p className="text-[13px] font-medium text-forest-400">{getGreeting(profile?.display_name)}</p>
         <h1 className="mt-1 text-[28px] font-bold leading-tight tracking-tight text-forest-900">{t.scanTitle}</h1>
         <p className="mt-2 max-w-md text-[14px] leading-6 text-forest-400">{t.scanSubtitle}</p>
       </div>
