@@ -23,8 +23,8 @@ export function DiagnosisScreen({ scan, onBack, onEscalate, onAskAI }: Diagnosis
       </button>
 
       <div className="mt-6">
-        <p className="text-sm font-medium text-forest-500">{crop.emoji} {cropName(scan.cropId, lang)} {t.diagCropCheck}</p>
-        <h1 className="mt-1 text-2xl font-bold tracking-tight text-forest-900">{lowConfidence ? t.diagGetExpertOpinion : t.diagCropHealthReport}</h1>
+        <p className="text-[13px] font-medium text-forest-400">{crop.emoji} {cropName(scan.cropId, lang)} {t.diagCropCheck}</p>
+        <h1 className="mt-1 text-[28px] font-bold leading-tight tracking-tight text-forest-900">{lowConfidence ? t.diagGetExpertOpinion : t.diagCropHealthReport}</h1>
       </div>
 
       {lowConfidence ? (
@@ -66,8 +66,8 @@ export function DiagnosisScreen({ scan, onBack, onEscalate, onAskAI }: Diagnosis
           <div className="my-8 border-t border-forest-100" />
 
           <div>
-            <h2 className="text-lg font-bold text-forest-900">{t.diagWhatYouCanDo}</h2>
-            <p className="mt-0.5 text-sm text-forest-500">{t.diagSimpleSteps}</p>
+            <h2 className="text-[20px] font-semibold text-forest-900">{t.diagWhatYouCanDo}</h2>
+            <p className="mt-0.5 text-[13px] text-forest-400">{t.diagSimpleSteps}</p>
             {hasAIRecommendation ? (
               <p className="mt-3 text-sm leading-6 text-forest-700">{scan.result.recommendation}</p>
             ) : (

@@ -16,21 +16,21 @@ export function CalculatorScreen() {
 
   return (
     <section className="screen-container animate-fade-in px-4">
-      <div className="pt-6">
-        <p className="text-sm font-medium text-forest-500">{t.calcPlanNext}</p>
-        <h1 className="mt-1 text-2xl font-bold tracking-tight text-forest-900">{t.calcTitle}</h1>
-        <p className="mt-1.5 text-sm leading-6 text-forest-500">{t.calcSubtitle}</p>
+      <div className="pt-8">
+        <p className="text-[13px] font-medium text-forest-400">{t.calcPlanNext}</p>
+        <h1 className="mt-1 text-[28px] font-bold leading-tight tracking-tight text-forest-900">{t.calcTitle}</h1>
+        <p className="mt-2 text-[14px] leading-6 text-forest-400">{t.calcSubtitle}</p>
       </div>
 
       <div className="mt-8">
-        <h2 className="text-lg font-bold text-forest-900">{t.calcFarmDetails}</h2>
+        <h2 className="text-[20px] font-semibold text-forest-900">{t.calcFarmDetails}</h2>
 
-        <label className="mt-4 mb-2 block text-sm font-semibold text-forest-800">{t.calcCropType}</label>
+        <label className="mt-4 mb-2 block text-[13px] font-semibold text-forest-700">{t.calcCropType}</label>
         <select value={cropId} onChange={(event) => setCropId(event.target.value as CropId)} className="select-field">
           {crops.map((crop) => <option key={crop.id} value={crop.id}>{crop.emoji} {cropName(crop.id, lang)}</option>)}
         </select>
 
-        <label className="mt-4 mb-2 block text-sm font-semibold text-forest-800">{t.calcFarmSize}</label>
+        <label className="mt-4 mb-2 block text-[13px] font-semibold text-forest-700">{t.calcFarmSize}</label>
         <div className="flex gap-2">
           <input inputMode="decimal" value={area} onChange={(event) => setArea(event.target.value)} className="input-field" placeholder="1" />
           <select value={unit} onChange={(event) => setUnit(event.target.value as 'acres' | 'hectares')} className="select-field max-w-[140px]">
@@ -39,7 +39,7 @@ export function CalculatorScreen() {
           </select>
         </div>
 
-        <label className="mt-4 mb-2 block text-sm font-semibold text-forest-800">{t.calcGrowthStage}</label>
+        <label className="mt-4 mb-2 block text-[13px] font-semibold text-forest-700">{t.calcGrowthStage}</label>
         <select value={stage} onChange={(event) => setStage(event.target.value as GrowthStage)} className="select-field">
           {growthStages.map((item) => <option key={item.id} value={item.id}>{stageLabel(item.id, lang)}</option>)}
         </select>
@@ -49,7 +49,7 @@ export function CalculatorScreen() {
 
       <div>
         <p className="section-label">{t.calcEstimatedNeed}</p>
-        <p className="mt-1 text-sm text-forest-500">{t.calcFor} {area || 0} {unit === 'acres' ? t.calcAcres.toLowerCase() : t.calcHectares.toLowerCase()}</p>
+        <p className="mt-1 text-[13px] text-forest-400">{t.calcFor} {area || 0} {unit === 'acres' ? t.calcAcres.toLowerCase() : t.calcHectares.toLowerCase()}</p>
         <div className="mt-4 grid grid-cols-3 gap-2 text-center">
           <div className="rounded-lg bg-forest-50 px-2 py-3">
             <p className="text-2xl font-bold text-forest-800">{Math.round(plan.npk.n * factor)}</p>
@@ -67,7 +67,7 @@ export function CalculatorScreen() {
       </div>
 
       <div className="mt-8">
-        <h2 className="text-lg font-bold text-forest-900">{t.calcProductQty}</h2>
+        <h2 className="text-[20px] font-semibold text-forest-900">{t.calcProductQty}</h2>
         <div className="mt-4 grid grid-cols-3 gap-2">
           {[['Urea', plan.unitsPerAcre.urea, 'kg'], ['DAP', plan.unitsPerAcre.dap, 'kg'], ['MOP', plan.unitsPerAcre.mop, 'kg']].map(([name, value, suffix]) => (
             <div key={name} className="rounded-lg border border-forest-100 bg-white px-2 py-3">
@@ -80,7 +80,7 @@ export function CalculatorScreen() {
       </div>
 
       <div className="mt-8">
-        <h2 className="text-lg font-bold text-forest-900">{t.calcSchedule}</h2>
+        <h2 className="text-[20px] font-semibold text-forest-900">{t.calcSchedule}</h2>
         <div className="mt-4 space-y-4">
           {plan.schedule.map((item) => (
             <div key={item.timing} className="flex gap-3">

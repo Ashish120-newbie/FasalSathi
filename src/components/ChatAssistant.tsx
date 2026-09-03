@@ -109,7 +109,7 @@ export function ChatAssistant({ open, onClose, context }: ChatAssistantProps) {
               <Bot size={22} />
             </div>
             <div>
-              <h2 className="text-lg font-extrabold text-forest-900">{t.chatTitle}</h2>
+              <h2 className="text-base font-bold text-forest-900">{t.chatTitle}</h2>
               <p className="text-xs text-forest-500">{t.chatSubtitle}</p>
             </div>
           </div>

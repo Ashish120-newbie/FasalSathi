@@ -19,6 +19,12 @@ export interface Profile {
   display_name: string | null;
   phone: string | null;
   state: string | null;
+  district: string | null;
+  village: string | null;
+  crops: string[] | null;
+  land_size_acres: number | null;
+  preferred_language: string | null;
+  mobile: string | null;
   created_at: string;
   updated_at: string;
 }

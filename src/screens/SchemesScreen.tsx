@@ -100,10 +100,10 @@ export function SchemesScreen() {
 
   return (
     <section className="screen-container animate-fade-in px-4">
-      <div className="pt-6">
-        <p className="text-sm font-medium text-forest-500">Support available for you</p>
-        <h1 className="mt-1 text-2xl font-bold tracking-tight text-forest-900">Government schemes</h1>
-        <p className="mt-1.5 text-sm leading-6 text-forest-500">Find benefits, insurance and support programmes for farmers.</p>
+      <div className="pt-8">
+        <p className="text-[13px] font-medium text-forest-400">Support available for you</p>
+        <h1 className="mt-1 text-[28px] font-bold leading-tight tracking-tight text-forest-900">Government schemes</h1>
+        <p className="mt-2 text-[14px] leading-6 text-forest-400">Find benefits, insurance and support programmes for farmers.</p>
       </div>
 
       {recommended.length > 0 && (
@@ -111,7 +111,7 @@ export function SchemesScreen() {
           <div className="mt-8">
             <div className="flex items-center gap-2">
               <BookOpen size={17} className="text-forest-500" />
-              <h2 className="text-lg font-bold text-forest-900">Recommended for you</h2>
+              <h2 className="text-[20px] font-semibold text-forest-900">Recommended for you</h2>
             </div>
             <p className="mt-0.5 text-xs text-forest-400">Based on your profile: {profile?.state ?? 'All India'}</p>
             <div className="mt-3 space-y-2">
@@ -192,7 +192,7 @@ export function SchemesScreen() {
             <div className="flex items-start justify-between gap-3">
               <button onClick={() => setSelectedScheme(scheme)} className="flex-1 text-left">
                 <span className="text-xs font-medium text-forest-500">{categoryLabel(scheme.category)}</span>
-                <h2 className="mt-1 text-lg font-bold leading-6 text-forest-900">{scheme.name}</h2>
+                <h2 className="mt-1 text-[17px] font-semibold leading-6 text-forest-900">{scheme.name}</h2>
                 <p className="mt-0.5 text-xs font-medium text-forest-500">{scheme.ministry}</p>
               </button>
               <button

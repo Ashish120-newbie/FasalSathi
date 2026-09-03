@@ -3,13 +3,26 @@ import type { Session, User } from '@supabase/supabase-js';
 import { supabase } from './supabase';
 import type { Profile, UserRole } from './db-types';
 
+export interface FarmerProfileData {
+  display_name: string;
+  mobile: string;
+  state: string;
+  district: string;
+  village?: string;
+  crops: string[];
+  land_size_acres: number;
+  preferred_language: string;
+}
+
 interface AuthContextValue {
   session: Session | null;
   user: User | null;
   profile: Profile | null;
   loading: boolean;
-  signUp: (email: string, password: string, displayName?: string) => Promise<{ error: string | null }>;
-  signIn: (email: string, password: string) => Promise<{ error: string | null }>;
+  signUpWithEmail: (email: string, password: string, profileData: FarmerProfileData) => Promise<{ error: string | null }>;
+  signInWithEmail: (email: string, password: string) => Promise<{ error: string | null }>;
+  signInWithPhone: (phone: string) => Promise<{ error: string | null }>;
+  verifyOtp: (phone: string, token: string) => Promise<{ error: string | null }>;
   signOut: () => Promise<void>;
   refreshProfile: () => Promise<void>;
 }
@@ -24,7 +37,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const fetchProfile = useCallback(async (userId: string) => {
     const { data, error } = await supabase
       .from('profiles')
-      .select('id, role, display_name, phone, state, created_at, updated_at')
+      .select('id, role, display_name, phone, state, district, village, crops, land_size_acres, preferred_language, mobile, created_at, updated_at')
       .eq('id', userId)
       .maybeSingle();
     if (!error && data) {
@@ -54,17 +67,47 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     return () => listener.subscription.unsubscribe();
   }, [fetchProfile]);
 
-  const signUp = useCallback(async (email: string, password: string, displayName?: string) => {
-    const { error } = await supabase.auth.signUp({
+  const signUpWithEmail = useCallback(async (email: string, password: string, profileData: FarmerProfileData) => {
+    const { data, error } = await supabase.auth.signUp({
       email,
       password,
-      options: { data: { display_name: displayName } },
+      options: {
+        data: {
+          display_name: profileData.display_name,
+          mobile: profileData.mobile,
+        },
+      },
     });
+    if (error) return { error: error.message };
+    const userId = data.user?.id;
+    if (userId) {
+      await supabase.from('profiles').upsert({
+        id: userId,
+        display_name: profileData.display_name,
+        mobile: profileData.mobile,
+        state: profileData.state,
+        district: profileData.district,
+        village: profileData.village ?? null,
+        crops: profileData.crops,
+        land_size_acres: profileData.land_size_acres,
+        preferred_language: profileData.preferred_language,
+      });
+    }
+    return { error: null };
+  }, []);
+
+  const signInWithEmail = useCallback(async (email: string, password: string) => {
+    const { error } = await supabase.auth.signInWithPassword({ email, password });
     return { error: error ? error.message : null };
   }, []);
 
-  const signIn = useCallback(async (email: string, password: string) => {
-    const { error } = await supabase.auth.signInWithPassword({ email, password });
+  const signInWithPhone = useCallback(async (phone: string) => {
+    const { error } = await supabase.auth.signInWithOtp({ phone });
+    return { error: error ? error.message : null };
+  }, []);
+
+  const verifyOtp = useCallback(async (phone: string, token: string) => {
+    const { error } = await supabase.auth.verifyOtp({ phone, token, type: 'sms' });
     return { error: error ? error.message : null };
   }, []);
 
@@ -84,11 +127,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     user: session?.user ?? null,
     profile,
     loading,
-    signUp,
-    signIn,
+    signUpWithEmail,
+    signInWithEmail,
+    signInWithPhone,
+    verifyOtp,
     signOut,
     refreshProfile,
-  }), [session, profile, loading, signUp, signIn, signOut, refreshProfile]);
+  }), [session, profile, loading, signUpWithEmail, signInWithEmail, signInWithPhone, verifyOtp, signOut, refreshProfile]);
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }

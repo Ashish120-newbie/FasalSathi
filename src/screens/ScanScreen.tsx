@@ -158,21 +158,21 @@ export function ScanScreen({ onResult }: ScanScreenProps) {
 
   return (
     <section className="screen-container animate-fade-in px-4">
-      <div className="pt-6">
-        <p className="text-sm font-medium text-forest-500">{t.scanGreeting}</p>
-        <h1 className="mt-1 text-2xl font-bold tracking-tight text-forest-900">{t.scanTitle}</h1>
-        <p className="mt-1.5 max-w-md text-sm leading-6 text-forest-500">{t.scanSubtitle}</p>
+      <div className="pt-8">
+        <p className="text-[13px] font-medium text-forest-400">{t.scanGreeting}</p>
+        <h1 className="mt-1 text-[28px] font-bold leading-tight tracking-tight text-forest-900">{t.scanTitle}</h1>
+        <p className="mt-2 max-w-md text-[14px] leading-6 text-forest-400">{t.scanSubtitle}</p>
       </div>
 
       <div className="mt-8">
         <p className="section-label">{t.scanQuickDiagnosis}</p>
-        <h2 className="mt-1 text-lg font-bold text-forest-900">{t.scanScanALeaf}</h2>
-        <p className="mt-0.5 text-sm leading-5 text-forest-500">{t.scanClearPhotos}</p>
+        <h2 className="mt-1 text-[20px] font-semibold text-forest-900">{t.scanScanALeaf}</h2>
+        <p className="mt-0.5 text-[13px] leading-5 text-forest-400">{t.scanClearPhotos}</p>
         <button
           onClick={() => inputRef.current?.click()}
-          className="mt-4 flex w-full items-center justify-center gap-2 rounded-lg bg-amber-400 px-5 py-2.5 text-base font-semibold text-amber-950 hover:bg-amber-500 transition-colors"
+          className="mt-4 flex w-full items-center justify-center gap-2 rounded-[10px] bg-amber-400 px-5 py-2.5 text-[15px] font-semibold text-amber-950 hover:bg-amber-500 transition-colors"
         >
-          <Camera size={19} /> {imageDataUrl ? t.scanChangePhoto : t.scanTakePhoto}
+          <Camera size={18} /> {imageDataUrl ? t.scanChangePhoto : t.scanTakePhoto}
         </button>
         <input ref={inputRef} type="file" accept="image/*" capture="environment" className="hidden" onChange={(event) => handleFile(event.target.files?.[0])} />
       </div>
@@ -204,27 +204,27 @@ export function ScanScreen({ onResult }: ScanScreenProps) {
         </div>
       )}
 
-      <div className="my-8 border-t border-forest-100" />
+      <div className="mt-8 border-t border-forest-100" />
 
       <div>
-        <h2 className="text-lg font-bold text-forest-900">{t.scanTellAboutCrop}</h2>
-        <p className="mt-0.5 text-sm text-forest-500">{t.scanThisHelpsImprove}</p>
+        <h2 className="mt-8 text-[20px] font-semibold text-forest-900">{t.scanTellAboutCrop}</h2>
+        <p className="mt-0.5 text-[13px] text-forest-400">{t.scanThisHelpsImprove}</p>
 
-        <label className="mt-5 mb-2 block text-sm font-semibold text-forest-800">{t.scanCropType}</label>
-        <div className="scrollbar-hide -mx-1 flex gap-1.5 overflow-x-auto px-1 pb-1">
+        <label className="mt-6 mb-2 block text-[13px] font-semibold text-forest-700">{t.scanCropType}</label>
+        <div className="scrollbar-hide -mx-1 flex gap-2 overflow-x-auto px-1 pb-1">
           {crops.map((crop) => (
             <button
               key={crop.id}
               onClick={() => setCropId(crop.id)}
-              className={`flex min-w-[72px] flex-col items-center gap-1 rounded-lg border px-2.5 py-2 transition-colors ${cropId === crop.id ? 'border-forest-500 bg-forest-50 text-forest-800' : 'border-forest-100 bg-white text-forest-500 hover:border-forest-200 hover:bg-forest-50'}`}
+              className={`flex min-w-[64px] flex-col items-center gap-1.5 rounded-[10px] border px-2 py-2.5 transition-colors ${cropId === crop.id ? 'border-forest-500 bg-forest-50 text-forest-800' : 'border-forest-100 bg-white text-forest-500 hover:border-forest-200 hover:bg-forest-50'}`}
             >
-              <span className="text-xl leading-none">{crop.emoji}</span>
-              <span className="text-xs font-medium">{cropName(crop.id, lang)}</span>
+              <span className="text-lg leading-none">{crop.emoji}</span>
+              <span className="text-[11px] font-medium leading-none">{cropName(crop.id, lang)}</span>
             </button>
           ))}
         </div>
 
-        <label className="mt-5 mb-2 block text-sm font-semibold text-forest-800">{t.scanGrowthStage}</label>
+        <label className="mt-6 mb-2 block text-[13px] font-semibold text-forest-700">{t.scanGrowthStage}</label>
         <select value={growthStage} onChange={(event) => setGrowthStage(event.target.value as GrowthStage)} className="select-field">
           {growthStages.map((stage) => <option key={stage.id} value={stage.id}>{stageLabel(stage.id, lang)}</option>)}
         </select>
@@ -233,15 +233,15 @@ export function ScanScreen({ onResult }: ScanScreenProps) {
       <button
         onClick={handleScan}
         disabled={scanning || !imageDataUrl}
-        className="mt-8 flex w-full items-center justify-center gap-2 rounded-lg bg-forest-600 px-5 py-2.5 text-base font-semibold text-white hover:bg-forest-700 disabled:cursor-wait disabled:opacity-60 transition-colors"
+        className="mt-8 flex w-full items-center justify-center gap-2 rounded-[10px] bg-forest-600 px-5 py-2.5 text-[15px] font-semibold text-white hover:bg-forest-700 disabled:cursor-wait disabled:opacity-60 transition-colors"
       >
         {scanning
           ? <><span className="h-5 w-5 animate-spin rounded-full border-2 border-white/40 border-t-white" /> {t.scanAnalysingLong}</>
-          : <><ImagePlus size={19} /> {t.scanAnalyseThis} <ChevronRight size={17} /></>}
+          : <><ImagePlus size={18} /> {t.scanAnalyseThis} <ChevronRight size={16} /></>}
       </button>
 
-      <p className="mt-3 flex items-center justify-center gap-1.5 text-center text-xs text-forest-400">
-        <Info size={13} /> {t.scanPhotoStays}
+      <p className="mt-3 flex items-center justify-center gap-1.5 text-center text-[11px] text-forest-400">
+        <Info size={12} /> {t.scanPhotoStays}
       </p>
     </section>
   );

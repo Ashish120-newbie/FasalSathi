@@ -14,10 +14,10 @@ export function HistoryScreen({ scans, onOpen }: HistoryScreenProps) {
 
   return (
     <section className="screen-container animate-fade-in px-4">
-      <div className="pt-6">
-        <p className="text-sm font-medium text-forest-500">{t.histSavedActivity}</p>
-        <h1 className="mt-1 text-2xl font-bold tracking-tight text-forest-900">{t.histTitle}</h1>
-        <p className="mt-1.5 text-sm leading-6 text-forest-500">{t.histSubtitle}</p>
+      <div className="pt-8">
+        <p className="text-[13px] font-medium text-forest-400">{t.histSavedActivity}</p>
+        <h1 className="mt-1 text-[28px] font-bold leading-tight tracking-tight text-forest-900">{t.histTitle}</h1>
+        <p className="mt-2 text-[14px] leading-6 text-forest-400">{t.histSubtitle}</p>
       </div>
 
       {scans.length === 0 ? (

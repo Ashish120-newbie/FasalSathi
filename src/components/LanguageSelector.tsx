@@ -12,16 +12,16 @@ export function LanguageSelector() {
     <div className="relative">
       <button
         onClick={() => setOpen((v) => !v)}
-        className="flex items-center gap-1.5 rounded-full p-2.5 text-forest-600 hover:bg-forest-50"
+        className="flex items-center gap-1.5 rounded-lg p-2 text-forest-600 hover:bg-forest-50"
         aria-label="Select language"
       >
-        <Globe size={20} />
+        <Globe size={18} />
         <span className="text-xs font-bold">{current?.nativeLabel ?? 'EN'}</span>
       </button>
       {open && (
         <>
           <div className="fixed inset-0 z-40" onClick={() => setOpen(false)} />
-          <div className="absolute right-0 top-full z-50 mt-2 w-44 overflow-hidden rounded-xl border border-forest-100 bg-white py-1 shadow-xl">
+          <div className="absolute right-0 top-full z-50 mt-2 w-44 overflow-hidden rounded-lg border border-forest-100 bg-white py-1 shadow-lg">
             {languages.map((l) => (
               <button
                 key={l.id}

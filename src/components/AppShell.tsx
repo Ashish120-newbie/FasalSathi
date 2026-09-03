@@ -42,18 +42,17 @@ export function AppShell({ activeView, onNavigate, children, pendingReviews, cha
               <Sprout size={18} className="text-white" />
             </div>
             <div className="text-left leading-none">
-              <div className="text-base font-bold text-forest-800">Fasal<span className="text-amber-600">Sathi</span></div>
-              <div className="mt-0.5 text-[10px] font-medium text-forest-400">Fasal Ki Pehchan, Sahi Samadhan</div>
+              <div className="text-[15px] font-bold tracking-tight text-forest-800">Fasal<span className="text-amber-600">Sathi</span></div>
             </div>
           </button>
           <div className="flex items-center gap-0.5">
             <LanguageSelector />
             <button className="relative rounded-lg p-2 text-forest-600 hover:bg-forest-50" aria-label={t.commonNotifications} onClick={() => setNotifOpen(true)}>
-              <Bell size={19} />
+              <Bell size={18} />
               {pendingReviews > 0 && <span className="absolute right-1.5 top-1.5 h-2 w-2 rounded-full bg-amber-500 ring-2 ring-white" />}
             </button>
             <button className="rounded-lg p-2 text-forest-600 hover:bg-forest-50 md:hidden" onClick={() => setMenuOpen(true)} aria-label={t.commonOpenMenu}>
-              <Menu size={20} />
+              <Menu size={19} />
             </button>
           </div>
         </div>
@@ -64,23 +63,23 @@ export function AppShell({ activeView, onNavigate, children, pendingReviews, cha
       {!chatOpen && (
         <button
           onClick={() => onOpenChat()}
-          className="fixed bottom-[84px] right-4 z-30 flex items-center gap-1.5 rounded-lg bg-forest-700 px-3 py-2 text-white hover:bg-forest-800 transition-colors"
+          className="fixed bottom-[80px] right-4 z-30 flex items-center gap-1.5 rounded-lg bg-forest-700 px-3 py-1.5 text-white hover:bg-forest-800 transition-colors"
           aria-label={t.commonAskAI}
         >
-          <Bot size={17} className="text-white" />
-          <span className="text-xs font-bold">{t.commonAskAI}</span>
+          <Bot size={15} className="text-white" />
+          <span className="text-xs font-semibold">{t.commonAskAI}</span>
         </button>
       )}
 
       <nav className="safe-bottom fixed bottom-0 left-0 right-0 z-30 border-t border-forest-100 bg-white">
-        <div className="mx-auto grid h-16 max-w-2xl grid-cols-6 px-0.5">
+        <div className="mx-auto grid h-14 max-w-2xl grid-cols-6 px-0.5">
           {navItems.map(({ view, label, Icon }) => (
             <button
               key={view}
               onClick={() => onNavigate(view)}
-              className={`flex flex-col items-center justify-center gap-1 text-[10px] font-medium transition-colors ${activeView === view ? 'text-forest-700' : 'text-forest-400'}`}
+              className={`flex flex-col items-center justify-center gap-0.5 text-[10px] font-medium transition-colors ${activeView === view ? 'text-forest-700' : 'text-forest-400'}`}
             >
-              <Icon size={19} strokeWidth={activeView === view ? 2.5 : 1.75} />
+              <Icon size={18} strokeWidth={activeView === view ? 2.25 : 1.75} />
               <span>{label}</span>
             </button>
           ))}

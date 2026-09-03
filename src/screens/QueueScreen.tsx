@@ -35,9 +35,9 @@ export function QueueScreen({ scans, onBack, onUpdate }: QueueScreenProps) {
       </button>
 
       <div className="mb-6">
-        <p className="text-sm font-medium text-forest-500">{t.queueOfficerView}</p>
-        <h1 className="mt-1 text-2xl font-bold tracking-tight text-forest-900">{t.queueTitle}</h1>
-        <p className="mt-1.5 text-sm leading-6 text-forest-500">{t.queueSubtitle}</p>
+        <p className="text-[13px] font-medium text-forest-400">{t.queueOfficerView}</p>
+        <h1 className="mt-1 text-[28px] font-bold leading-tight tracking-tight text-forest-900">{t.queueTitle}</h1>
+        <p className="mt-2 text-[14px] leading-6 text-forest-400">{t.queueSubtitle}</p>
       </div>
 
       <div className="mb-6 flex items-baseline gap-3 border-b border-forest-100 pb-4">
@@ -80,7 +80,7 @@ export function QueueScreen({ scans, onBack, onUpdate }: QueueScreenProps) {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-xs font-bold uppercase tracking-wider text-forest-400">{t.queueCaseReview}</p>
-                <h2 className="text-xl font-extrabold text-forest-900">{cropName(selected.cropId, lang)} {t.queueScan}</h2>
+                <h2 className="text-lg font-bold text-forest-900">{cropName(selected.cropId, lang)} {t.queueScan}</h2>
               </div>
               <button onClick={() => setSelected(null)} className="rounded-lg p-2 text-forest-500 hover:bg-forest-50 transition-colors" aria-label="Close">
                 <X size={21} />
