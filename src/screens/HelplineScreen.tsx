@@ -1,6 +1,6 @@
 import { Clock, Phone, PhoneCall, Sprout, Users, Wheat } from 'lucide-react';
 import { useLang } from '@/lib/lang';
-
+import Card14 from '@/components/ui/card-14';
 export function HelplineScreen() {
   const { t } = useLang();
   const kccNumber = '1800-180-1551';
@@ -58,6 +58,9 @@ export function HelplineScreen() {
       <div className="mt-8 flex gap-2 rounded-lg border border-forest-100 bg-forest-50 px-3 py-2.5 text-xs leading-5 text-forest-600">
         <PhoneCall size={15} className="mt-0.5 shrink-0 text-forest-400" />
         <p>{t.helpEscalatedNote}</p>
+      </div>
+            <div className="mt-8">
+        <Card14 />
       </div>
     </section>
   );
