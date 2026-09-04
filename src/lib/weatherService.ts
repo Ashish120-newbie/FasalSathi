@@ -20,16 +20,24 @@ export interface WeatherError {
 
 type WeatherResponse = WeatherResult | WeatherError;
 
-const WEATHER_API_BASE = 'https://api.weatherapi.com/v1/forecast.json';
+const CURRENT_WEATHER_URL = 'https://api.openweathermap.org/data/2.5/weather';
+const FORECAST_URL = 'https://api.openweathermap.org/data/2.5/forecast';
 
-function describeWind(windKph: number, windDir: string): string {
+const COMPASS_DIRS = ['N', 'NE', 'E', 'SE', 'S', 'SW', 'W', 'NW'];
+
+function degToCompass(deg: number): string {
+  const index = Math.round(deg / 45) % 8;
+  return COMPASS_DIRS[index];
+}
+
+function describeWind(windKph: number, compassDir: string): string {
   let strength: string;
   if (windKph < 5) strength = 'Calm';
   else if (windKph < 15) strength = 'Light breeze';
   else if (windKph < 30) strength = 'Moderate wind';
   else strength = 'Strong wind';
 
-  const dir = windDir.toLowerCase();
+  const dir = compassDir.toLowerCase();
   if (strength === 'Calm') return 'Calm';
   return `${strength} from ${dir}`;
 }
@@ -51,26 +59,111 @@ async function fetchWithTimeout(url: string, timeoutMs: number): Promise<Respons
   }
 }
 
-async function tryApiKey(apiKey: string, lat: number, lon: number): Promise<Response> {
-  const url = `${WEATHER_API_BASE}?key=${apiKey}&q=${lat},${lon}&days=3&aqi=no&alerts=no`;
-  const maskedUrl = url.replace(apiKey, '***');
-  console.log('[Weather] Request URL:', maskedUrl);
-  return fetchWithTimeout(url, 10000);
+interface ForecastEntry {
+  dt_txt: string;
+  main: { temp: number; temp_max: number; temp_min: number };
+  weather: { main: string; description: string }[];
 }
 
-function parseWeatherResponse(data: any): WeatherResult {
-  const forecastDays = data.forecast?.forecastday ?? [];
+function groupForecastByDate(list: ForecastEntry[]): Map<string, ForecastEntry[]> {
+  const byDate = new Map<string, ForecastEntry[]>();
+  for (const entry of list) {
+    const date = entry.dt_txt.split(' ')[0];
+    if (!byDate.has(date)) byDate.set(date, []);
+    byDate.get(date)!.push(entry);
+  }
+  return byDate;
+}
+
+function buildForecast(list: ForecastEntry[]): WeatherForecastDay[] {
+  const byDate = groupForecastByDate(list);
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  const todayStr = today.toISOString().split('T')[0];
+
+  const sortedDates = Array.from(byDate.keys())
+    .filter((d) => d >= todayStr)
+    .sort();
+
+  const result: WeatherForecastDay[] = [];
+
+  for (let i = 0; i < Math.min(3, sortedDates.length); i++) {
+    const date = sortedDates[i];
+    const entries = byDate.get(date)!;
+
+    let minTemp = Infinity;
+    let maxTemp = -Infinity;
+    for (const e of entries) {
+      if (e.main.temp_min < minTemp) minTemp = e.main.temp_min;
+      if (e.main.temp_max > maxTemp) maxTemp = e.main.temp_max;
+    }
+
+    let representative = entries[0];
+    let minDiff = Infinity;
+    for (const e of entries) {
+      const hour = parseInt(e.dt_txt.split(' ')[1].split(':')[0], 10);
+      const diff = Math.abs(hour - 12);
+      if (diff < minDiff) {
+        minDiff = diff;
+        representative = e;
+      }
+    }
+
+    const condition = representative.weather[0]?.description ??
+      representative.weather[0]?.main ?? '';
+
+    result.push({
+      label: computeDayLabel(date, i),
+      maxTemp: Math.round(maxTemp),
+      minTemp: Math.round(minTemp),
+      condition,
+    });
+  }
+
+  return result;
+}
+
+async function tryApiKey(
+  apiKey: string,
+  lat: number,
+  lon: number
+): Promise<WeatherResult> {
+  const currentUrl = `${CURRENT_WEATHER_URL}?lat=${lat}&lon=${lon}&appid=${apiKey}&units=metric`;
+  const forecastUrl = `${FORECAST_URL}?lat=${lat}&lon=${lon}&appid=${apiKey}&units=metric`;
+
+  const maskedCurrent = currentUrl.replace(apiKey, '***');
+  const maskedForecast = forecastUrl.replace(apiKey, '***');
+  console.log('[Weather] Current request URL:', maskedCurrent);
+  console.log('[Weather] Forecast request URL:', maskedForecast);
+
+  const currentResponse = await fetchWithTimeout(currentUrl, 10000);
+  if (!currentResponse.ok) {
+    const errorBody = await currentResponse.text().catch(() => '');
+    console.error(`[Weather] Current HTTP ${currentResponse.status} — Response body:`, errorBody);
+    throw new Error(`Current weather HTTP ${currentResponse.status}`);
+  }
+
+  const currentData = await currentResponse.json();
+
+  const forecastResponse = await fetchWithTimeout(forecastUrl, 10000);
+  if (!forecastResponse.ok) {
+    const errorBody = await forecastResponse.text().catch(() => '');
+    console.error(`[Weather] Forecast HTTP ${forecastResponse.status} — Response body:`, errorBody);
+    throw new Error(`Forecast HTTP ${forecastResponse.status}`);
+  }
+
+  const forecastData = await forecastResponse.json();
+
+  const windKph = (currentData.wind?.speed ?? 0) * 3.6;
+  const compassDir = degToCompass(currentData.wind?.deg ?? 0);
+
   return {
-    location: data.location?.name ?? 'Unknown',
-    temp: Math.round(data.current?.temp_c ?? 0),
-    condition: data.current?.condition?.text ?? '',
-    windDescription: describeWind(data.current?.wind_kph ?? 0, data.current?.wind_dir ?? ''),
-    forecast: forecastDays.map((day: any, index: number) => ({
-      label: computeDayLabel(day.date, index),
-      maxTemp: Math.round(day.day?.maxtemp_c ?? 0),
-      minTemp: Math.round(day.day?.mintemp_c ?? 0),
-      condition: day.day?.condition?.text ?? '',
-    })),
+    location: currentData.name ?? 'Unknown',
+    temp: Math.round(currentData.main?.temp ?? 0),
+    condition: currentData.weather?.[0]?.description ??
+      currentData.weather?.[0]?.main ?? '',
+    windDescription: describeWind(windKph, compassDir),
+    forecast: buildForecast(forecastData.list ?? []),
   };
 }
 
@@ -88,18 +181,9 @@ export async function getWeatherByLocation(lat: number, lon: number): Promise<We
 
   for (const key of keysToTry) {
     try {
-      const response = await tryApiKey(key, lat, lon);
-      if (response.ok) {
-        const data = await response.json();
-        return parseWeatherResponse(data);
-      }
-      const errorBody = await response.text().catch(() => '');
-      console.error(`[Weather] HTTP ${response.status} — Response body:`, errorBody);
-      if (response.status === 429 || (response.status >= 400 && response.status < 600)) {
-        continue;
-      }
+      return await tryApiKey(key, lat, lon);
     } catch (err) {
-      console.error('[Weather] Fetch failed:', err);
+      console.error('[Weather] Attempt failed:', err);
       continue;
     }
   }
