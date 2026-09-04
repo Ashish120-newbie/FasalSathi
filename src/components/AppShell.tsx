@@ -46,6 +46,7 @@ export function AppShell({ activeView, onNavigate, children, pendingReviews, cha
             </div>
             <div className="text-left leading-none">
               <div className="text-[15px] font-bold tracking-tight text-forest-800">Fasal<span className="text-amber-600">Sathi</span></div>
+              <div className="mt-0.5 text-[10px] font-medium text-forest-500">{t.appTagline}</div>
             </div>
           </button>
           <div className="flex items-center gap-0.5">

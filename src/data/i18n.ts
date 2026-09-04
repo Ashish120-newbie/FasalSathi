@@ -182,7 +182,7 @@ export interface TranslationKey {
 
 export const translations: Record<Language, TranslationKey> = {
   en: {
-    appName: 'FasalSathi', appTagline: 'Your crop companion',
+    appName: 'FasalSathi', appTagline: 'Fasal ki pehchaan, sahi samadhaan',
     navScan: 'Scan', navFertilizer: 'Fertilizer', navSchemes: 'Schemes', navHistory: 'History', navHelpline: 'Helpline',
     scanGreeting: 'Good morning, farmer', scanTitle: 'Check your crop health', scanSubtitle: 'Take a clear photo of an affected leaf, fruit, or plant part. FasalSathi will help you understand what your crop needs.',
     scanQuickDiagnosis: 'Quick diagnosis', scanScanALeaf: 'Scan a crop', scanClearPhotos: 'Clear photos give better results.',
@@ -242,7 +242,7 @@ export const translations: Record<Language, TranslationKey> = {
     commonNotifications: 'Notifications', commonOpenMenu: 'Open menu', commonCloseMenu: 'Close menu', commonAskAI: 'Ask AI assistant', commonOfficerQueue: 'Officer review queue', schemesVerifiedDate: 'Verified: ', 
   },
   hi: {
-    appName: 'FasalSathi', appTagline: 'आपका फसल साथी',
+    appName: 'FasalSathi', appTagline: 'फसल की पहचान, सही समाधान',
     navScan: 'स्कैन', navFertilizer: 'खाद', navSchemes: 'योजनाएं', navHistory: 'इतिहास', navHelpline: 'हेल्पलाइन',
     scanGreeting: 'सुप्रभात, किसान', scanTitle: 'अपनी फसल का स्वास्थ्य जांचें', scanSubtitle: 'प्रभावित पत्ती, फल, या पौधे के हिस्से की एक स्पष्ट फोटो लें। FasalSathi आपको समझने में मदद करेगा कि आपकी फसल को क्या चाहिए।',
     scanQuickDiagnosis: 'त्वरित निदान', scanScanALeaf: 'फसल स्कैन करें', scanClearPhotos: 'स्पष्ट फोटो से बेहतर परिणाम मिलते हैं।',
@@ -302,7 +302,7 @@ export const translations: Record<Language, TranslationKey> = {
     commonNotifications: 'सूचनाएं', commonOpenMenu: 'मेन्यू खोलें', commonCloseMenu: 'मेन्यू बंद करें', commonAskAI: 'AI सहायक से पूछें', commonOfficerQueue: 'अधिकारी समीक्षा कतार', schemesVerifiedDate: 'सत्यापित: ', 
   },
   bn: {
-    appName: 'FasalSathi', appTagline: 'আপনার ফসল সঙ্গী',
+    appName: 'FasalSathi', appTagline: 'ফসলের পরিচয়, সঠিক সমাধান',
     navScan: 'স্ক্যান', navFertilizer: 'সার', navSchemes: 'প্রকল্প', navHistory: 'ইতিহাস', navHelpline: 'হেল্পলাইন',
     scanGreeting: 'সুপ্রভাত, কৃষক', scanTitle: 'আপনার ফসলের স্বাস্থ্য পরীক্ষা করুন', scanSubtitle: 'আক্রান্ত পাতা, ফল, বা গাছের অংশের একটি পরিষ্কার ছবি নিন। FasalSathi আপনাকে বুঝতে সাহায্য করবে আপনার ফসলের কী প্রয়োজন।',
     scanQuickDiagnosis: 'দ্রুত নির্ণয়', scanScanALeaf: 'ফসল স্ক্যান করুন', scanClearPhotos: 'পরিষ্কার ছবিতে ভালো ফলাফল পাওয়া যায়।',
@@ -362,7 +362,7 @@ export const translations: Record<Language, TranslationKey> = {
     commonNotifications: 'বিজ্ঞপ্তি', commonOpenMenu: 'মেনু খুলুন', commonCloseMenu: 'মেনু বন্ধ করুন', commonAskAI: 'AI সহকারীকে জিজ্ঞাসা করুন', commonOfficerQueue: 'অফিসার পর্যালোচনা সারি', schemesVerifiedDate: 'যাচাইকৃত: ', 
   },
   te: {
-    appName: 'FasalSathi', appTagline: 'మీ పంట సహచరుడు',
+    appName: 'FasalSathi', appTagline: 'పంట గుర్తింపు, సరైన పరిష్కారం',
     navScan: 'స్కాన్', navFertilizer: 'ఎరువు', navSchemes: 'పథకాలు', navHistory: 'చరిత్ర', navHelpline: 'హెల్ప్‌లైన్',
     scanGreeting: 'శుభోదయం, రైతు', scanTitle: 'మీ పంట ఆరోగ్యాన్ని తనిఖీ చేయండి', scanSubtitle: 'ప్రభావిత ఆకు, పండు, లేదా మొక్క భాగం యొక్క స్పష్టమైన ఫోటో తీయండి. FasalSathi మీ పంటకు ఏమి అవసరమో అర్థం చేసుకోవడంలో సహాయపడుతుంది.',
     scanQuickDiagnosis: 'త్వరిత నిర్ధారణ', scanScanALeaf: 'పంటను స్కాన్ చేయండి', scanClearPhotos: 'స్పష్టమైన ఫోటోలు మంచి ఫలితాలను ఇస్తాయి.',
@@ -422,7 +422,7 @@ export const translations: Record<Language, TranslationKey> = {
     commonNotifications: 'నోటిఫికేషన్‌లు', commonOpenMenu: 'మెను తెరవండి', commonCloseMenu: 'మెను మూసివేయండి', commonAskAI: 'AI సహాయకుడిని అడగండి', commonOfficerQueue: 'అధికారి సమీక్ష క్యూ', schemesVerifiedDate: 'ధృవీకరించబడింది: ', 
   },
   mr: {
-    appName: 'FasalSathi', appTagline: 'तुमचा पीक साथीदार',
+    appName: 'FasalSathi', appTagline: 'पिकाची ओळख, योग्य उपाय',
     navScan: 'स्कॅन', navFertilizer: 'खत', navSchemes: 'योजना', navHistory: 'इतिहास', navHelpline: 'हेल्पलाइन',
     scanGreeting: 'सुप्रभात, शेतकरी', scanTitle: 'तुमच्या पिकाचे आरोग्य तपासा', scanSubtitle: 'बाधित पान, फळ, किंवा झाडाच्या भागाची स्पष्ट फोटो घ्या. FasalSathi तुम्हाला समजून घेण्यास मदत करेल की तुमच्या पिकाला काय हवे आहे.',
     scanQuickDiagnosis: 'त्वरित निदान', scanScanALeaf: 'पीक स्कॅन करा', scanClearPhotos: 'स्पष्ट फोटो देतात चांगले निकाल.',
@@ -482,7 +482,7 @@ export const translations: Record<Language, TranslationKey> = {
     commonNotifications: 'सूचना', commonOpenMenu: 'मेन्यू उघडा', commonCloseMenu: 'मेन्यू बंद करा', commonAskAI: 'AI सहाय्यकाला विचारा', commonOfficerQueue: 'अधिकारी समीक्षा रांग', schemesVerifiedDate: 'प्रमाणित: ', 
   },
   ta: {
-    appName: 'FasalSathi', appTagline: 'உங்கள் பயிர் துணை',
+    appName: 'FasalSathi', appTagline: 'பயிர் அடையாளம், சரியான தீர்வு',
     navScan: 'ஸ்கேன்', navFertilizer: 'உரம்', navSchemes: 'திட்டங்கள்', navHistory: 'வரலாறு', navHelpline: 'ஹெல்ப்லைன்',
     scanGreeting: 'காலை வணக்கம், விவசாயி', scanTitle: 'உங்கள் பயிரின் ஆரோக்கியத்தை சரிபார்க்கவும்', scanSubtitle: 'பாதிக்கப்பட்ட இலை, கனி, அல்லது செடியின் பகுதியின் தெளிவான புகைப்படத்தை எடுக்கவும். FasalSathi உங்கள் பயிருக்கு என்ன தேவை என்பதைப் புரிந்துகொள்ள உதவும்.',
     scanQuickDiagnosis: 'விரைவான கண்டறிதல்', scanScanALeaf: 'பயிரை ஸ்கேன் செய்யவும்', scanClearPhotos: 'தெளிவான புகைப்படங்கள் சிறந்த முடிவுகளைத் தரும்.',
