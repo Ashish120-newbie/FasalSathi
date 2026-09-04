@@ -102,7 +102,7 @@ export async function classifyCropImage(
 
   let response: Response;
   try {
-    response = await fetch('https://crop.kindwise.com/api/v1/identification?details=treatment,description', {
+    response = await fetch(`https://crop.kindwise.com/api/v1/identification?details=treatment,description&language=${encodeURIComponent(language)}`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -110,7 +110,6 @@ export async function classifyCropImage(
       },
       body: JSON.stringify({
         images: [imageBase64],
-        language,
       }),
     });
   } catch {
