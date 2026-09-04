@@ -93,6 +93,7 @@ export async function classifyCropImage(
   const [, , imageBase64] = base64Match;
 
   const apiKey = import.meta.env.VITE_KINDWISE_API_KEY;
+  console.log('[Kindwise] VITE_KINDWISE_API_KEY found:', Boolean(apiKey), apiKey ? `starts with ${apiKey.slice(0, 4)}...` : '(empty)');
   if (!apiKey) {
     return { error: new DiagnosisError('API_KEY_MISSING', 'API_KEY_MISSING') };
   }
