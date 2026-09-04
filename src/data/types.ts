@@ -50,6 +50,8 @@ export interface ClassifierResult {
   affectedRegion?: AffectedRegion;
   affectedArea?: string;
   recommendation?: string;
+  description?: string;
+  detectedCropName?: string;
   source: 'ai' | 'offline';
 }
 

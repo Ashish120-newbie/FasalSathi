@@ -235,12 +235,23 @@ export function HomeScreen({ onResult, onNavigate }: HomeScreenProps) {
       )}
 
       {error && (
-        <div className="mt-3 flex items-start gap-2 rounded-lg border border-error-200 bg-error-50 px-3 py-3 text-sm text-error-800">
-          <AlertCircle size={18} className="mt-0.5 shrink-0" />
-          <div>
-            <p className="font-bold">{t.scanDiagnosisFailed}</p>
-            <p className="mt-0.5 text-xs leading-5">{error}</p>
+        <div className="mt-3 rounded-lg border border-error-200 bg-error-50 px-3 py-3 text-sm text-error-800">
+          <div className="flex items-start gap-2">
+            <AlertCircle size={18} className="mt-0.5 shrink-0" />
+            <div>
+              <p className="font-bold">{t.scanDiagnosisFailed}</p>
+              <p className="mt-0.5 text-xs leading-5">{error}</p>
+            </div>
           </div>
+          <button
+            onClick={handleScan}
+            disabled={scanning}
+            className="mt-3 flex w-full items-center justify-center gap-2 rounded-lg border border-error-300 bg-white px-4 py-2 text-[13px] font-semibold text-error-700 hover:bg-error-100 disabled:opacity-60 transition-colors"
+          >
+            {scanning
+              ? <><span className="h-4 w-4 animate-spin rounded-full border-2 border-error-300 border-t-error-700" /> Retrying...</>
+              : <>Retry analysis</>}
+          </button>
         </div>
       )}
 

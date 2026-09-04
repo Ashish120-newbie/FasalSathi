@@ -21,8 +21,10 @@ export class DiagnosisError extends Error {
 
 interface AIDiagnosisResponse {
   is_crop: boolean;
+  crop_name?: string;
   diagnosis?: string;
   confidence?: number;
+  description?: string;
   affected_area?: string;
   recommendation?: string;
 }
@@ -114,6 +116,8 @@ export async function classifyCropImage(
       level: getConfidenceLevel(confidence),
       affectedArea: data.affected_area || undefined,
       recommendation: data.recommendation || undefined,
+      description: data.description || undefined,
+      detectedCropName: data.crop_name || undefined,
       source: 'ai',
     },
   };

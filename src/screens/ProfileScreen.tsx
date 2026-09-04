@@ -1,7 +1,7 @@
 import { User, LogOut, MapPin, Phone } from 'lucide-react';
 import { useAuth } from '@/lib/auth';
 import { useHomeLang } from '@/data/i18n-home';
-
+import Card14 from '@/components/ui/card-14';
 export function ProfileScreen() {
   const ht = useHomeLang();
   const { profile, signOut } = useAuth();
@@ -40,6 +40,9 @@ export function ProfileScreen() {
       >
         <LogOut size={16} /> {ht.profileLogout}
       </button>
+      <div className="mt-8">
+  <Card14 />
+</div>
     </section>
   );
 }

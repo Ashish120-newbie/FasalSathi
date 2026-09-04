@@ -1,0 +1,8 @@
+[functions.ai-chat]
+verify_jwt = true
+
+[functions.ai-diagnosis]
+verify_jwt = true
+
+[functions.scan-management]
+verify_jwt = true

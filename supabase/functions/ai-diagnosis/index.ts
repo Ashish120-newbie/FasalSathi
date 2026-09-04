@@ -131,7 +131,9 @@ Deno.serve(async (req: Request) => {
     }
 
     // Single Gemini call: first detect if image is a crop, then diagnose if it is
-    const prompt = `First, determine if this image shows any part of a crop plant — including leaves, fruit, stems, stalks, or tubers. If it does NOT show any part of a crop or plant, respond with JSON: {"is_crop": false}. If it DOES show a plant or crop, analyze the visible plant part (leaf, fruit, stem, or tuber) for disease, pest damage, or nutrient deficiency given crop type: ${cropType} and growth stage: ${growthStage}, and respond with JSON: {"is_crop": true, "diagnosis": "<disease, pest, or deficiency name, or 'Healthy' if no issue>", "confidence": <0-100>, "affected_area": "<describe the affected area and what plant part it is on, e.g. 'spots on fruit surface', 'rot on tuber', 'lesions on stem', 'discoloration on leaf'>", "recommendation": "<treatment advice in ${languageName}, 2-3 sentences>"}. Respond ONLY in JSON, no other text.`;
+    const prompt = `You are a plant pathology expert. First, determine if this image shows any part of a crop plant — including leaves, fruit, stems, stalks, or tubers. If it does NOT show any part of a crop or plant, respond with JSON: {"is_crop": false}. If it DOES show a plant or crop, analyze the visible plant part for disease, pest damage, or nutrient deficiency. The farmer indicated the crop might be ${cropType} at the ${growthStage} stage, but you should identify the actual crop from the photo. Respond ONLY in this exact JSON format, no extra text:
+{"is_crop": true, "crop_name": "<detected crop name, e.g. Wheat>", "diagnosis": "<disease, pest, or deficiency name, or 'Healthy' if no issue found>", "confidence": <0-100>, "description": "<1-2 sentence description of the issue>", "affected_area": "<describe the affected area and what plant part it is on>", "recommendation": "<2-3 sentence practical treatment recommendation in ${languageName}>"}
+If you cannot confidently identify the crop or issue, set confidence to a low value and give general care guidance instead.`;
 
     const geminiModel = "gemini-flash-latest";
     const geminiUrl = `https://generativelanguage.googleapis.com/v1beta/models/${geminiModel}:generateContent?key=${geminiApiKey}`;
@@ -189,7 +191,7 @@ Deno.serve(async (req: Request) => {
     const geminiData = await geminiResp.json();
     const textContent: string = geminiData?.candidates?.[0]?.content?.parts?.[0]?.text ?? "";
 
-    let result: { is_crop?: boolean; diagnosis?: string; confidence?: number; affected_area?: string; recommendation?: string };
+    let result: { is_crop?: boolean; crop_name?: string; diagnosis?: string; confidence?: number; description?: string; affected_area?: string; recommendation?: string };
     try {
       const cleaned = textContent.replace(/```json\s*/gi, "").replace(/```/g, "").trim();
       result = JSON.parse(cleaned);
@@ -213,12 +215,21 @@ Deno.serve(async (req: Request) => {
     const diagnosis = result.diagnosis || "Unknown";
     const confidence = Math.max(0, Math.min(100, Math.round(result.confidence ?? 0)));
     const affectedArea = result.affected_area || "";
-    const recommendation = result.recommendation || "";
+    const cropName = result.crop_name || "";
+    const description = result.description || "";
+    let recommendation = result.recommendation || "";
+
+    // If Gemini says the crop is healthy, replace treatment with a positive message
+    if (diagnosis.toLowerCase() === "healthy") {
+      recommendation = "No issues detected. Your crop looks healthy!";
+    }
 
     return jsonResponse({
       is_crop: true,
+      crop_name: cropName,
       diagnosis,
       confidence,
+      description,
       affected_area: affectedArea,
       recommendation,
     });

@@ -1,4 +1,4 @@
-import { ArrowLeft, CheckCircle2, ChevronRight, Info, MessageCircle, PhoneCall, ShieldAlert, WifiOff } from 'lucide-react';
+import { ArrowLeft, CheckCircle2, ChevronRight, Info, MessageCircle, PhoneCall, ShieldAlert, WifiOff, Sparkles } from 'lucide-react';
 import { cropById, cropName } from '@/data/crops';
 import { diseaseById } from '@/data/diseases';
 import type { ScanRecord } from '@/data/types';
@@ -15,6 +15,8 @@ export function DiagnosisScreen({ scan, onBack, onEscalate, onAskAI }: Diagnosis
   const lowConfidence = scan.result.level === 'low';
   const hasAIRecommendation = Boolean(scan.result.recommendation);
   const isOffline = scan.result.source === 'offline';
+  const isHealthy = scan.result.diseaseName.toLowerCase() === 'healthy';
+  const displayCropName = scan.result.detectedCropName || cropName(scan.cropId, lang);
 
   return (
     <section className="screen-container animate-slide-up px-4">
@@ -23,7 +25,7 @@ export function DiagnosisScreen({ scan, onBack, onEscalate, onAskAI }: Diagnosis
       </button>
 
       <div className="mt-6">
-        <p className="text-[13px] font-medium text-forest-400">{crop.emoji} {cropName(scan.cropId, lang)} {t.diagCropCheck}</p>
+        <p className="text-[13px] font-medium text-forest-400">{crop.emoji} {displayCropName} {t.diagCropCheck}</p>
         <h1 className="mt-1 text-[28px] font-bold leading-tight tracking-tight text-forest-900">{lowConfidence ? t.diagGetExpertOpinion : t.diagCropHealthReport}</h1>
       </div>
 
@@ -51,6 +53,9 @@ export function DiagnosisScreen({ scan, onBack, onEscalate, onAskAI }: Diagnosis
               </div>
               <ConfidenceBadge level={scan.result.level} confidence={scan.result.confidence} />
             </div>
+            {scan.result.description && (
+              <p className="mt-3 text-sm leading-6 text-forest-600">{scan.result.description}</p>
+            )}
           </div>
 
           {isOffline && (
@@ -66,10 +71,13 @@ export function DiagnosisScreen({ scan, onBack, onEscalate, onAskAI }: Diagnosis
           <div className="my-8 border-t border-forest-100" />
 
           <div>
-            <h2 className="text-[20px] font-semibold text-forest-900">{t.diagWhatYouCanDo}</h2>
-            <p className="mt-0.5 text-[13px] text-forest-400">{t.diagSimpleSteps}</p>
+            <h2 className="text-[20px] font-semibold text-forest-900">{isHealthy ? 'Crop Health' : t.diagWhatYouCanDo}</h2>
+            <p className="mt-0.5 text-[13px] text-forest-400">{isHealthy ? 'Great news from your scan' : t.diagSimpleSteps}</p>
             {hasAIRecommendation ? (
-              <p className="mt-3 text-sm leading-6 text-forest-700">{scan.result.recommendation}</p>
+              <div className={`mt-3 ${isHealthy ? 'flex items-start gap-2 rounded-lg border border-success-200 bg-success-50 px-3 py-3' : ''}`}>
+                {isHealthy && <CheckCircle2 size={20} className="mt-0.5 shrink-0 text-success-600" />}
+                <p className="text-sm leading-6 text-forest-700">{scan.result.recommendation}</p>
+              </div>
             ) : (
               <>
                 <p className="mt-3 text-sm leading-6 text-forest-700">{disease.description}</p>
