@@ -138,53 +138,87 @@ If you cannot confidently identify the crop or issue, set confidence to a low va
     const geminiModel = "gemini-flash-latest";
     const geminiUrl = `https://generativelanguage.googleapis.com/v1beta/models/${geminiModel}:generateContent?key=${geminiApiKey}`;
 
-    const controller = new AbortController();
-    const timeout = setTimeout(() => controller.abort(), 45000);
+    const requestBody = JSON.stringify({
+      contents: [{
+        parts: [
+          { text: prompt },
+          { inline_data: { mime_type: imageContentType, data: imageBase64 } },
+        ],
+      }],
+      generationConfig: {
+        temperature: 0.4,
+        maxOutputTokens: 1000,
+        responseMimeType: "application/json",
+      },
+    });
 
-    let geminiResp: Response;
-    try {
-      geminiResp = await fetch(geminiUrl, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          contents: [{
-            parts: [
-              { text: prompt },
-              { inline_data: { mime_type: imageContentType, data: imageBase64 } },
-            ],
-          }],
-          generationConfig: {
-            temperature: 0.4,
-            maxOutputTokens: 1000,
-            responseMimeType: "application/json",
-          },
-        }),
-        signal: controller.signal,
-      });
-    } catch (fetchErr) {
+    const RETRY_DELAYS = [1500, 3000];
+    let geminiResp: Response | null = null;
+    let lastError: { error: string; code: string; debug: unknown } | null = null;
+
+    for (let attempt = 0; attempt <= RETRY_DELAYS.length; attempt++) {
+      if (attempt > 0) {
+        const delay = RETRY_DELAYS[attempt - 1];
+        console.log(`[ai-diagnosis] Retry attempt ${attempt} after ${delay}ms`);
+        await new Promise((resolve) => setTimeout(resolve, delay));
+      }
+
+      const controller = new AbortController();
+      const timeout = setTimeout(() => controller.abort(), 45000);
+
+      try {
+        geminiResp = await fetch(geminiUrl, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: requestBody,
+          signal: controller.signal,
+        });
+      } catch (fetchErr) {
+        clearTimeout(timeout);
+        const errName = (fetchErr as Error)?.name || "Unknown";
+        const errMsg = (fetchErr as Error)?.message || String(fetchErr);
+        console.error(`[ai-diagnosis] GEMINI_FETCH_FAILED (attempt ${attempt + 1}):`, errName, errMsg);
+        lastError = {
+          error: "Could not reach the Gemini API. Please check your internet connection and try again.",
+          code: "GEMINI_FETCH_FAILED",
+          debug: { stage: "gemini_fetch", attempt: attempt + 1, errorName: errName, errorMessage: errMsg, model: geminiModel },
+        };
+        continue;
+      }
+
       clearTimeout(timeout);
-      const errName = (fetchErr as Error)?.name || "Unknown";
-      const errMsg = (fetchErr as Error)?.message || String(fetchErr);
-      console.error("[ai-diagnosis] GEMINI_FETCH_FAILED:", errName, errMsg);
-      return jsonResponse({
-        error: "Could not reach the Gemini API. Please check your internet connection and try again.",
-        code: "GEMINI_FETCH_FAILED",
-        debug: { stage: "gemini_fetch", errorName: errName, errorMessage: errMsg, model: geminiModel },
-      }, 502);
-    }
 
-    clearTimeout(timeout);
+      if (geminiResp.ok) break;
 
-    if (!geminiResp.ok) {
       const geminiErrorBody = await geminiResp.text().catch(() => "<could not read body>");
-      console.error("[ai-diagnosis] GEMINI_API_ERROR:", geminiResp.status, geminiErrorBody.slice(0, 500));
+      const isUnavailable = geminiResp.status === 503 || geminiErrorBody.includes("UNAVAILABLE");
+
+      console.error(`[ai-diagnosis] GEMINI_API_ERROR (attempt ${attempt + 1}):`, geminiResp.status, geminiErrorBody.slice(0, 500));
+
+      if (isUnavailable && attempt < RETRY_DELAYS.length) {
+        lastError = {
+          error: "The AI diagnosis service is temporarily unavailable. Please try again in a moment, or call the Kisan helpline at 1800-180-1551 for help.",
+          code: "GEMINI_API_ERROR",
+          debug: { stage: "gemini_api", attempt: attempt + 1, status: geminiResp.status, body: geminiErrorBody.slice(0, 500), model: geminiModel },
+        };
+        continue;
+      }
+
       const friendly = geminiResp.status === 429
         ? "The AI service is very busy right now. Please wait a moment and try again."
         : "The AI diagnosis service is temporarily unavailable. Please try again in a moment, or call the Kisan helpline at 1800-180-1551 for help.";
       return jsonResponse({
         error: friendly,
         code: "GEMINI_API_ERROR",
-        debug: { stage: "gemini_api", status: geminiResp.status, body: geminiErrorBody.slice(0, 500), model: geminiModel },
+        debug: { stage: "gemini_api", attempt: attempt + 1, status: geminiResp.status, body: geminiErrorBody.slice(0, 500), model: geminiModel },
+      }, 502);
+    }
+
+    if (!geminiResp || !geminiResp.ok) {
+      return jsonResponse({
+        error: lastError?.error || "The AI diagnosis service is temporarily unavailable. Please try again.",
+        code: lastError?.code || "GEMINI_API_ERROR",
+        debug: lastError?.debug,
       }, 502);
     }
 
