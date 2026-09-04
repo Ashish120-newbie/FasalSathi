@@ -83,7 +83,7 @@ const Card14 = () => {
 
   return (
     <>
-      <Card className='relative w-full max-w-lg border-border/70 shadow-sm'>
+     <Card className='relative mx-auto w-full max-w-lg border-border/70 shadow-sm'>
         <CardHeader className='flex flex-col items-center gap-2 pb-3 text-center'>
           <div className='flex size-10 items-center justify-center rounded-full bg-green-100 text-green-700 dark:bg-green-950/40 dark:text-green-300'>
             <Icon className='size-5' />
