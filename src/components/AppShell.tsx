@@ -1,4 +1,4 @@
-import { Bell, BookOpen, Calculator, ClipboardList, Home, Menu, PhoneCall, Sprout, Store, X, Bot, LogOut } from 'lucide-react';
+import { Bell, Home, Menu, Sprout, Store, BookOpen, ClipboardList, User, X, Bot, LogOut } from 'lucide-react';
 import { useState, type ReactNode } from 'react';
 import type { ChatContext } from '@/data/types';
 import { ChatAssistant } from '@/components/ChatAssistant';
@@ -6,8 +6,9 @@ import { LanguageSelector } from '@/components/LanguageSelector';
 import { NotificationPanel } from '@/components/NotificationPanel';
 import { useLang } from '@/lib/lang';
 import { useAuth } from '@/lib/auth';
+import { useHomeLang } from '@/data/i18n-home';
 
-export type View = 'home' | 'calculator' | 'schemes' | 'history' | 'helpline' | 'queue' | 'marketplace';
+export type View = 'home' | 'calculator' | 'schemes' | 'history' | 'helpline' | 'queue' | 'marketplace' | 'pesticide-calc' | 'cost-calc' | 'crops' | 'cultivation-tips' | 'pests-diseases' | 'pests-disease-alert' | 'profile';
 
 interface AppShellProps {
   activeView: View;
@@ -22,17 +23,17 @@ interface AppShellProps {
 
 export function AppShell({ activeView, onNavigate, children, pendingReviews, chatContext, chatOpen, onOpenChat, onCloseChat }: AppShellProps) {
   const { t } = useLang();
+  const ht = useHomeLang();
   const { profile, signOut } = useAuth();
   const [menuOpen, setMenuOpen] = useState(false);
   const [notifOpen, setNotifOpen] = useState(false);
 
   const navItems: { view: View; label: string; Icon: typeof Home }[] = [
-    { view: 'home', label: t.navScan, Icon: Home },
-    { view: 'calculator', label: t.navFertilizer, Icon: Calculator },
+    { view: 'home', label: ht.navHome, Icon: Home },
+    { view: 'marketplace', label: ht.navMandi, Icon: Store },
     { view: 'schemes', label: t.navSchemes, Icon: BookOpen },
-    { view: 'marketplace', label: 'Market', Icon: Store },
     { view: 'history', label: t.navHistory, Icon: ClipboardList },
-    { view: 'helpline', label: t.navHelpline, Icon: PhoneCall },
+    { view: 'profile', label: ht.navProfile, Icon: User },
   ];
 
   return (
@@ -74,7 +75,7 @@ export function AppShell({ activeView, onNavigate, children, pendingReviews, cha
       )}
 
       <nav className="safe-bottom fixed bottom-0 left-0 right-0 z-30 border-t border-forest-100 bg-white">
-        <div className="mx-auto grid h-14 max-w-2xl grid-cols-6 px-0.5">
+        <div className="mx-auto grid h-14 max-w-2xl grid-cols-5 px-0.5">
           {navItems.map(({ view, label, Icon }) => (
             <button
               key={view}
