@@ -5,12 +5,21 @@ export interface WeatherForecastDay {
   condition: string;
 }
 
+export interface WeatherHourlyEntry {
+  pop: number;
+  rainMm: number;
+  temp: number;
+}
+
 export interface WeatherResult {
   location: string;
   temp: number;
   condition: string;
   windDescription: string;
+  windKph: number;
+  humidity: number;
   forecast: WeatherForecastDay[];
+  hourly: WeatherHourlyEntry[];
 }
 
 export interface WeatherError {
@@ -61,8 +70,10 @@ async function fetchWithTimeout(url: string, timeoutMs: number): Promise<Respons
 
 interface ForecastEntry {
   dt_txt: string;
-  main: { temp: number; temp_max: number; temp_min: number };
+  main: { temp: number; temp_max: number; temp_min: number; humidity: number };
   weather: { main: string; description: string }[];
+  pop: number;
+  rain?: { '3h': number };
 }
 
 function groupForecastByDate(list: ForecastEntry[]): Map<string, ForecastEntry[]> {
@@ -157,13 +168,23 @@ async function tryApiKey(
   const windKph = (currentData.wind?.speed ?? 0) * 3.6;
   const compassDir = degToCompass(currentData.wind?.deg ?? 0);
 
+  const rawList: any[] = forecastData.list ?? [];
+  const hourly: WeatherHourlyEntry[] = rawList.slice(0, 8).map((e: any) => ({
+    pop: e.pop ?? 0,
+    rainMm: e.rain?.['3h'] ?? 0,
+    temp: Math.round(e.main?.temp ?? 0),
+  }));
+
   return {
     location: currentData.name ?? 'Unknown',
     temp: Math.round(currentData.main?.temp ?? 0),
     condition: currentData.weather?.[0]?.description ??
       currentData.weather?.[0]?.main ?? '',
     windDescription: describeWind(windKph, compassDir),
-    forecast: buildForecast(forecastData.list ?? []),
+    windKph: Math.round(windKph),
+    humidity: currentData.main?.humidity ?? 0,
+    forecast: buildForecast(rawList),
+    hourly,
   };
 }
 

@@ -1,4 +1,4 @@
-import { Check, ChevronRight, ImagePlus, Info, AlertCircle, Cloud, CloudRain, Sun, Store, BookOpen, Calculator, Bug, Wallet, Sprout, BookMarked, ShieldAlert, Phone, PhoneCall, Users, Wheat, Clock, RefreshCw } from 'lucide-react';
+import { Check, ChevronRight, ImagePlus, Info, AlertCircle, Cloud, CloudRain, Sun, Store, BookOpen, Calculator, Bug, Wallet, Sprout, BookMarked, ShieldAlert, Phone, PhoneCall, Users, Wheat, Clock, RefreshCw, CheckCircle2, AlertTriangle, XCircle, Droplets, FlaskConical, Sprout as SproutIcon } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 import { classifyCropImage } from '@/data/classifier';
 import type { CropId, GrowthStage, ScanRecord } from '@/data/types';
@@ -9,7 +9,7 @@ import { supabase } from '@/lib/supabase';
 import { useHomeLang } from '@/data/i18n-home';
 import type { View } from '@/components/AppShell';
 import { ScanIcon } from '@/components/BrandIcons';
-import { getWeatherByLocation, getUserLocation, type WeatherResult } from '@/lib/weatherService';
+import { getWeatherByLocation, getUserLocation, type WeatherResult, type WeatherHourlyEntry } from '@/lib/weatherService';
 
 interface HomeScreenProps {
   onResult: (scan: ScanRecord) => void;
@@ -72,6 +72,9 @@ interface WeatherData {
   location: string;
   forecast: { day: string; icon: typeof Sun; temp: string; condition: string }[];
   updatedAt: number;
+  windKph: number;
+  humidity: number;
+  hourly: WeatherHourlyEntry[];
 }
 
 const fallbackWeather: WeatherData = {
@@ -84,7 +87,100 @@ const fallbackWeather: WeatherData = {
     { day: 'Wed', icon: CloudRain, temp: '24°C', condition: 'Light rain expected' },
   ],
   updatedAt: Date.now(),
+  windKph: 8,
+  humidity: 55,
+  hourly: [
+    { pop: 0, rainMm: 0, temp: 29 },
+    { pop: 0, rainMm: 0, temp: 28 },
+    { pop: 10, rainMm: 0, temp: 27 },
+    { pop: 20, rainMm: 0.5, temp: 26 },
+  ],
 };
+
+type AdvisoryStatus = 'good' | 'caution' | 'avoid';
+
+interface Advisory {
+  status: AdvisoryStatus;
+  message: string;
+}
+
+function computeAdvisories(data: WeatherData): { spray: Advisory; fertilizer: Advisory; sow: Advisory } {
+  const temp = parseInt(data.temp, 10);
+  const wind = data.windKph;
+  const humidity = data.humidity;
+  const hourly = data.hourly;
+
+  const rainNext6h = hourly.slice(0, 2).some((h) => h.pop > 50 || h.rainMm > 0.5);
+  const heavyRainNext24h = hourly.slice(0, 8).some((h) => h.rainMm > 10);
+  const anyRainNext3Days = hourly.some((h) => h.pop > 30 || h.rainMm > 0.2);
+  const maxTempForecast = Math.max(temp, ...hourly.map((h) => h.temp));
+
+  // Spray advisory
+  let spray: Advisory;
+  if (wind > 15) {
+    spray = { status: 'avoid', message: 'Too windy — spray drift risk' };
+  } else if (temp > 30) {
+    spray = { status: 'avoid', message: 'Too hot — pesticide may evaporate before absorption' };
+  } else if (rainNext6h) {
+    spray = { status: 'avoid', message: 'Rain expected soon — spray will wash off, wait until after' };
+  } else if (wind >= 3 && wind <= 15 && temp <= 30) {
+    let msg = 'Good conditions for spraying';
+    if (humidity < 40) msg += ' — low humidity, spray early morning or evening';
+    spray = { status: 'good', message: msg };
+  } else {
+    let msg = 'Fair conditions — monitor weather before spraying';
+    if (humidity < 40) msg += ' — low humidity, spray early morning or evening';
+    spray = { status: 'caution', message: msg };
+  }
+
+  // Fertilizer advisory
+  let fertilizer: Advisory;
+  if (heavyRainNext24h) {
+    fertilizer = { status: 'avoid', message: 'Heavy rain expected — fertilizer may wash away, apply after rain passes' };
+  } else {
+    fertilizer = { status: 'good', message: 'Good to apply fertilizer — no heavy rain expected in 24 hours' };
+  }
+
+  // Sowing advisory
+  let sow: Advisory;
+  if (maxTempForecast > 35 && !anyRainNext3Days) {
+    sow = { status: 'avoid', message: 'Hot, dry conditions ahead — germination may be poor, consider waiting for rain' };
+  } else if (heavyRainNext24h) {
+    sow = { status: 'avoid', message: 'Heavy rain expected — risk of seed rot, wait for drier conditions' };
+  } else if (temp >= 15 && temp <= 32 && anyRainNext3Days) {
+    sow = { status: 'good', message: 'Good conditions for sowing — moderate temps with rain expected aids germination' };
+  } else if (temp >= 15 && temp <= 32) {
+    sow = { status: 'caution', message: 'Temperature is suitable but little rain ahead — ensure soil moisture before sowing' };
+  } else {
+    sow = { status: 'caution', message: 'Check local soil moisture and forecast before sowing' };
+  }
+
+  return { spray, fertilizer, sow };
+}
+
+function AdvisoryRow({ icon: Icon, label, advisory }: { icon: typeof Sun; label: string; advisory: Advisory }) {
+  const statusConfig: Record<AdvisoryStatus, { icon: typeof Sun; color: string; bg: string; text: string }> = {
+    good: { icon: CheckCircle2, color: 'text-success-600', bg: 'bg-success-50', text: 'text-success-800' },
+    caution: { icon: AlertTriangle, color: 'text-warning-600', bg: 'bg-warning-50', text: 'text-warning-800' },
+    avoid: { icon: XCircle, color: 'text-error-600', bg: 'bg-error-50', text: 'text-error-800' },
+  };
+  const s = statusConfig[advisory.status];
+  const StatusIcon = s.icon;
+  return (
+    <div className="flex items-start gap-3 rounded-xl border border-forest-100 bg-white p-3">
+      <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-forest-50">
+        <Icon size={18} className="text-forest-600" />
+      </div>
+      <div className="min-w-0 flex-1">
+        <p className="text-[13px] font-semibold text-forest-800">{label}</p>
+        <p className="mt-0.5 text-[12px] leading-5 text-forest-600">{advisory.message}</p>
+      </div>
+      <div className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-full ${s.bg}`}>
+        <StatusIcon size={16} className={s.color} />
+      </div>
+    </div>
+  );
+}
 
 function pickWeatherIcon(condition: string): typeof Sun {
   const c = condition.toLowerCase();
@@ -185,6 +281,9 @@ export function HomeScreen({ onResult, onNavigate }: HomeScreenProps) {
             condition: f.condition,
           })),
           updatedAt: Date.now(),
+          windKph: result.windKph,
+          humidity: result.humidity,
+          hourly: result.hourly,
         };
         setWeather(w);
         requestAnimationFrame(() => setWeatherVisible(true));
@@ -460,6 +559,17 @@ export function HomeScreen({ onResult, onNavigate }: HomeScreenProps) {
                 ))}
               </div>
             </div>
+            {weather && !weatherError && weather.hourly.length > 0 && (
+              <div className="mt-3">
+                <p className="text-[11px] font-bold uppercase tracking-[0.12em] text-forest-100">Farming Advisory</p>
+                <div className="mt-2 space-y-2">
+                  <AdvisoryRow icon={Droplets} label="Spray" advisory={computeAdvisories(weather).spray} />
+                  <AdvisoryRow icon={FlaskConical} label="Fertilizer" advisory={computeAdvisories(weather).fertilizer} />
+                  <AdvisoryRow icon={SproutIcon} label="Sow" advisory={computeAdvisories(weather).sow} />
+                </div>
+                <p className="mt-2 text-[10px] leading-4 text-forest-200">Based on general weather guidelines. Always check pesticide/fertilizer product labels for specific recommendations.</p>
+              </div>
+            )}
           </>
         )}
       </div>
