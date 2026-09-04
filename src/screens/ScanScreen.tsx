@@ -51,8 +51,8 @@ function compressImage(file: File, maxDim: number): Promise<string> {
 const ERROR_CODE_TO_KEY: Record<string, string> = {
   NETWORK_ERROR: 'scanErrNetwork',
   API_KEY_MISSING: 'scanErrApiKeyMissing',
-  GEMINI_FETCH_FAILED: 'scanErrGeminiFetch',
-  GEMINI_API_ERROR: 'scanErrGeminiApi',
+  KINDWISE_FETCH_FAILED: 'scanErrKindwiseFetch',
+  KINDWISE_API_ERROR: 'scanErrKindwiseApi',
   PARSE_ERROR: 'scanErrParse',
   INTERNAL_ERROR: 'scanErrInternal',
   SERVICE_UNAVAILABLE: 'scanErrServiceUnavailable',
@@ -168,7 +168,7 @@ export function ScanScreen({ onResult }: ScanScreenProps) {
     <section className="screen-container animate-fade-in px-4">
       <div className="pt-8">
         <p className="text-[13px] font-medium text-forest-400">{getGreeting(profile?.display_name)}</p>
-        <h1 className="mt-1 text-[28px] font-bold leading-tight tracking-tight text-forest-900">{t.scanTitle}</h1>
+        <h1 className="heading-display mt-1 text-[28px] font-bold leading-tight tracking-tight text-forest-900">{t.scanTitle}</h1>
         <p className="mt-2 max-w-md text-[14px] leading-6 text-forest-400">{t.scanSubtitle}</p>
       </div>
 

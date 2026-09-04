@@ -125,7 +125,7 @@ export default {
       },
       fontFamily: {
         sans: ['Inter Variable', 'system-ui', 'sans-serif'],
-        display: ['Inter Variable', 'system-ui', 'sans-serif'],
+        display: ['Merriweather Variable', 'Georgia', 'serif'],
       },
       borderRadius: {
         xl: '0.625rem',

@@ -1,5 +1,6 @@
 @import "tw-animate-css";
 @import "@fontsource-variable/inter";
+@import "@fontsource-variable/merriweather";
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -13,9 +14,15 @@
   body {
     @apply font-sans antialiased bg-background text-foreground;
     overscroll-behavior-y: none;
+    background-image:
+      radial-gradient(circle at 20% 8%, rgba(44, 98, 64, 0.04) 0%, transparent 50%),
+      radial-gradient(circle at 80% 50%, rgba(94, 152, 113, 0.03) 0%, transparent 45%),
+      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='40' viewBox='0 0 40 40'%3E%3Cpath d='M20 0a20 20 0 0 0-20 20 20 20 0 0 0 20 20 20 20 0 0 0 20-20A20 20 0 0 0 20 0zm0 3a17 17 0 0 1 17 17 17 17 0 0 1-17 17A17 17 0 0 1 3 20 17 17 0 0 1 20 3z' fill='%232c6240' fill-opacity='0.015'/%3E%3C/svg%3E");
+    background-attachment: fixed;
   }
   h1, h2, h3, h4 {
-    @apply font-sans font-bold;
+    @apply font-display font-bold;
+    font-family: 'Merriweather Variable', Georgia, serif;
   }
   button {
     @apply transition-colors duration-150;
@@ -96,35 +103,46 @@
 
 @layer components {
   .card {
-    @apply bg-white rounded-xl border border-forest-100 p-4;
+    @apply bg-white rounded-2xl border border-forest-100 p-4 shadow-sm;
+    transition: box-shadow 0.2s ease, transform 0.2s ease;
+  }
+  .card-hover:hover {
+    @apply shadow-md;
+    transform: translateY(-2px);
   }
   .btn-primary {
-    @apply bg-forest-600 hover:bg-forest-700 text-white font-semibold rounded-lg px-5 py-2.5 text-base transition-colors;
+    @apply bg-forest-600 hover:bg-forest-700 text-white font-semibold rounded-xl px-5 py-2.5 text-base transition-all;
   }
   .btn-secondary {
-    @apply bg-moss-100 hover:bg-moss-200 text-forest-800 font-semibold rounded-lg px-5 py-2.5 text-base transition-colors;
+    @apply bg-moss-100 hover:bg-moss-200 text-forest-800 font-semibold rounded-xl px-5 py-2.5 text-base transition-all;
   }
   .btn-amber {
-    @apply bg-amber-400 hover:bg-amber-500 text-amber-950 font-semibold rounded-lg px-5 py-2.5 text-base transition-colors;
+    @apply bg-amber-400 hover:bg-amber-500 text-amber-950 font-semibold rounded-xl px-5 py-2.5 text-base transition-all;
   }
   .input-field {
-    @apply w-full bg-white border border-forest-200 rounded-lg px-4 py-2.5 text-base text-forest-900 placeholder:text-forest-400 focus:outline-none focus:ring-2 focus:ring-forest-400 focus:border-transparent transition-colors;
+    @apply w-full bg-white border border-forest-200 rounded-xl px-4 py-2.5 text-base text-forest-900 placeholder:text-forest-400 focus:outline-none focus:ring-2 focus:ring-forest-400 focus:border-transparent transition-colors;
   }
   .select-field {
-    @apply w-full bg-white border border-forest-200 rounded-lg px-4 py-2.5 text-base text-forest-900 focus:outline-none focus:ring-2 focus:ring-forest-400 focus:border-transparent transition-colors appearance-none bg-no-repeat;
+    @apply w-full bg-white border border-forest-200 rounded-xl px-4 py-2.5 text-base text-forest-900 focus:outline-none focus:ring-2 focus:ring-forest-400 focus:border-transparent transition-colors appearance-none bg-no-repeat;
     background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 24 24' fill='none' stroke='%232c6240' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
     background-position: right 0.75rem center;
     background-size: 20px;
     padding-right: 2.5rem;
   }
   .chip {
-    @apply inline-flex items-center gap-1 rounded-md px-2 py-0.5 text-xs font-semibold transition-colors;
+    @apply inline-flex items-center gap-1 rounded-lg px-2 py-0.5 text-xs font-semibold transition-colors;
   }
   .screen-container {
     @apply min-h-screen pb-24 pt-2;
   }
   .section-label {
-    @apply text-xs font-semibold uppercase tracking-wider text-forest-400;
+    @apply text-[11px] font-bold uppercase tracking-[0.12em] text-forest-400;
+  }
+  .greeting-text {
+    @apply text-[13px] font-light text-forest-500;
+  }
+  .heading-display {
+    font-family: 'Merriweather Variable', Georgia, serif;
   }
 }
 
@@ -141,6 +159,30 @@
     padding-top: env(safe-area-inset-top);
     padding-left: env(safe-area-inset-left);
     padding-right: env(safe-area-inset-right);
+  }
+  .press-scale {
+    transition: transform 0.15s ease, box-shadow 0.2s ease;
+  }
+  .press-scale:active {
+    transform: scale(0.97);
+  }
+  .card-lift {
+    transition: box-shadow 0.25s ease, transform 0.25s ease;
+  }
+  .card-lift:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(44, 98, 64, 0.08), 0 2px 6px rgba(0, 0, 0, 0.04);
+  }
+  .card-lift:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 8px rgba(44, 98, 64, 0.06);
+  }
+  .animate-weather-in {
+    animation: weatherIn 0.6s ease-out;
+  }
+  @keyframes weatherIn {
+    0% { opacity: 0; transform: scale(0.97) translateY(8px); }
+    100% { opacity: 1; transform: scale(1) translateY(0); }
   }
   @media (prefers-reduced-motion: reduce) {
     * { animation: none !important; transition: none !important; }

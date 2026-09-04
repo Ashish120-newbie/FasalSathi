@@ -26,7 +26,7 @@ export function DiagnosisScreen({ scan, onBack, onEscalate, onAskAI }: Diagnosis
 
       <div className="mt-6">
         <p className="text-[13px] font-medium text-forest-400">{crop.emoji} {displayCropName} {t.diagCropCheck}</p>
-        <h1 className="mt-1 text-[28px] font-bold leading-tight tracking-tight text-forest-900">{lowConfidence ? t.diagGetExpertOpinion : t.diagCropHealthReport}</h1>
+        <h1 className="heading-display mt-1 text-[28px] font-bold leading-tight tracking-tight text-forest-900">{lowConfidence ? t.diagGetExpertOpinion : t.diagCropHealthReport}</h1>
       </div>
 
       {lowConfidence ? (

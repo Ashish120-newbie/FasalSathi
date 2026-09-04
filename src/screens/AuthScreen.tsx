@@ -200,7 +200,7 @@ export function AuthScreen() {
         <div className="flex h-14 w-14 items-center justify-center rounded-[14px] bg-forest-600 text-white shadow-sm">
           <Sprout size={28} />
         </div>
-        <h1 className="mt-3 text-[22px] font-bold tracking-tight text-forest-900">Fasal<span className="text-amber-600">Sathi</span></h1>
+        <h1 className="heading-display mt-3 text-[22px] font-bold tracking-tight text-forest-900">Fasal<span className="text-amber-600">Sathi</span></h1>
         <p className="mt-1 text-[13px] text-forest-400">Fasal Ki Pehchan, Sahi Samadhan</p>
       </div>
 

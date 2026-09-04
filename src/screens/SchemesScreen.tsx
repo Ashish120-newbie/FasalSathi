@@ -102,7 +102,7 @@ export function SchemesScreen() {
     <section className="screen-container animate-fade-in px-4">
       <div className="pt-8">
         <p className="text-[13px] font-medium text-forest-400">Support available for you</p>
-        <h1 className="mt-1 text-[28px] font-bold leading-tight tracking-tight text-forest-900">Government schemes</h1>
+        <h1 className="heading-display mt-1 text-[28px] font-bold leading-tight tracking-tight text-forest-900">Government schemes</h1>
         <p className="mt-2 text-[14px] leading-6 text-forest-400">Find benefits, insurance and support programmes for farmers.</p>
       </div>
 

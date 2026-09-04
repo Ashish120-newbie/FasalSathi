@@ -1,5 +1,4 @@
 import { diseases } from './diseases';
-import { cropById } from './crops';
 import type { ClassifierResult, CropId } from './types';
 
 export function getConfidenceLevel(confidence: number): ClassifierResult['level'] {
@@ -19,19 +18,32 @@ export class DiagnosisError extends Error {
   }
 }
 
-interface AIDiagnosisResponse {
-  is_crop: boolean;
-  crop_name?: string;
-  diagnosis?: string;
-  confidence?: number;
-  description?: string;
-  affected_area?: string;
-  recommendation?: string;
+interface KindwiseSuggestion {
+  name: string;
+  probability: number;
+  details?: {
+    treatment?: {
+      biological?: string[];
+      chemical?: string[];
+      prevention?: string[];
+    };
+    common_names?: string[];
+    taxonomy?: { class?: string; family?: string; genus?: string; species?: string };
+    url?: string;
+  };
 }
 
-interface AIErrorResponse {
-  error: string;
-  code: string;
+interface KindwiseResponse {
+  result?: {
+    is_plant?: boolean;
+    crop?: {
+      suggestions: KindwiseSuggestion[];
+    };
+    disease?: {
+      suggestions: KindwiseSuggestion[];
+    };
+  };
+  error?: string;
 }
 
 export interface ClassificationOutcome {
@@ -52,9 +64,25 @@ function matchDiseaseId(diagnosisName: string, cropId: CropId): string {
   return 'unknown';
 }
 
+function formatTreatment(suggestion: KindwiseSuggestion): string {
+  const treatment = suggestion.details?.treatment;
+  if (!treatment) return '';
+  const parts: string[] = [];
+  if (treatment.chemical && treatment.chemical.length > 0) {
+    parts.push(`Chemical: ${treatment.chemical.join('. ')}.`);
+  }
+  if (treatment.biological && treatment.biological.length > 0) {
+    parts.push(`Biological: ${treatment.biological.join('. ')}.`);
+  }
+  if (treatment.prevention && treatment.prevention.length > 0) {
+    parts.push(`Prevention: ${treatment.prevention.join('. ')}.`);
+  }
+  return parts.join(' ');
+}
+
 export async function classifyCropImage(
   cropId: CropId,
-  growthStage: string,
+  _growthStage: string,
   imageDataUrl: string,
   language: string = 'en',
 ): Promise<ClassificationOutcome> {
@@ -62,62 +90,85 @@ export async function classifyCropImage(
   if (!base64Match) {
     return { error: new DiagnosisError('Could not read the image. Please try a different photo.', 'INVALID_IMAGE') };
   }
-  const [, imageContentType, imageBase64] = base64Match;
+  const [, , imageBase64] = base64Match;
 
-  const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
-  const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
-  if (!supabaseUrl || !supabaseAnonKey) {
-    return { error: new DiagnosisError('SERVICE_UNAVAILABLE', 'SERVICE_UNAVAILABLE') };
+  const apiKey = import.meta.env.VITE_KINDWISE_API_KEY;
+  if (!apiKey) {
+    return { error: new DiagnosisError('API_KEY_MISSING', 'API_KEY_MISSING') };
   }
+
+  console.log('Calling Kindwise crop.health API...');
 
   let response: Response;
   try {
-    response = await fetch(`${supabaseUrl}/functions/v1/ai-diagnosis`, {
+    response = await fetch('https://crop.kindwise.com/api/v1/identification', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        Authorization: `Bearer ${supabaseAnonKey}`,
-        apikey: supabaseAnonKey,
+        'Api-Key': apiKey,
       },
       body: JSON.stringify({
-        imageBase64,
-        imageContentType,
-        cropType: cropById(cropId).name,
-        growthStage,
+        images: [imageBase64],
+        details: 'treatment,common_names,taxonomy',
         language,
       }),
     });
   } catch {
-    return { error: new DiagnosisError('NETWORK_ERROR', 'NETWORK_ERROR') };
+    return { error: new DiagnosisError('KINDWISE_FETCH_FAILED', 'KINDWISE_FETCH_FAILED') };
   }
 
   if (!response.ok) {
-    const errorBody = await response.json().catch(() => ({ error: '', code: 'UNKNOWN' }));
-    const code = errorBody.code || 'DIAGNOSIS_FAILED';
-    if (errorBody.debug) {
-      console.error('[ai-diagnosis] raw debug info:', errorBody.debug);
-    }
-    return { error: new DiagnosisError(errorBody.error || code, code, errorBody.debug) };
+    const errorBody = await response.text().catch(() => '');
+    return {
+      error: new DiagnosisError(
+        'KINDWISE_API_ERROR',
+        'KINDWISE_API_ERROR',
+        { status: response.status, body: errorBody.slice(0, 500) },
+      ),
+    };
   }
 
-  const data: AIDiagnosisResponse = await response.json();
+  const data: KindwiseResponse = await response.json();
 
-  if (data.is_crop === false) {
+  if (data.result?.is_plant === false) {
     return { notACrop: true };
   }
 
-  const confidence = Math.max(0, Math.min(100, Math.round(data.confidence ?? 0)));
+  const cropSuggestions = data.result?.crop?.suggestions ?? [];
+  const diseaseSuggestions = data.result?.disease?.suggestions ?? [];
+
+  if (cropSuggestions.length === 0 || (cropSuggestions[0].probability < 0.5 && !data.result?.is_plant)) {
+    return { notACrop: true };
+  }
+
+  const topCrop = cropSuggestions[0];
+  const topDisease = diseaseSuggestions[0];
+
+  if (!topDisease || topDisease.probability < 0.1) {
+    return {
+      result: {
+        diseaseId: 'unknown',
+        diseaseName: 'Healthy',
+        confidence: Math.round((topCrop.probability ?? 0) * 100),
+        level: getConfidenceLevel(Math.round((topCrop.probability ?? 0) * 100)),
+        detectedCropName: topCrop.name,
+        recommendation: 'No issues detected. Your crop looks healthy!',
+        source: 'ai',
+      },
+    };
+  }
+
+  const confidence = Math.round((topDisease.probability ?? 0) * 100);
+  const recommendation = formatTreatment(topDisease) || 'Consult your local agricultural officer for treatment advice.';
 
   return {
     result: {
-      diseaseId: matchDiseaseId(data.diagnosis || 'Unknown', cropId),
-      diseaseName: data.diagnosis || 'Unknown',
+      diseaseId: matchDiseaseId(topDisease.name, cropId),
+      diseaseName: topDisease.name,
       confidence,
       level: getConfidenceLevel(confidence),
-      affectedArea: data.affected_area || undefined,
-      recommendation: data.recommendation || undefined,
-      description: data.description || undefined,
-      detectedCropName: data.crop_name || undefined,
+      recommendation,
+      detectedCropName: topCrop.name,
       source: 'ai',
     },
   };

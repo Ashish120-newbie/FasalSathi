@@ -1,4 +1,5 @@
 import { User, LogOut, MapPin, Phone, Pencil, Check, X, Globe, Sprout } from 'lucide-react';
+import { LeafWatermark } from '@/components/BrandIcons';
 import { useState, useEffect, useRef } from 'react';
 import { useAuth } from '@/lib/auth';
 import { useHomeLang } from '@/data/i18n-home';
@@ -122,11 +123,12 @@ export function ProfileScreen() {
   return (
     <section className="screen-container animate-fade-in px-4">
       <div className="pt-8">
-        <h1 className="text-[28px] font-bold leading-tight tracking-tight text-forest-900">{ht.profileTitle}</h1>
+        <h1 className="heading-display text-[28px] font-bold leading-tight tracking-tight text-forest-900">{ht.profileTitle}</h1>
       </div>
 
       {/* Profile Card */}
-      <div className="mt-8 rounded-2xl border border-forest-100 bg-white p-5">
+      <div className="card-lift mt-8 relative overflow-hidden rounded-2xl border border-forest-100 bg-white p-5 shadow-sm">
+        <LeafWatermark size={40} className="absolute -top-1 -right-1 text-forest-600 pointer-events-none" />
         {/* Header: Avatar + Name + Edit button */}
         <div className="flex items-start justify-between">
           <div className="flex items-center gap-4">
@@ -142,14 +144,14 @@ export function ProfileScreen() {
                   className="w-48 rounded-lg border border-forest-200 bg-white px-3 py-1.5 text-[16px] font-semibold text-forest-900 focus:border-forest-500 focus:outline-none"
                 />
               ) : (
-                <p className="text-[18px] font-bold text-forest-900">{profile?.display_name ?? 'Farmer'}</p>
+                <p className="heading-display text-[18px] font-bold text-forest-900">{profile?.display_name ?? 'Farmer'}</p>
               )}
             </div>
           </div>
           {!editing && (
             <button
               onClick={handleEdit}
-              className="flex items-center gap-1.5 rounded-lg bg-green-800 px-3 py-1.5 text-[13px] font-semibold text-white hover:bg-green-900 transition-colors"
+              className="press-scale flex items-center gap-1.5 rounded-xl bg-forest-600 px-3 py-1.5 text-[13px] font-semibold text-white hover:bg-forest-700 transition-colors"
             >
               <Pencil size={14} /> {ht.profileEdit}
             </button>
@@ -269,7 +271,7 @@ export function ProfileScreen() {
                       <button
                         key={c.id}
                         onClick={() => toggleCrop(c.id)}
-                        className={`rounded-full px-2.5 py-1 text-[12px] font-medium transition-colors ${selected ? 'bg-green-800 text-white' : 'bg-forest-50 text-forest-600 hover:bg-forest-100'}`}
+                        className={`rounded-full px-2.5 py-1 text-[12px] font-medium transition-colors ${selected ? 'bg-forest-600 text-white' : 'bg-forest-50 text-forest-600 hover:bg-forest-100'}`}
                       >
                         {c.emoji} {cropName(c.id, lang)}
                       </button>
@@ -300,14 +302,14 @@ export function ProfileScreen() {
             <button
               onClick={handleSave}
               disabled={saving}
-              className="flex flex-1 items-center justify-center gap-2 rounded-lg bg-green-800 px-4 py-2.5 text-[14px] font-semibold text-white hover:bg-green-900 disabled:opacity-60 transition-colors"
+              className="press-scale flex flex-1 items-center justify-center gap-2 rounded-xl bg-forest-600 px-4 py-2.5 text-[14px] font-semibold text-white hover:bg-forest-700 disabled:opacity-60 transition-colors"
             >
               {saving ? <span className="h-4 w-4 animate-spin rounded-full border-2 border-white/40 border-t-white" /> : <Check size={16} />}
               {ht.profileSave}
             </button>
             <button
               onClick={handleCancel}
-              className="flex flex-1 items-center justify-center gap-2 rounded-lg border border-forest-200 bg-white px-4 py-2.5 text-[14px] font-semibold text-forest-600 hover:bg-forest-50 transition-colors"
+              className="press-scale flex flex-1 items-center justify-center gap-2 rounded-xl border border-forest-200 bg-white px-4 py-2.5 text-[14px] font-semibold text-forest-600 hover:bg-forest-50 transition-colors"
             >
               <X size={16} /> {ht.profileCancel}
             </button>
@@ -318,7 +320,7 @@ export function ProfileScreen() {
       {/* Logout - outlined secondary style below the card */}
       <button
         onClick={signOut}
-        className="mt-4 flex w-full items-center justify-center gap-2 rounded-lg border border-error-200 bg-white px-4 py-2.5 text-sm font-semibold text-error-700 hover:bg-error-50 transition-colors"
+        className="press-scale mt-4 flex w-full items-center justify-center gap-2 rounded-xl border border-error-200 bg-white px-4 py-2.5 text-sm font-semibold text-error-700 hover:bg-error-50 transition-colors"
       >
         <LogOut size={16} /> {ht.profileLogout}
       </button>
@@ -330,7 +332,7 @@ export function ProfileScreen() {
 
       {/* Success toast */}
       {showToast && (
-        <div className={`fixed bottom-24 left-1/2 z-50 -translate-x-1/2 animate-fade-in rounded-lg px-4 py-2.5 text-sm font-medium text-white shadow-lg ${toastError ? 'bg-error-600' : 'bg-green-800'}`}>
+        <div className={`fixed bottom-24 left-1/2 z-50 -translate-x-1/2 animate-fade-in rounded-xl px-4 py-2.5 text-sm font-medium text-white shadow-lg ${toastError ? 'bg-error-600' : 'bg-forest-600'}`}>
           {toastError ? ht.profileSaveError : ht.profileUpdated}
         </div>
       )}

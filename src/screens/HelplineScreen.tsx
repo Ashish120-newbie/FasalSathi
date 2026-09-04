@@ -15,7 +15,7 @@ export function HelplineScreen() {
     <section className="screen-container animate-fade-in px-4">
       <div className="pt-8">
         <p className="text-[13px] font-medium text-forest-400">{t.helpFreeGovt}</p>
-        <h1 className="mt-1 text-[28px] font-bold leading-tight tracking-tight text-forest-900">{t.helpTitle}</h1>
+        <h1 className="heading-display mt-1 text-[28px] font-bold leading-tight tracking-tight text-forest-900">{t.helpTitle}</h1>
         <p className="mt-2 max-w-md text-[14px] leading-6 text-forest-400">{t.helpSubtitle}</p>
       </div>
 

@@ -1,4 +1,4 @@
-import { Camera, Check, ChevronRight, ImagePlus, Info, AlertCircle, Cloud, CloudRain, Sun, Store, BookOpen, Calculator, Bug, Wallet, Sprout, BookMarked, ShieldAlert, Phone, PhoneCall, Users, Wheat, Clock, RefreshCw } from 'lucide-react';
+import { Check, ChevronRight, ImagePlus, Info, AlertCircle, Cloud, CloudRain, Sun, Store, BookOpen, Calculator, Bug, Wallet, Sprout, BookMarked, ShieldAlert, Phone, PhoneCall, Users, Wheat, Clock, RefreshCw } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 import { classifyCropImage } from '@/data/classifier';
 import type { CropId, GrowthStage, ScanRecord } from '@/data/types';
@@ -8,6 +8,7 @@ import { useAuth } from '@/lib/auth';
 import { supabase } from '@/lib/supabase';
 import { useHomeLang } from '@/data/i18n-home';
 import type { View } from '@/components/AppShell';
+import { ScanIcon, LeafWatermark } from '@/components/BrandIcons';
 
 interface HomeScreenProps {
   onResult: (scan: ScanRecord) => void;
@@ -55,8 +56,8 @@ function compressImage(file: File, maxDim: number): Promise<string> {
 const ERROR_CODE_TO_KEY: Record<string, string> = {
   NETWORK_ERROR: 'scanErrNetwork',
   API_KEY_MISSING: 'scanErrApiKeyMissing',
-  GEMINI_FETCH_FAILED: 'scanErrGeminiFetch',
-  GEMINI_API_ERROR: 'scanErrGeminiApi',
+  KINDWISE_FETCH_FAILED: 'scanErrKindwiseFetch',
+  KINDWISE_API_ERROR: 'scanErrKindwiseApi',
   PARSE_ERROR: 'scanErrParse',
   INTERNAL_ERROR: 'scanErrInternal',
   SERVICE_UNAVAILABLE: 'scanErrServiceUnavailable',
@@ -96,24 +97,24 @@ function formatUpdatedAgo(updatedAt: number, lang: string): string {
 
 function WeatherSkeleton() {
   return (
-    <div className="rounded-2xl bg-gradient-to-br from-slate-200 to-slate-300 p-4 animate-pulse">
+    <div className="rounded-2xl bg-gradient-to-br from-forest-100 to-forest-200 p-4 animate-pulse">
       <div className="flex items-center justify-between">
         <div>
-          <div className="h-3 w-20 rounded bg-slate-400/40" />
-          <div className="mt-2 h-4 w-28 rounded bg-slate-400/40" />
+          <div className="h-3 w-20 rounded bg-forest-300/40" />
+          <div className="mt-2 h-4 w-28 rounded bg-forest-300/40" />
         </div>
         <div className="flex items-center gap-2">
-          <div className="h-7 w-7 rounded-full bg-slate-400/40" />
-          <div className="h-7 w-12 rounded bg-slate-400/40" />
+          <div className="h-7 w-7 rounded-full bg-forest-300/40" />
+          <div className="h-7 w-12 rounded bg-forest-300/40" />
         </div>
       </div>
-      <div className="mt-3 h-3 w-40 rounded bg-slate-400/30" />
+      <div className="mt-3 h-3 w-40 rounded bg-forest-300/30" />
       <div className="mt-4 flex gap-2">
         {[0, 1, 2].map((i) => (
-          <div key={i} className="flex-1 rounded-xl bg-slate-400/25 px-2 py-2.5 text-center">
-            <div className="mx-auto h-2.5 w-12 rounded bg-slate-400/40" />
-            <div className="mx-auto mt-2 h-5 w-5 rounded-full bg-slate-400/40" />
-            <div className="mx-auto mt-2 h-3 w-10 rounded bg-slate-400/40" />
+          <div key={i} className="flex-1 rounded-xl bg-forest-300/25 px-2 py-2.5 text-center">
+            <div className="mx-auto h-2.5 w-12 rounded bg-forest-300/40" />
+            <div className="mx-auto mt-2 h-5 w-5 rounded-full bg-forest-300/40" />
+            <div className="mx-auto mt-2 h-3 w-10 rounded bg-forest-300/40" />
           </div>
         ))}
       </div>
@@ -127,7 +128,7 @@ function ScanSkeleton() {
       <div className="h-3 w-24 rounded bg-forest-200/60" />
       <div className="h-5 w-40 rounded bg-forest-200/60" />
       <div className="h-3 w-56 rounded bg-forest-200/40" />
-      <div className="h-11 w-full rounded-[10px] bg-forest-200/50" />
+      <div className="h-11 w-full rounded-xl bg-forest-200/50" />
     </div>
   );
 }
@@ -292,26 +293,37 @@ export function HomeScreen({ onResult, onNavigate }: HomeScreenProps) {
 
   return (
     <section className="screen-container animate-fade-in px-4">
-      {/* Greeting + Scan */}
-      <div className="pt-8">
-        <p className="text-[13px] font-medium text-forest-400">{getGreeting(profile?.display_name)}</p>
-        <h1 className="mt-1 text-[28px] font-bold leading-tight tracking-tight text-forest-900">{t.scanTitle}</h1>
-        <p className="mt-2 max-w-md text-[14px] leading-6 text-forest-400">{t.scanSubtitle}</p>
+      {/* Hero image */}
+      <div className="relative mt-6 overflow-hidden rounded-2xl">
+        <img
+          src="https://images.pexels.com/photos/20445181/pexels-photo-20445181.jpeg?auto=compress&cs=tinysrgb&h=400&w=940"
+          alt="Farmer tending to a lush wheat field"
+          className="h-36 w-full object-cover sm:h-44"
+          loading="lazy"
+        />
+        <div className="absolute inset-0 bg-gradient-to-t from-forest-950/70 via-forest-900/20 to-transparent" />
+        <div className="absolute bottom-0 left-0 p-4">
+          <p className="greeting-text text-white/80">{getGreeting(profile?.display_name)}</p>
+          <h1 className="heading-display mt-0.5 text-[22px] font-bold leading-tight text-white sm:text-[26px]">{t.scanTitle}</h1>
+        </div>
       </div>
 
-      <div className="mt-8">
+      <p className="mt-3 max-w-md text-[14px] leading-6 text-forest-400">{t.scanSubtitle}</p>
+
+      {/* Scan card */}
+      <div className="mt-6">
         {recentScans === null ? (
           <ScanSkeleton />
         ) : (
           <div className="animate-fade-in">
             <p className="section-label">{t.scanQuickDiagnosis}</p>
-            <h2 className="mt-1 text-[20px] font-semibold text-forest-900">{t.scanScanALeaf}</h2>
+            <h2 className="heading-display mt-1 text-[20px] font-bold text-forest-900">{t.scanScanALeaf}</h2>
             <p className="mt-0.5 text-[13px] leading-5 text-forest-400">{t.scanClearPhotos}</p>
             <button
               onClick={() => inputRef.current?.click()}
-              className="mt-4 flex w-full items-center justify-center gap-2 rounded-[10px] bg-gradient-to-b from-amber-300 to-amber-400 px-5 py-2.5 text-[15px] font-semibold text-amber-950 shadow-[inset_0_1px_0_rgba(255,255,255,0.45),inset_0_-2px_4px_rgba(120,60,0,0.15),0_6px_16px_rgba(247,168,32,0.35),0_2px_4px_rgba(0,0,0,0.08)] hover:from-amber-400 hover:to-amber-500 hover:shadow-[inset_0_1px_0_rgba(255,255,255,0.5),inset_0_-2px_4px_rgba(120,60,0,0.2),0_8px_20px_rgba(247,168,32,0.4),0_2px_4px_rgba(0,0,0,0.1)] active:shadow-[inset_0_1px_0_rgba(255,255,255,0.3),inset_0_-1px_2px_rgba(120,60,0,0.12),0_2px_8px_rgba(247,168,32,0.25)] transition-all duration-200"
+              className="press-scale mt-4 flex w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-b from-amber-300 to-amber-400 px-5 py-3 text-[15px] font-semibold text-amber-950 shadow-[inset_0_1px_0_rgba(255,255,255,0.45),inset_0_-2px_4px_rgba(120,60,0,0.15),0_6px_16px_rgba(247,168,32,0.35),0_2px_4px_rgba(0,0,0,0.08)] hover:from-amber-400 hover:to-amber-500 hover:shadow-[inset_0_1px_0_rgba(255,255,255,0.5),inset_0_-2px_4px_rgba(120,60,0,0.2),0_8px_20px_rgba(247,168,32,0.4),0_2px_4px_rgba(0,0,0,0.1)] transition-all duration-200"
             >
-              <Camera size={18} /> {imageDataUrl ? t.scanChangePhoto : t.scanTakePhoto}
+              <ScanIcon size={20} /> {imageDataUrl ? t.scanChangePhoto : t.scanTakePhoto}
             </button>
             <input ref={inputRef} type="file" accept="image/*" capture="environment" className="hidden" onChange={(event) => handleFile(event.target.files?.[0])} />
           </div>
@@ -319,7 +331,7 @@ export function HomeScreen({ onResult, onNavigate }: HomeScreenProps) {
       </div>
 
       {fileName && (
-        <div className="mt-3 flex items-center gap-2 rounded-lg border border-success-200 bg-success-50 px-3 py-2.5 text-sm text-success-800 animate-fade-in">
+        <div className="mt-3 flex items-center gap-2 rounded-xl border border-success-200 bg-success-50 px-3 py-2.5 text-sm text-success-800 animate-fade-in">
           <Check size={16} className="shrink-0" />
           <div className="min-w-0">
             <p className="font-bold">{t.scanPhotoReady}</p>
@@ -329,14 +341,14 @@ export function HomeScreen({ onResult, onNavigate }: HomeScreenProps) {
       )}
 
       {notACrop && (
-        <div className="mt-3 flex items-start gap-2 rounded-lg border border-amber-200 bg-amber-50 px-3 py-3 text-sm text-amber-900 animate-fade-in">
+        <div className="mt-3 flex items-start gap-2 rounded-xl border border-amber-200 bg-amber-50 px-3 py-3 text-sm text-amber-900 animate-fade-in">
           <AlertCircle size={18} className="mt-0.5 shrink-0" />
           <p className="font-medium leading-6">{t.scanNotACrop}</p>
         </div>
       )}
 
       {error && (
-        <div className="mt-3 rounded-lg border border-error-200 bg-error-50 px-3 py-3 text-sm text-error-800 animate-fade-in">
+        <div className="mt-3 rounded-xl border border-error-200 bg-error-50 px-3 py-3 text-sm text-error-800 animate-fade-in">
           <div className="flex items-start gap-2">
             <AlertCircle size={18} className="mt-0.5 shrink-0" />
             <div>
@@ -347,7 +359,7 @@ export function HomeScreen({ onResult, onNavigate }: HomeScreenProps) {
           <button
             onClick={handleScan}
             disabled={scanning}
-            className="mt-3 flex w-full items-center justify-center gap-2 rounded-lg border border-error-300 bg-white px-4 py-2 text-[13px] font-semibold text-error-700 hover:bg-error-100 disabled:opacity-60 transition-colors"
+            className="mt-3 flex w-full items-center justify-center gap-2 rounded-xl border border-error-300 bg-white px-4 py-2 text-[13px] font-semibold text-error-700 hover:bg-error-100 disabled:opacity-60 transition-colors"
           >
             {scanning
               ? <><span className="h-4 w-4 animate-spin rounded-full border-2 border-error-300 border-t-error-700" /> Retrying...</>
@@ -360,7 +372,7 @@ export function HomeScreen({ onResult, onNavigate }: HomeScreenProps) {
         <button
           onClick={handleScan}
           disabled={scanning}
-          className="mt-4 flex w-full items-center justify-center gap-2 rounded-[10px] bg-forest-600 px-5 py-2.5 text-[15px] font-semibold text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.2),0_4px_12px_rgba(44,98,64,0.25)] hover:bg-forest-700 hover:shadow-[inset_0_1px_0_rgba(255,255,255,0.25),0_6px_16px_rgba(44,98,64,0.3)] disabled:cursor-wait disabled:opacity-60 transition-all duration-200"
+          className="press-scale mt-4 flex w-full items-center justify-center gap-2 rounded-xl bg-forest-600 px-5 py-3 text-[15px] font-semibold text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.2),0_4px_12px_rgba(44,98,64,0.25)] hover:bg-forest-700 hover:shadow-[inset_0_1px_0_rgba(255,255,255,0.25),0_6px_16px_rgba(44,98,64,0.3)] disabled:cursor-wait disabled:opacity-60 transition-all duration-200"
         >
           {scanning
             ? <><span className="h-5 w-5 animate-spin rounded-full border-2 border-white/40 border-t-white" /> {t.scanAnalysingLong}</>
@@ -386,10 +398,10 @@ export function HomeScreen({ onResult, onNavigate }: HomeScreenProps) {
             <span className="font-medium">{ht.homeWeatherLoadError}</span>
           </button>
         ) : weather && (
-          <div className={`rounded-2xl bg-gradient-to-br from-indigo-500 to-blue-600 p-4 text-white shadow-[0_4px_14px_rgba(49,46,129,0.2)] transition-all duration-500 ${weatherVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-2'}`}>
+          <div className={`rounded-2xl bg-gradient-to-br from-forest-700 to-teal-700 p-4 text-white shadow-[0_4px_14px_rgba(44,98,64,0.2)] transition-all duration-500 ${weatherVisible ? 'opacity-100 translate-y-0 scale-100' : 'opacity-0 translate-y-2 scale-[0.97]'} ${weatherVisible ? 'animate-weather-in' : ''}`}>
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-[12px] font-medium text-indigo-100">{ht.homeWeatherLocation}</p>
+                <p className="text-[12px] font-medium text-forest-100">{ht.homeWeatherLocation}</p>
                 <p className="mt-0.5 text-[15px] font-semibold">{weather.location}</p>
               </div>
               <div className="flex items-center gap-2">
@@ -398,15 +410,15 @@ export function HomeScreen({ onResult, onNavigate }: HomeScreenProps) {
               </div>
             </div>
             <div className="mt-2 flex items-center justify-between">
-              <p className="text-[13px] text-indigo-100">{weather.condition}</p>
-              <p className="flex items-center gap-1 text-[11px] text-indigo-200">
+              <p className="text-[13px] text-forest-100">{weather.condition}</p>
+              <p className="flex items-center gap-1 text-[11px] text-forest-200">
                 <Clock size={11} /> {ht.homeWeatherUpdated} {formatUpdatedAgo(weather.updatedAt, lang)}
               </p>
             </div>
             <div className="mt-4 flex gap-2">
               {weather.forecast.map((f) => (
                 <div key={f.day} className="flex-1 rounded-xl bg-white/15 px-2 py-2.5 text-center backdrop-blur-sm">
-                  <p className="text-[11px] font-medium text-indigo-100">{f.day}</p>
+                  <p className="text-[11px] font-medium text-forest-100">{f.day}</p>
                   <f.icon size={20} className="mx-auto mt-1 text-white" />
                   <p className="mt-1 text-[13px] font-semibold">{f.temp}</p>
                 </div>
@@ -419,20 +431,20 @@ export function HomeScreen({ onResult, onNavigate }: HomeScreenProps) {
       {/* Tools */}
       <div className="mt-8 border-t border-forest-100" />
       <div className="mt-6">
-        <h2 className="text-[20px] font-semibold text-forest-900">{ht.homeTools}</h2>
+        <h2 className="heading-display text-[20px] font-bold text-forest-900">{ht.homeTools}</h2>
         <div className="mt-4 grid grid-cols-3 gap-3">
           {tools.map(({ icon: Icon, label, view, isNew }) => (
             <button
               key={label}
               onClick={() => onNavigate(view)}
-              className="flex flex-col items-center rounded-2xl border border-forest-100 bg-white p-3 text-center transition-colors hover:border-indigo-200 hover:bg-indigo-50/30"
+              className="card-lift flex flex-col items-center rounded-2xl border border-forest-100 bg-white p-3 text-center hover:border-forest-200"
             >
-              <div className="flex h-12 w-12 items-center justify-center rounded-full bg-indigo-100">
-                <Icon size={22} className="text-indigo-700" />
+              <div className="flex h-12 w-12 items-center justify-center rounded-full bg-forest-50">
+                <Icon size={22} className="text-forest-600" />
               </div>
               <span className="mt-2 text-[12px] font-medium leading-tight text-forest-800">{label}</span>
               {isNew && (
-                <span className="mt-1 rounded-full bg-purple-100 px-2 py-0.5 text-[10px] font-semibold text-purple-700">{ht.homeNew}</span>
+                <span className="mt-1 rounded-full bg-amber-100 px-2 py-0.5 text-[10px] font-semibold text-amber-700">{ht.homeNew}</span>
               )}
             </button>
           ))}
@@ -442,17 +454,18 @@ export function HomeScreen({ onResult, onNavigate }: HomeScreenProps) {
       {/* Library */}
       <div className="mt-8 border-t border-forest-100" />
       <div className="mt-6">
-        <h2 className="text-[20px] font-semibold text-forest-900">{ht.homeLibrary}</h2>
+        <h2 className="heading-display text-[20px] font-bold text-forest-900">{ht.homeLibrary}</h2>
         <div className="mt-4 grid grid-cols-2 gap-3">
           {library.map(({ icon: Icon, label, view }) => (
             <button
               key={label}
               onClick={() => onNavigate(view)}
-              className="flex items-center justify-between rounded-2xl bg-indigo-50 px-4 py-4 transition-colors hover:bg-indigo-100/60"
+              className="card-lift relative flex items-center justify-between rounded-2xl bg-forest-50 px-4 py-4 hover:bg-forest-100/60 overflow-hidden"
             >
-              <span className="text-[14px] font-semibold text-indigo-900">{label}</span>
-              <div className="flex h-9 w-9 items-center justify-center rounded-full bg-indigo-200/60">
-                <Icon size={18} className="text-indigo-800" />
+              <LeafWatermark size={36} className="absolute -bottom-1 -right-1 text-forest-600 pointer-events-none" />
+              <span className="relative text-[14px] font-semibold text-forest-800">{label}</span>
+              <div className="relative flex h-9 w-9 items-center justify-center rounded-full bg-forest-200/60">
+                <Icon size={18} className="text-forest-700" />
               </div>
             </button>
           ))}
@@ -463,16 +476,16 @@ export function HomeScreen({ onResult, onNavigate }: HomeScreenProps) {
       <div className="mt-8 border-t border-forest-100" />
       <div className="mt-6">
         <p className="text-[13px] font-medium text-forest-400">{t.helpFreeGovt}</p>
-        <h2 className="mt-1 text-[20px] font-semibold text-forest-900">{t.helpTitle}</h2>
+        <h2 className="heading-display mt-1 text-[20px] font-bold text-forest-900">{t.helpTitle}</h2>
         <p className="mt-0.5 text-[13px] leading-5 text-forest-400">{t.helpSubtitle}</p>
 
         <div className="mt-4">
           <p className="section-label">{t.helpKCC}</p>
-          <h3 className="mt-1 text-[18px] font-semibold text-forest-900">{t.helpFreeHelpline}</h3>
+          <h3 className="heading-display mt-1 text-[18px] font-bold text-forest-900">{t.helpFreeHelpline}</h3>
           <p className="mt-0.5 text-[13px] leading-5 text-forest-400">{t.helpMinistry}</p>
           <a
             href="tel:18001801551"
-            className="mt-3 flex w-full items-center justify-center gap-2 rounded-lg bg-amber-400 px-5 py-2.5 text-base font-semibold text-amber-950 shadow-[inset_0_1px_0_rgba(255,255,255,0.4),inset_0_-2px_4px_rgba(120,60,0,0.15),0_4px_12px_rgba(247,168,32,0.3)] hover:bg-amber-500 transition-all"
+            className="press-scale mt-3 flex w-full items-center justify-center gap-2 rounded-xl bg-amber-400 px-5 py-3 text-base font-semibold text-amber-950 shadow-[inset_0_1px_0_rgba(255,255,255,0.4),inset_0_-2px_4px_rgba(120,60,0,0.15),0_4px_12px_rgba(247,168,32,0.3)] hover:bg-amber-500 transition-all"
           >
             <Phone size={19} /> {t.helpCall} 1800-180-1551
           </a>
@@ -480,7 +493,7 @@ export function HomeScreen({ onResult, onNavigate }: HomeScreenProps) {
         </div>
 
         <div className="mt-6">
-          <h3 className="text-[18px] font-semibold text-forest-900">{t.helpWhatAsk}</h3>
+          <h3 className="heading-display text-[18px] font-bold text-forest-900">{t.helpWhatAsk}</h3>
           <p className="mt-0.5 text-[13px] text-forest-400">{t.helpAdvisorsReady}</p>
           <div className="mt-3 space-y-3">
             {helplineTopics.map(({ icon: Icon, label }) => (
@@ -493,12 +506,12 @@ export function HomeScreen({ onResult, onNavigate }: HomeScreenProps) {
         </div>
 
         <div className="mt-6">
-          <h3 className="text-[18px] font-semibold text-forest-900">{t.helpLocalLang}</h3>
+          <h3 className="heading-display text-[18px] font-bold text-forest-900">{t.helpLocalLang}</h3>
           <p className="mt-0.5 text-[13px] text-forest-400">{t.helpLocalLangDesc}</p>
           <p className="mt-3 text-[14px] leading-6 text-forest-700">{t.helpLocalLangBody}</p>
         </div>
 
-        <div className="mt-6 flex gap-2 rounded-lg border border-forest-100 bg-forest-50 px-3 py-2.5 text-xs leading-5 text-forest-600">
+        <div className="mt-6 flex gap-2 rounded-xl border border-forest-100 bg-forest-50 px-3 py-2.5 text-xs leading-5 text-forest-600">
           <PhoneCall size={15} className="mt-0.5 shrink-0 text-forest-400" />
           <p>{t.helpEscalatedNote}</p>
         </div>
