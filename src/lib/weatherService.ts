@@ -53,6 +53,8 @@ async function fetchWithTimeout(url: string, timeoutMs: number): Promise<Respons
 
 async function tryApiKey(apiKey: string, lat: number, lon: number): Promise<Response> {
   const url = `${WEATHER_API_BASE}?key=${apiKey}&q=${lat},${lon}&days=3&aqi=no&alerts=no`;
+  const maskedUrl = url.replace(apiKey, '***');
+  console.log('[Weather] Request URL:', maskedUrl);
   return fetchWithTimeout(url, 10000);
 }
 
@@ -91,10 +93,13 @@ export async function getWeatherByLocation(lat: number, lon: number): Promise<We
         const data = await response.json();
         return parseWeatherResponse(data);
       }
+      const errorBody = await response.text().catch(() => '');
+      console.error(`[Weather] HTTP ${response.status} — Response body:`, errorBody);
       if (response.status === 429 || (response.status >= 400 && response.status < 600)) {
         continue;
       }
-    } catch {
+    } catch (err) {
+      console.error('[Weather] Fetch failed:', err);
       continue;
     }
   }
