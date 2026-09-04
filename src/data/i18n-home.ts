@@ -39,6 +39,11 @@ export interface HomeTranslationKey {
   profilePhoneError: string;
   profileLandError: string;
   profileNoCrops: string;
+  homeWeatherUpdated: string;
+  homeWeatherUpdatedAgo: string;
+  homeWeatherLoadError: string;
+  homeWeatherRetry: string;
+  homeWeatherLoading: string;
 }
 
 const homeTranslations: Record<Language, HomeTranslationKey> = {
@@ -55,6 +60,7 @@ const homeTranslations: Record<Language, HomeTranslationKey> = {
     profileVillage: 'Village', profileDistrict: 'District', profileState: 'State',
     profileLandSize: 'Land size', profileAcres: 'acres', profilePrimaryCrops: 'Primary crops', profilePreferredLang: 'Preferred language',
     profileUpdated: 'Profile updated', profileSaveError: 'Could not save profile. Please try again.', profilePhoneError: 'Phone number must be exactly 10 digits', profileLandError: 'Land size must be a positive number', profileNoCrops: 'No crops selected',
+    homeWeatherUpdated: 'Updated', homeWeatherUpdatedAgo: 'min ago', homeWeatherLoadError: "Couldn't load weather — tap to retry", homeWeatherRetry: 'Retry', homeWeatherLoading: 'Loading weather...',
   },
   hi: {
     navHome: 'होम', navMandi: 'मंडी', navProfile: 'प्रोफ़ाइल',
@@ -69,6 +75,7 @@ const homeTranslations: Record<Language, HomeTranslationKey> = {
     profileVillage: 'गाँव', profileDistrict: 'ज़िला', profileState: 'राज्य',
     profileLandSize: 'भूमि आकार', profileAcres: 'एकड़', profilePrimaryCrops: 'मुख्य फसलें', profilePreferredLang: 'पसंदीदा भाषा',
     profileUpdated: 'प्रोफ़ाइल अपडेट हुआ', profileSaveError: 'प्रोफ़ाइल सहेजी नहीं जा सकी। कृपया पुनः प्रयास करें।', profilePhoneError: 'फ़ोन नंबर 10 अंकों का होना चाहिए', profileLandError: 'भूमि आकार एक सकारात्मक संख्या होनी चाहिए', profileNoCrops: 'कोई फसल चयनित नहीं',
+    homeWeatherUpdated: 'अपडेटेड', homeWeatherUpdatedAgo: 'मिनट पहले', homeWeatherLoadError: 'मौसम लोड नहीं हुआ — फिर से कोशिश करने के लिए टैप करें', homeWeatherRetry: 'फिर से कोशिश करें', homeWeatherLoading: 'मौसम लोड हो रहा है...',
   },
   bn: {
     navHome: 'হোম', navMandi: 'মণ্ডি', navProfile: 'প্রোফাইল',
@@ -83,6 +90,7 @@ const homeTranslations: Record<Language, HomeTranslationKey> = {
     profileVillage: 'গ্রাম', profileDistrict: 'জেলা', profileState: 'রাজ্য',
     profileLandSize: 'জমির পরিমাণ', profileAcres: 'একর', profilePrimaryCrops: 'প্রধান ফসল', profilePreferredLang: 'পছন্দের ভাষা',
     profileUpdated: 'প্রোফাইল আপডেট হয়েছে', profileSaveError: 'প্রোফাইল সংরক্ষণ করা যায়নি। আবার চেষ্টা করুন।', profilePhoneError: 'ফোন নম্বর ঠিক ১০ সংখ্যার হতে হবে', profileLandError: 'জমির পরিমাণ একটি ধনাত্মক সংখ্যা হতে হবে', profileNoCrops: 'কোনো ফসল নির্বাচিত নেই',
+    homeWeatherUpdated: 'আপডেটেড', homeWeatherUpdatedAgo: 'মিনিট আগে', homeWeatherLoadError: 'আবহাওয়া লোড হয়নি — আবার চেষ্টা করতে ট্যাপ করুন', homeWeatherRetry: 'আবার চেষ্টা করুন', homeWeatherLoading: 'আবহাওয়া লোড হচ্ছে...',
   },
   te: {
     navHome: 'హోమ్', navMandi: 'మండి', navProfile: 'ప్రొఫైల్',
@@ -97,6 +105,7 @@ const homeTranslations: Record<Language, HomeTranslationKey> = {
     profileVillage: 'గ్రామం', profileDistrict: 'జిల్లా', profileState: 'రాష్ట్రం',
     profileLandSize: 'భూమి పరిమాణం', profileAcres: 'ఎకరాలు', profilePrimaryCrops: 'ప్రధాన పంటలు', profilePreferredLang: 'ప్రాధాన్యత భాష',
     profileUpdated: 'ప్రొఫైల్ నవీకరించబడింది', profileSaveError: 'ప్రొఫైల్‌ను సేవ్ చేయడం సాధ్యం కాలేదు. దయచేసి మళ్లీ ప్రయత్నించండి.', profilePhoneError: 'ఫోన్ నంబర్ ఖచ్చితంగా 10 అంకెలు ఉండాలి', profileLandError: 'భూమి పరిమాణం ధనాత్మక సంఖ్య అయి ఉండాలి', profileNoCrops: 'ఎటువంటి పంటలు ఎంచుకోబడలేదు',
+    homeWeatherUpdated: 'అప్‌డేట్', homeWeatherUpdatedAgo: 'నిమిషాల క్రితం', homeWeatherLoadError: 'వాతావరణం లోడ్ కాలేదు — మళ్లీ ప్రయత్నించడానికి ట్యాప్ చేయండి', homeWeatherRetry: 'మళ్లీ ప్రయత్నించండి', homeWeatherLoading: 'వాతావరణం లోడ్ అవుతోంది...',
   },
   mr: {
     navHome: 'होम', navMandi: 'मंडी', navProfile: 'प्रोफाइल',
@@ -111,6 +120,7 @@ const homeTranslations: Record<Language, HomeTranslationKey> = {
     profileVillage: 'गाव', profileDistrict: 'जिल्हा', profileState: 'राज्य',
     profileLandSize: 'जमीन आकार', profileAcres: 'एकर', profilePrimaryCrops: 'प्रमुख पीक', profilePreferredLang: 'पसंतीची भाषा',
     profileUpdated: 'प्रोफाइल अपडेट झाले', profileSaveError: 'प्रोफाइल जतन करता आले नाही. कृपया पुन्हा प्रयत्न करा.', profilePhoneError: 'फोन नंबर नक्की १० अंकी असावा', profileLandError: 'जमीन आकार सकारात्मक संख्या असावी', profileNoCrops: 'कोणतेही पीक निवडले नाही',
+    homeWeatherUpdated: 'अपडेट', homeWeatherUpdatedAgo: 'मिनिटांपूर्वी', homeWeatherLoadError: 'हवामान लोड झाले नाही — पुन्हा प्रयत्न करण्यासाठी टॅप करा', homeWeatherRetry: 'पुन्हा प्रयत्न करा', homeWeatherLoading: 'हवामान लोड होत आहे...',
   },
   ta: {
     navHome: 'ஹோம்', navMandi: 'மண்டி', navProfile: 'சுயவிவரம்',
@@ -125,6 +135,7 @@ const homeTranslations: Record<Language, HomeTranslationKey> = {
     profileVillage: 'கிராமம்', profileDistrict: 'மாவட்டம்', profileState: 'மாநிலம்',
     profileLandSize: 'நில அளவு', profileAcres: 'ஏக்கர்', profilePrimaryCrops: 'முக்கிய பயிர்கள்', profilePreferredLang: 'விருப்ப மொழி',
     profileUpdated: 'சுயவிவரம் புதுப்பிக்கப்பட்டது', profileSaveError: 'சுயவிவரத்தை சேமிக்க முடியவில்லை. மீண்டும் முயற்சிக்கவும்.', profilePhoneError: 'தொலைபேசி எண் சரியாக 10 இலக்கங்கள் இருக்க வேண்டும்', profileLandError: 'நில அளவு ஒரு நேர்மறை எண்ணாக இருக்க வேண்டும்', profileNoCrops: 'எந்தப் பயிர்களும் தேர்ந்தெடுக்கப்படவில்லை',
+    homeWeatherUpdated: 'புதுப்பிக்கப்பட்டது', homeWeatherUpdatedAgo: 'நிமிடங்களுக்கு முன்', homeWeatherLoadError: 'வானிலை ஏற்ற முடியவில்லை — மீண்டும் முயற்சிக்க தட்டவும்', homeWeatherRetry: 'மீண்டும் முயற்சிக்கவும்', homeWeatherLoading: 'வானிலை ஏற்றப்படுகிறது...',
   },
 };
 

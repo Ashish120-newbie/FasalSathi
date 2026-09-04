@@ -1,8 +1,8 @@
-import { Camera, Check, ChevronRight, ImagePlus, Info, AlertCircle, Cloud, CloudRain, Sun, Store, BookOpen, Calculator, Bug, Wallet, Sprout, BookMarked, ShieldAlert, Phone, PhoneCall, Users, Wheat, Clock } from 'lucide-react';
-import { useRef, useState } from 'react';
+import { Camera, Check, ChevronRight, ImagePlus, Info, AlertCircle, Cloud, CloudRain, Sun, Store, BookOpen, Calculator, Bug, Wallet, Sprout, BookMarked, ShieldAlert, Phone, PhoneCall, Users, Wheat, Clock, RefreshCw } from 'lucide-react';
+import { useEffect, useRef, useState } from 'react';
 import { classifyCropImage } from '@/data/classifier';
 import type { CropId, GrowthStage, ScanRecord } from '@/data/types';
-import { addScan } from '@/data/storage';
+import { addScan, loadScans } from '@/data/storage';
 import { useLang } from '@/lib/lang';
 import { useAuth } from '@/lib/auth';
 import { supabase } from '@/lib/supabase';
@@ -64,11 +64,73 @@ const ERROR_CODE_TO_KEY: Record<string, string> = {
   NOT_A_PLANT: 'scanNotACrop',
 };
 
-const dummyForecast = [
-  { day: 'Today', icon: Sun, temp: '29°C', condition: 'Sunny' },
-  { day: 'Tomorrow', icon: Cloud, temp: '27°C', condition: 'Cloudy' },
-  { day: 'Wed', icon: CloudRain, temp: '24°C', condition: 'Light rain expected' },
-];
+interface WeatherData {
+  temp: string;
+  condition: string;
+  location: string;
+  forecast: { day: string; icon: typeof Sun; temp: string; condition: string }[];
+  updatedAt: number;
+}
+
+const dummyWeather: WeatherData = {
+  temp: '29°',
+  condition: 'Sunny · Light breeze from west',
+  location: 'Pune, Maharashtra',
+  forecast: [
+    { day: 'Today', icon: Sun, temp: '29°C', condition: 'Sunny' },
+    { day: 'Tomorrow', icon: Cloud, temp: '27°C', condition: 'Cloudy' },
+    { day: 'Wed', icon: CloudRain, temp: '24°C', condition: 'Light rain expected' },
+  ],
+  updatedAt: Date.now(),
+};
+
+function formatUpdatedAgo(updatedAt: number, lang: string): string {
+  const mins = Math.max(1, Math.round((Date.now() - updatedAt) / 60000));
+  if (lang === 'hi') return `${mins} मिनट पहले`;
+  if (lang === 'bn') return `${mins} মিনিট আগে`;
+  if (lang === 'te') return `${mins} నిమిషాల క్రితం`;
+  if (lang === 'mr') return `${mins} मिनिटांपूर्वी`;
+  if (lang === 'ta') return `${mins} நிமிடங்களுக்கு முன்`;
+  return `${mins} min ago`;
+}
+
+function WeatherSkeleton() {
+  return (
+    <div className="rounded-2xl bg-gradient-to-br from-slate-200 to-slate-300 p-4 animate-pulse">
+      <div className="flex items-center justify-between">
+        <div>
+          <div className="h-3 w-20 rounded bg-slate-400/40" />
+          <div className="mt-2 h-4 w-28 rounded bg-slate-400/40" />
+        </div>
+        <div className="flex items-center gap-2">
+          <div className="h-7 w-7 rounded-full bg-slate-400/40" />
+          <div className="h-7 w-12 rounded bg-slate-400/40" />
+        </div>
+      </div>
+      <div className="mt-3 h-3 w-40 rounded bg-slate-400/30" />
+      <div className="mt-4 flex gap-2">
+        {[0, 1, 2].map((i) => (
+          <div key={i} className="flex-1 rounded-xl bg-slate-400/25 px-2 py-2.5 text-center">
+            <div className="mx-auto h-2.5 w-12 rounded bg-slate-400/40" />
+            <div className="mx-auto mt-2 h-5 w-5 rounded-full bg-slate-400/40" />
+            <div className="mx-auto mt-2 h-3 w-10 rounded bg-slate-400/40" />
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function ScanSkeleton() {
+  return (
+    <div className="animate-pulse space-y-3">
+      <div className="h-3 w-24 rounded bg-forest-200/60" />
+      <div className="h-5 w-40 rounded bg-forest-200/60" />
+      <div className="h-3 w-56 rounded bg-forest-200/40" />
+      <div className="h-11 w-full rounded-[10px] bg-forest-200/50" />
+    </div>
+  );
+}
 
 export function HomeScreen({ onResult, onNavigate }: HomeScreenProps) {
   const { t, lang } = useLang();
@@ -79,7 +141,40 @@ export function HomeScreen({ onResult, onNavigate }: HomeScreenProps) {
   const [scanning, setScanning] = useState(false);
   const [error, setError] = useState('');
   const [notACrop, setNotACrop] = useState(false);
+  const [recentScans, setRecentScans] = useState<ScanRecord[] | null>(null);
+  const [weather, setWeather] = useState<WeatherData | null>(null);
+  const [weatherLoading, setWeatherLoading] = useState(true);
+  const [weatherError, setWeatherError] = useState(false);
+  const [weatherVisible, setWeatherVisible] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    const scans = loadScans();
+    setRecentScans(scans.slice(0, 3));
+  }, []);
+
+  async function fetchWeather() {
+    setWeatherLoading(true);
+    setWeatherError(false);
+    setWeatherVisible(false);
+    try {
+      await new Promise((resolve) => setTimeout(resolve, 900));
+      const locationName = profile?.district
+        ? `${profile.district}${profile.state ? ', ' + profile.state : ''}`
+        : 'Pune, Maharashtra';
+      setWeather({ ...dummyWeather, location: locationName, updatedAt: Date.now() });
+      requestAnimationFrame(() => setWeatherVisible(true));
+    } catch {
+      setWeatherError(true);
+    } finally {
+      setWeatherLoading(false);
+    }
+  }
+
+  useEffect(() => {
+    fetchWeather();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [profile?.district, profile?.state]);
 
   function handleFile(file?: File) {
     if (!file) return;
@@ -205,20 +300,26 @@ export function HomeScreen({ onResult, onNavigate }: HomeScreenProps) {
       </div>
 
       <div className="mt-8">
-        <p className="section-label">{t.scanQuickDiagnosis}</p>
-        <h2 className="mt-1 text-[20px] font-semibold text-forest-900">{t.scanScanALeaf}</h2>
-        <p className="mt-0.5 text-[13px] leading-5 text-forest-400">{t.scanClearPhotos}</p>
-        <button
-          onClick={() => inputRef.current?.click()}
-          className="mt-4 flex w-full items-center justify-center gap-2 rounded-[10px] bg-amber-400 px-5 py-2.5 text-[15px] font-semibold text-amber-950 hover:bg-amber-500 transition-colors"
-        >
-          <Camera size={18} /> {imageDataUrl ? t.scanChangePhoto : t.scanTakePhoto}
-        </button>
-        <input ref={inputRef} type="file" accept="image/*" capture="environment" className="hidden" onChange={(event) => handleFile(event.target.files?.[0])} />
+        {recentScans === null ? (
+          <ScanSkeleton />
+        ) : (
+          <div className="animate-fade-in">
+            <p className="section-label">{t.scanQuickDiagnosis}</p>
+            <h2 className="mt-1 text-[20px] font-semibold text-forest-900">{t.scanScanALeaf}</h2>
+            <p className="mt-0.5 text-[13px] leading-5 text-forest-400">{t.scanClearPhotos}</p>
+            <button
+              onClick={() => inputRef.current?.click()}
+              className="mt-4 flex w-full items-center justify-center gap-2 rounded-[10px] bg-gradient-to-b from-amber-300 to-amber-400 px-5 py-2.5 text-[15px] font-semibold text-amber-950 shadow-[inset_0_1px_0_rgba(255,255,255,0.45),inset_0_-2px_4px_rgba(120,60,0,0.15),0_6px_16px_rgba(247,168,32,0.35),0_2px_4px_rgba(0,0,0,0.08)] hover:from-amber-400 hover:to-amber-500 hover:shadow-[inset_0_1px_0_rgba(255,255,255,0.5),inset_0_-2px_4px_rgba(120,60,0,0.2),0_8px_20px_rgba(247,168,32,0.4),0_2px_4px_rgba(0,0,0,0.1)] active:shadow-[inset_0_1px_0_rgba(255,255,255,0.3),inset_0_-1px_2px_rgba(120,60,0,0.12),0_2px_8px_rgba(247,168,32,0.25)] transition-all duration-200"
+            >
+              <Camera size={18} /> {imageDataUrl ? t.scanChangePhoto : t.scanTakePhoto}
+            </button>
+            <input ref={inputRef} type="file" accept="image/*" capture="environment" className="hidden" onChange={(event) => handleFile(event.target.files?.[0])} />
+          </div>
+        )}
       </div>
 
       {fileName && (
-        <div className="mt-3 flex items-center gap-2 rounded-lg border border-success-200 bg-success-50 px-3 py-2.5 text-sm text-success-800">
+        <div className="mt-3 flex items-center gap-2 rounded-lg border border-success-200 bg-success-50 px-3 py-2.5 text-sm text-success-800 animate-fade-in">
           <Check size={16} className="shrink-0" />
           <div className="min-w-0">
             <p className="font-bold">{t.scanPhotoReady}</p>
@@ -228,14 +329,14 @@ export function HomeScreen({ onResult, onNavigate }: HomeScreenProps) {
       )}
 
       {notACrop && (
-        <div className="mt-3 flex items-start gap-2 rounded-lg border border-amber-200 bg-amber-50 px-3 py-3 text-sm text-amber-900">
+        <div className="mt-3 flex items-start gap-2 rounded-lg border border-amber-200 bg-amber-50 px-3 py-3 text-sm text-amber-900 animate-fade-in">
           <AlertCircle size={18} className="mt-0.5 shrink-0" />
           <p className="font-medium leading-6">{t.scanNotACrop}</p>
         </div>
       )}
 
       {error && (
-        <div className="mt-3 rounded-lg border border-error-200 bg-error-50 px-3 py-3 text-sm text-error-800">
+        <div className="mt-3 rounded-lg border border-error-200 bg-error-50 px-3 py-3 text-sm text-error-800 animate-fade-in">
           <div className="flex items-start gap-2">
             <AlertCircle size={18} className="mt-0.5 shrink-0" />
             <div>
@@ -259,7 +360,7 @@ export function HomeScreen({ onResult, onNavigate }: HomeScreenProps) {
         <button
           onClick={handleScan}
           disabled={scanning}
-          className="mt-4 flex w-full items-center justify-center gap-2 rounded-[10px] bg-forest-600 px-5 py-2.5 text-[15px] font-semibold text-white hover:bg-forest-700 disabled:cursor-wait disabled:opacity-60 transition-colors"
+          className="mt-4 flex w-full items-center justify-center gap-2 rounded-[10px] bg-forest-600 px-5 py-2.5 text-[15px] font-semibold text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.2),0_4px_12px_rgba(44,98,64,0.25)] hover:bg-forest-700 hover:shadow-[inset_0_1px_0_rgba(255,255,255,0.25),0_6px_16px_rgba(44,98,64,0.3)] disabled:cursor-wait disabled:opacity-60 transition-all duration-200"
         >
           {scanning
             ? <><span className="h-5 w-5 animate-spin rounded-full border-2 border-white/40 border-t-white" /> {t.scanAnalysingLong}</>
@@ -274,28 +375,45 @@ export function HomeScreen({ onResult, onNavigate }: HomeScreenProps) {
       {/* Weather Forecast */}
       <div className="mt-8 border-t border-forest-100" />
       <div className="mt-6">
-        <div className="rounded-2xl bg-gradient-to-br from-indigo-500 to-blue-600 p-4 text-white shadow-sm">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-[12px] font-medium text-indigo-100">{ht.homeWeatherLocation}</p>
-              <p className="mt-0.5 text-[15px] font-semibold">{profile?.district ? `${profile.district}, ${profile.state ?? ''}` : 'Pune, Maharashtra'}</p>
-            </div>
-            <div className="flex items-center gap-2">
-              <Sun size={28} className="text-amber-200" />
-              <span className="text-[28px] font-bold leading-none">29°</span>
-            </div>
-          </div>
-          <p className="mt-2 text-[13px] text-indigo-100">Sunny · Light breeze from west</p>
-          <div className="mt-4 flex gap-2">
-            {dummyForecast.map((f) => (
-              <div key={f.day} className="flex-1 rounded-xl bg-white/15 px-2 py-2.5 text-center backdrop-blur-sm">
-                <p className="text-[11px] font-medium text-indigo-100">{f.day}</p>
-                <f.icon size={20} className="mx-auto mt-1 text-white" />
-                <p className="mt-1 text-[13px] font-semibold">{f.temp}</p>
+        {weatherLoading ? (
+          <WeatherSkeleton />
+        ) : weatherError ? (
+          <button
+            onClick={fetchWeather}
+            className="flex w-full items-center justify-center gap-2 rounded-2xl border border-forest-200 bg-forest-50 px-4 py-4 text-sm text-forest-600 hover:bg-forest-100 transition-colors animate-fade-in"
+          >
+            <RefreshCw size={16} className="shrink-0" />
+            <span className="font-medium">{ht.homeWeatherLoadError}</span>
+          </button>
+        ) : weather && (
+          <div className={`rounded-2xl bg-gradient-to-br from-indigo-500 to-blue-600 p-4 text-white shadow-[0_4px_14px_rgba(49,46,129,0.2)] transition-all duration-500 ${weatherVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-2'}`}>
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-[12px] font-medium text-indigo-100">{ht.homeWeatherLocation}</p>
+                <p className="mt-0.5 text-[15px] font-semibold">{weather.location}</p>
               </div>
-            ))}
+              <div className="flex items-center gap-2">
+                <Sun size={28} className="text-amber-200" />
+                <span className="text-[28px] font-bold leading-none">{weather.temp}</span>
+              </div>
+            </div>
+            <div className="mt-2 flex items-center justify-between">
+              <p className="text-[13px] text-indigo-100">{weather.condition}</p>
+              <p className="flex items-center gap-1 text-[11px] text-indigo-200">
+                <Clock size={11} /> {ht.homeWeatherUpdated} {formatUpdatedAgo(weather.updatedAt, lang)}
+              </p>
+            </div>
+            <div className="mt-4 flex gap-2">
+              {weather.forecast.map((f) => (
+                <div key={f.day} className="flex-1 rounded-xl bg-white/15 px-2 py-2.5 text-center backdrop-blur-sm">
+                  <p className="text-[11px] font-medium text-indigo-100">{f.day}</p>
+                  <f.icon size={20} className="mx-auto mt-1 text-white" />
+                  <p className="mt-1 text-[13px] font-semibold">{f.temp}</p>
+                </div>
+              ))}
+            </div>
           </div>
-        </div>
+        )}
       </div>
 
       {/* Tools */}
@@ -354,7 +472,7 @@ export function HomeScreen({ onResult, onNavigate }: HomeScreenProps) {
           <p className="mt-0.5 text-[13px] leading-5 text-forest-400">{t.helpMinistry}</p>
           <a
             href="tel:18001801551"
-            className="mt-3 flex w-full items-center justify-center gap-2 rounded-lg bg-amber-400 px-5 py-2.5 text-base font-semibold text-amber-950 hover:bg-amber-500 transition-colors"
+            className="mt-3 flex w-full items-center justify-center gap-2 rounded-lg bg-amber-400 px-5 py-2.5 text-base font-semibold text-amber-950 shadow-[inset_0_1px_0_rgba(255,255,255,0.4),inset_0_-2px_4px_rgba(120,60,0,0.15),0_4px_12px_rgba(247,168,32,0.3)] hover:bg-amber-500 transition-all"
           >
             <Phone size={19} /> {t.helpCall} 1800-180-1551
           </a>
