@@ -9,6 +9,7 @@ import { supabase } from '@/lib/supabase';
 import { useHomeLang } from '@/data/i18n-home';
 import type { View } from '@/components/AppShell';
 import { ScanIcon, LeafWatermark } from '@/components/BrandIcons';
+import { getWeatherByLocation, getUserLocation, type WeatherResult } from '@/lib/weatherService';
 
 interface HomeScreenProps {
   onResult: (scan: ScanRecord) => void;
@@ -73,7 +74,7 @@ interface WeatherData {
   updatedAt: number;
 }
 
-const dummyWeather: WeatherData = {
+const fallbackWeather: WeatherData = {
   temp: '29°',
   condition: 'Sunny · Light breeze from west',
   location: 'Pune, Maharashtra',
@@ -84,6 +85,13 @@ const dummyWeather: WeatherData = {
   ],
   updatedAt: Date.now(),
 };
+
+function pickWeatherIcon(condition: string): typeof Sun {
+  const c = condition.toLowerCase();
+  if (c.includes('rain') || c.includes('drizzle')) return CloudRain;
+  if (c.includes('cloud') || c.includes('overcast')) return Cloud;
+  return Sun;
+}
 
 function formatUpdatedAgo(updatedAt: number, lang: string): string {
   const mins = Math.max(1, Math.round((Date.now() - updatedAt) / 60000));
@@ -159,14 +167,32 @@ export function HomeScreen({ onResult, onNavigate }: HomeScreenProps) {
     setWeatherError(false);
     setWeatherVisible(false);
     try {
-      await new Promise((resolve) => setTimeout(resolve, 900));
-      const locationName = profile?.district
-        ? `${profile.district}${profile.state ? ', ' + profile.state : ''}`
-        : 'Pune, Maharashtra';
-      setWeather({ ...dummyWeather, location: locationName, updatedAt: Date.now() });
-      requestAnimationFrame(() => setWeatherVisible(true));
+      const { lat, lon } = await getUserLocation();
+      const result = await getWeatherByLocation(lat, lon);
+      if ('error' in result) {
+        setWeatherError(true);
+        setWeather(fallbackWeather);
+        requestAnimationFrame(() => setWeatherVisible(true));
+      } else {
+        const w: WeatherData = {
+          temp: `${result.temp}°`,
+          condition: `${result.condition} · ${result.windDescription}`,
+          location: result.location,
+          forecast: result.forecast.map((f) => ({
+            day: f.label,
+            icon: pickWeatherIcon(f.condition),
+            temp: `${f.maxTemp}°C`,
+            condition: f.condition,
+          })),
+          updatedAt: Date.now(),
+        };
+        setWeather(w);
+        requestAnimationFrame(() => setWeatherVisible(true));
+      }
     } catch {
       setWeatherError(true);
+      setWeather(fallbackWeather);
+      requestAnimationFrame(() => setWeatherVisible(true));
     } finally {
       setWeatherLoading(false);
     }
@@ -175,7 +201,7 @@ export function HomeScreen({ onResult, onNavigate }: HomeScreenProps) {
   useEffect(() => {
     fetchWeather();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [profile?.district, profile?.state]);
+  }, []);
 
   function handleFile(file?: File) {
     if (!file) return;
@@ -389,42 +415,45 @@ export function HomeScreen({ onResult, onNavigate }: HomeScreenProps) {
       <div className="mt-6">
         {weatherLoading ? (
           <WeatherSkeleton />
-        ) : weatherError ? (
-          <button
-            onClick={fetchWeather}
-            className="flex w-full items-center justify-center gap-2 rounded-2xl border border-forest-200 bg-forest-50 px-4 py-4 text-sm text-forest-600 hover:bg-forest-100 transition-colors animate-fade-in"
-          >
-            <RefreshCw size={16} className="shrink-0" />
-            <span className="font-medium">{ht.homeWeatherLoadError}</span>
-          </button>
         ) : weather && (
-          <div className={`rounded-2xl bg-gradient-to-br from-forest-700 to-teal-700 p-4 text-white shadow-[0_4px_14px_rgba(44,98,64,0.2)] transition-all duration-500 ${weatherVisible ? 'opacity-100 translate-y-0 scale-100' : 'opacity-0 translate-y-2 scale-[0.97]'} ${weatherVisible ? 'animate-weather-in' : ''}`}>
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-[12px] font-medium text-forest-100">{ht.homeWeatherLocation}</p>
-                <p className="mt-0.5 text-[15px] font-semibold">{weather.location}</p>
+          <>
+            {weatherError && (
+              <div className="mb-2 flex items-center gap-2 rounded-xl border border-amber-200 bg-amber-50 px-3 py-2 text-[12px] text-amber-800 animate-fade-in">
+                <AlertCircle size={14} className="shrink-0" />
+                <span className="font-medium">Unable to fetch weather, showing last known data</span>
+                <button onClick={fetchWeather} className="ml-auto shrink-0 rounded-lg p-1 text-amber-700 hover:bg-amber-100 transition-colors">
+                  <RefreshCw size={14} />
+                </button>
               </div>
-              <div className="flex items-center gap-2">
-                <Sun size={28} className="text-amber-200" />
-                <span className="text-[28px] font-bold leading-none">{weather.temp}</span>
-              </div>
-            </div>
-            <div className="mt-2 flex items-center justify-between">
-              <p className="text-[13px] text-forest-100">{weather.condition}</p>
-              <p className="flex items-center gap-1 text-[11px] text-forest-200">
-                <Clock size={11} /> {ht.homeWeatherUpdated} {formatUpdatedAgo(weather.updatedAt, lang)}
-              </p>
-            </div>
-            <div className="mt-4 flex gap-2">
-              {weather.forecast.map((f) => (
-                <div key={f.day} className="flex-1 rounded-xl bg-white/15 px-2 py-2.5 text-center backdrop-blur-sm">
-                  <p className="text-[11px] font-medium text-forest-100">{f.day}</p>
-                  <f.icon size={20} className="mx-auto mt-1 text-white" />
-                  <p className="mt-1 text-[13px] font-semibold">{f.temp}</p>
+            )}
+            <div className={`rounded-2xl bg-gradient-to-br from-forest-700 to-teal-700 p-4 text-white shadow-[0_4px_14px_rgba(44,98,64,0.2)] transition-all duration-500 ${weatherVisible ? 'opacity-100 translate-y-0 scale-100' : 'opacity-0 translate-y-2 scale-[0.97]'} ${weatherVisible ? 'animate-weather-in' : ''}`}>
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-[12px] font-medium text-forest-100">{ht.homeWeatherLocation}</p>
+                  <p className="mt-0.5 text-[15px] font-semibold">{weather.location}</p>
                 </div>
-              ))}
+                <div className="flex items-center gap-2">
+                  <Sun size={28} className="text-amber-200" />
+                  <span className="text-[28px] font-bold leading-none">{weather.temp}</span>
+                </div>
+              </div>
+              <div className="mt-2 flex items-center justify-between">
+                <p className="text-[13px] text-forest-100">{weather.condition}</p>
+                <p className="flex items-center gap-1 text-[11px] text-forest-200">
+                  <Clock size={11} /> {ht.homeWeatherUpdated} {formatUpdatedAgo(weather.updatedAt, lang)}
+                </p>
+              </div>
+              <div className="mt-4 flex gap-2">
+                {weather.forecast.map((f) => (
+                  <div key={f.day} className="flex-1 rounded-xl bg-white/15 px-2 py-2.5 text-center backdrop-blur-sm">
+                    <p className="text-[11px] font-medium text-forest-100">{f.day}</p>
+                    <f.icon size={20} className="mx-auto mt-1 text-white" />
+                    <p className="mt-1 text-[13px] font-semibold">{f.temp}</p>
+                  </div>
+                ))}
+              </div>
             </div>
-          </div>
+          </>
         )}
       </div>
 

@@ -37,7 +37,7 @@ export function AppShell({ activeView, onNavigate, children, pendingReviews, cha
   ];
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen">
       <header className="sticky top-0 z-30 border-b border-forest-100 bg-white safe-bottom">
         <div className="mx-auto flex h-14 max-w-2xl items-center justify-between px-4">
           <button className="flex items-center gap-2" onClick={() => onNavigate('home')} aria-label="Go to home">

@@ -75,7 +75,7 @@ function App() {
 
   if (loading) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-background">
+      <div className="flex min-h-screen items-center justify-center">
         <Loader2 size={32} className="animate-spin text-forest-500" />
       </div>
     );
