@@ -37,7 +37,9 @@ export function AppShell({ activeView, onNavigate, children, pendingReviews, cha
   ];
 
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen relative">
+      <div className="grain-overlay" />
+      <div className="relative z-10">
       <header className="sticky top-0 z-30 border-b border-forest-100 bg-white safe-bottom">
         <div className="mx-auto flex h-14 max-w-2xl items-center justify-between px-4">
           <button className="flex items-center gap-2" onClick={() => onNavigate('home')} aria-label="Go to home">
@@ -130,6 +132,7 @@ export function AppShell({ activeView, onNavigate, children, pendingReviews, cha
 
       <ChatAssistant open={chatOpen} onClose={onCloseChat} context={chatContext} />
       <NotificationPanel open={notifOpen} onClose={() => setNotifOpen(false)} />
+      </div>
     </div>
   );
 }

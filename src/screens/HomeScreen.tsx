@@ -8,7 +8,7 @@ import { useAuth } from '@/lib/auth';
 import { supabase } from '@/lib/supabase';
 import { useHomeLang } from '@/data/i18n-home';
 import type { View } from '@/components/AppShell';
-import { ScanIcon, LeafWatermark } from '@/components/BrandIcons';
+import { ScanIcon } from '@/components/BrandIcons';
 import { getWeatherByLocation, getUserLocation, type WeatherResult } from '@/lib/weatherService';
 
 interface HomeScreenProps {
@@ -304,11 +304,18 @@ export function HomeScreen({ onResult, onNavigate }: HomeScreenProps) {
   ];
 
   const library = [
-    { icon: Sprout, label: ht.homeCrops, view: 'crops' as View },
-    { icon: BookMarked, label: ht.homeCultivationTips, view: 'cultivation-tips' as View },
-    { icon: Bug, label: ht.homePestsDiseases, view: 'pests-diseases' as View },
-    { icon: ShieldAlert, label: ht.homePestsDiseaseAlert, view: 'pests-disease-alert' as View },
+    { icon: Sprout, label: ht.homeCrops, view: 'crops' as View, accent: 'green' },
+    { icon: BookMarked, label: ht.homeCultivationTips, view: 'cultivation-tips' as View, accent: 'amber' },
+    { icon: Bug, label: ht.homePestsDiseases, view: 'pests-diseases' as View, accent: 'red' },
+    { icon: ShieldAlert, label: ht.homePestsDiseaseAlert, view: 'pests-disease-alert' as View, accent: 'warning' },
   ];
+
+  const libraryAccentStyles: Record<string, { iconBg: string; iconColor: string; hoverBorder: string }> = {
+    green: { iconBg: 'bg-forest-100', iconColor: 'text-forest-700', hoverBorder: 'hover:border-forest-300' },
+    amber: { iconBg: 'bg-amber-100', iconColor: 'text-amber-700', hoverBorder: 'hover:border-amber-300' },
+    red: { iconBg: 'bg-error-100', iconColor: 'text-error-700', hoverBorder: 'hover:border-error-300' },
+    warning: { iconBg: 'bg-warning-100', iconColor: 'text-warning-700', hoverBorder: 'hover:border-warning-300' },
+  };
 
   const helplineTopics = [
     { icon: Sprout, label: t.helpCropDiseases },
@@ -485,19 +492,21 @@ export function HomeScreen({ onResult, onNavigate }: HomeScreenProps) {
       <div className="mt-6">
         <h2 className="heading-display text-[20px] font-bold text-forest-900">{ht.homeLibrary}</h2>
         <div className="mt-4 grid grid-cols-2 gap-3">
-          {library.map(({ icon: Icon, label, view }) => (
-            <button
-              key={label}
-              onClick={() => onNavigate(view)}
-              className="card-lift relative flex items-center justify-between rounded-2xl bg-forest-50 px-4 py-4 hover:bg-forest-100/60 overflow-hidden"
-            >
-              <LeafWatermark size={36} className="absolute -bottom-1 -right-1 text-forest-600 pointer-events-none" />
-              <span className="relative text-[14px] font-semibold text-forest-800">{label}</span>
-              <div className="relative flex h-9 w-9 items-center justify-center rounded-full bg-forest-200/60">
-                <Icon size={18} className="text-forest-700" />
-              </div>
-            </button>
-          ))}
+          {library.map(({ icon: Icon, label, view, accent }) => {
+            const s = libraryAccentStyles[accent];
+            return (
+              <button
+                key={label}
+                onClick={() => onNavigate(view)}
+                className={`card-lift flex h-[88px] items-center justify-between rounded-2xl border border-forest-100 bg-white px-4 py-4 ${s.hoverBorder} overflow-hidden`}
+              >
+                <span className="relative text-[14px] font-semibold leading-tight text-forest-800">{label}</span>
+                <div className={`relative flex h-10 w-10 shrink-0 items-center justify-center rounded-full ${s.iconBg}`}>
+                  <Icon size={20} className={s.iconColor} />
+                </div>
+              </button>
+            );
+          })}
         </div>
       </div>
 
@@ -510,13 +519,15 @@ export function HomeScreen({ onResult, onNavigate }: HomeScreenProps) {
 
         <div className="mt-4">
           <p className="section-label">{t.helpKCC}</p>
-          <h3 className="heading-display mt-1 text-[18px] font-bold text-forest-900">{t.helpFreeHelpline}</h3>
+          <h3 className="heading-display mt-1 flex items-center gap-2 text-[18px] font-bold text-forest-900">
+            <Phone size={18} className="text-forest-600" /> {t.helpFreeHelpline}
+          </h3>
           <p className="mt-0.5 text-[13px] leading-5 text-forest-400">{t.helpMinistry}</p>
           <a
             href="tel:18001801551"
-            className="press-scale mt-3 flex w-full items-center justify-center gap-2 rounded-xl bg-amber-400 px-5 py-3 text-base font-semibold text-amber-950 shadow-[inset_0_1px_0_rgba(255,255,255,0.4),inset_0_-2px_4px_rgba(120,60,0,0.15),0_4px_12px_rgba(247,168,32,0.3)] hover:bg-amber-500 transition-all"
+            className="press-scale mt-3 flex w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-b from-amber-300 to-amber-400 px-5 py-3.5 text-base font-bold text-amber-950 shadow-[inset_0_1px_0_rgba(255,255,255,0.45),inset_0_-2px_4px_rgba(120,60,0,0.15),0_6px_16px_rgba(247,168,32,0.35),0_2px_4px_rgba(0,0,0,0.08)] hover:from-amber-400 hover:to-amber-500 hover:shadow-[inset_0_1px_0_rgba(255,255,255,0.5),inset_0_-2px_4px_rgba(120,60,0,0.2),0_8px_20px_rgba(247,168,32,0.4),0_2px_4px_rgba(0,0,0,0.1)] transition-all duration-200"
           >
-            <Phone size={19} /> {t.helpCall} 1800-180-1551
+            <PhoneCall size={20} /> {t.helpCall} 1800-180-1551
           </a>
           <p className="mt-2 text-center text-xs text-forest-400">{t.helpTollFree}</p>
         </div>
