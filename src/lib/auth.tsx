@@ -25,6 +25,7 @@ interface AuthContextValue {
   verifyOtp: (phone: string, token: string) => Promise<{ error: string | null }>;
   signOut: () => Promise<void>;
   refreshProfile: () => Promise<void>;
+  updateProfile: (updates: Partial<Pick<Profile, 'display_name' | 'mobile' | 'state' | 'district' | 'village' | 'crops' | 'land_size_acres' | 'preferred_language'>>) => Promise<{ error: string | null }>;
 }
 
 const AuthContext = createContext<AuthContextValue | undefined>(undefined);
@@ -122,6 +123,27 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   }, [session, fetchProfile]);
 
+  const updateProfile = useCallback(async (updates: Partial<Pick<Profile, 'display_name' | 'mobile' | 'state' | 'district' | 'village' | 'crops' | 'land_size_acres' | 'preferred_language'>>) => {
+    if (!session?.user) return { error: 'Not authenticated' };
+    const { error } = await supabase
+      .from('profiles')
+      .update({
+        display_name: updates.display_name,
+        mobile: updates.mobile,
+        state: updates.state,
+        district: updates.district,
+        village: updates.village,
+        crops: updates.crops,
+        land_size_acres: updates.land_size_acres,
+        preferred_language: updates.preferred_language,
+        updated_at: new Date().toISOString(),
+      })
+      .eq('id', session.user.id);
+    if (error) return { error: error.message };
+    await fetchProfile(session.user.id);
+    return { error: null };
+  }, [session, fetchProfile]);
+
   const value = useMemo<AuthContextValue>(() => ({
     session,
     user: session?.user ?? null,
@@ -133,7 +155,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     verifyOtp,
     signOut,
     refreshProfile,
-  }), [session, profile, loading, signUpWithEmail, signInWithEmail, signInWithPhone, verifyOtp, signOut, refreshProfile]);
+    updateProfile,
+  }), [session, profile, loading, signUpWithEmail, signInWithEmail, signInWithPhone, verifyOtp, signOut, refreshProfile, updateProfile]);
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }
