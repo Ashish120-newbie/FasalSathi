@@ -41,6 +41,7 @@ export function ProfileScreen() {
   const [errors, setErrors] = useState<{ phone?: string; land?: string }>({});
   const [saving, setSaving] = useState(false);
   const [showToast, setShowToast] = useState(false);
+  const [toastError, setToastError] = useState(false);
   const toastTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
@@ -92,8 +93,15 @@ export function ProfileScreen() {
       preferred_language: editState.preferred_language,
     });
     setSaving(false);
-    if (error) return;
+    if (error) {
+      setToastError(true);
+      setShowToast(true);
+      if (toastTimer.current) clearTimeout(toastTimer.current);
+      toastTimer.current = setTimeout(() => { setShowToast(false); setToastError(false); }, 3500);
+      return;
+    }
     setEditing(false);
+    setToastError(false);
     setShowToast(true);
     if (toastTimer.current) clearTimeout(toastTimer.current);
     toastTimer.current = setTimeout(() => setShowToast(false), 2500);
@@ -322,8 +330,8 @@ export function ProfileScreen() {
 
       {/* Success toast */}
       {showToast && (
-        <div className="fixed bottom-24 left-1/2 z-50 -translate-x-1/2 animate-fade-in rounded-lg bg-green-800 px-4 py-2.5 text-sm font-medium text-white shadow-lg">
-          {ht.profileUpdated}
+        <div className={`fixed bottom-24 left-1/2 z-50 -translate-x-1/2 animate-fade-in rounded-lg px-4 py-2.5 text-sm font-medium text-white shadow-lg ${toastError ? 'bg-error-600' : 'bg-green-800'}`}>
+          {toastError ? ht.profileSaveError : ht.profileUpdated}
         </div>
       )}
     </section>
