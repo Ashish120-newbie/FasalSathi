@@ -398,15 +398,15 @@ export function HomeScreen({ onResult, onNavigate }: HomeScreenProps) {
 
   const tools = [
     { icon: FlaskConical, label: ht.homeFertilizerCalc, view: 'calculator' as View, isNew: false, iconBg: 'bg-[#E3EDD3]', iconColor: 'text-[#2F5233]' },
-    { icon: SprayCan, label: ht.homePesticideCalc, view: 'pesticide-calc' as View, isNew: true, iconBg: 'bg-[#FBE8CE]', iconColor: 'text-[#8A5A1E]' },
-    { icon: Calculator, label: ht.homeCostCalc, view: 'cost-calc' as View, isNew: true, iconBg: 'bg-[#F5E6C8]', iconColor: 'text-[#7A5B12]' },
+    { icon: SprayCan, label: ht.homePesticideCalc, view: 'pesticide-calc' as View, isNew: false, iconBg: 'bg-[#FBE8CE]', iconColor: 'text-[#8A5A1E]' },
+    { icon: Calculator, label: ht.homeCostCalc, view: 'cost-calc' as View, isNew: false, iconBg: 'bg-[#F5E6C8]', iconColor: 'text-[#7A5B12]' }
   ];
 
   const library = [
     { icon: Leaf, label: ht.homeCrops, view: 'crops' as View, isNew: false, iconBg: 'bg-[#DCEBC7]', iconColor: 'text-[#3B6D11]' },
     { icon: BookOpen, label: ht.homeCultivationTips, view: 'cultivation-tips' as View, isNew: false, iconBg: 'bg-[#F5E6C8]', iconColor: 'text-[#7A5B12]' },
     { icon: Bug, label: ht.homePestsDiseases, view: 'pests-diseases' as View, isNew: false, iconBg: 'bg-[#F7D9D9]', iconColor: 'text-[#A32D2D]' },
-    { icon: ShieldAlert, label: ht.homePestsDiseaseAlert, view: 'pests-disease-alert' as View, isNew: true, iconBg: 'bg-[#FBE8CE]', iconColor: 'text-[#8A5A1E]' },
+    { icon: ShieldAlert, label: ht.homePestsDiseaseAlert, view: 'pests-disease-alert' as View, isNew: false, iconBg: 'bg-[#FBE8CE]', iconColor: 'text-[#8A5A1E]' }
   ];
 
   const helplineTopics = [
