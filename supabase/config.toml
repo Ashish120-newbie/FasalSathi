@@ -6,3 +6,6 @@ verify_jwt = true
 
 [functions.scan-management]
 verify_jwt = true
+
+[functions.ai-translate]
+verify_jwt = true

@@ -53,6 +53,105 @@ export interface ClassificationOutcome {
   error?: DiagnosisError;
 }
 
+// ── Language mapping: app language → Kindwise API language code ──
+const KINDWISE_LANG_MAP: Record<string, string> = {
+  en: 'en',
+  hi: 'hi',
+  bn: 'bn',
+  te: 'te',
+  mr: 'mr',
+  ta: 'ta',
+};
+
+function kindwiseLang(appLang: string): string {
+  return KINDWISE_LANG_MAP[appLang] ?? 'en';
+}
+
+// ── Translation cache: keyed by `${originalTextHash}|${targetLang}` ──
+interface CachedTranslation {
+  description: string;
+  treatment: string[];
+  prevention: string[];
+}
+const translationCache = new Map<string, CachedTranslation>();
+
+function cacheKey(description: string, treatment: string[], prevention: string[], lang: string): string {
+  const combined = description + '||' + treatment.join('|') + '||' + prevention.join('|');
+  let hash = 0;
+  for (let i = 0; i < combined.length; i++) {
+    hash = ((hash << 5) - hash + combined.charCodeAt(i)) | 0;
+  }
+  return `${hash}|${lang}`;
+}
+
+// ── Heuristic: detect if text is likely English (for non-English app languages) ──
+function looksLikeEnglish(text: string): boolean {
+  if (!text) return false;
+  const asciiLetters = (text.match(/[a-zA-Z]/g) ?? []).length;
+  const totalLetters = text.replace(/[\s\d\p{P}]/gu, '').length;
+  if (totalLetters === 0) return true;
+  return asciiLetters / totalLetters > 0.7;
+}
+
+// ── Fallback translation via Gemini edge function ──
+async function translateViaGemini(
+  description: string,
+  treatment: string[],
+  prevention: string[],
+  targetLang: string,
+): Promise<CachedTranslation | null> {
+  const textsToTranslate: string[] = [];
+  const descIdx = 0;
+  textsToTranslate.push(description);
+  const treatmentIndices: number[] = [];
+  treatment.forEach((t, i) => {
+    treatmentIndices.push(textsToTranslate.length);
+    textsToTranslate.push(t);
+  });
+  const preventionIndices: number[] = [];
+  prevention.forEach((p, i) => {
+    preventionIndices.push(textsToTranslate.length);
+    textsToTranslate.push(p);
+  });
+
+  try {
+    const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+    const anonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
+    if (!supabaseUrl || !anonKey) return null;
+
+    const response = await fetch(`${supabaseUrl}/functions/v1/ai-translate`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${anonKey}`,
+        apikey: anonKey,
+      },
+      body: JSON.stringify({ texts: textsToTranslate, targetLang }),
+    });
+
+    if (!response.ok) {
+      console.warn('[Translation] Edge function returned non-OK:', response.status);
+      return null;
+    }
+
+    const data = await response.json();
+    const translations: string[] = data.translations ?? [];
+    if (translations.length !== textsToTranslate.length) {
+      console.warn('[Translation] Mismatch: expected', textsToTranslate.length, 'got', translations.length);
+      return null;
+    }
+
+    return {
+      description: translations[descIdx] || description,
+      treatment: treatmentIndices.map((idx) => translations[idx] || treatment[idx - 1] || ''),
+      prevention: preventionIndices.map((idx) => translations[idx] || prevention[idx - treatment.length - 1] || ''),
+    };
+  } catch (err) {
+    console.warn('[Translation] Fallback failed:', err);
+    return null;
+  }
+}
+
 function matchDiseaseId(diagnosisName: string, cropId: CropId): string {
   const lower = diagnosisName.toLowerCase();
   const cropDiseases = diseases.filter((d) => d.cropId === cropId);
@@ -100,11 +199,12 @@ export async function classifyCropImage(
     return { error: new DiagnosisError('API_KEY_MISSING', 'API_KEY_MISSING') };
   }
 
-  console.log('Calling Kindwise crop.health API...');
+  const kwLang = kindwiseLang(language);
+  console.log(`[Kindwise] Calling crop.health API with language=${kwLang} (app lang: ${language})`);
 
   let response: Response;
   try {
-    response = await fetch(`https://crop.kindwise.com/api/v1/identification?details=treatment,description&language=${encodeURIComponent(language)}`, {
+    response = await fetch(`https://crop.kindwise.com/api/v1/identification?details=treatment,description&language=${encodeURIComponent(kwLang)}`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -161,7 +261,58 @@ export async function classifyCropImage(
 
   const confidence = Math.round((topDisease.probability ?? 0) * 100);
   const { prevention, treatment, description } = extractTreatmentData(topDisease);
-  const recommendation = [...prevention, ...treatment].join(' ') || 'Consult your local agricultural officer for treatment advice.';
+
+  let finalDescription = description;
+  let finalTreatment = treatment;
+  let finalPrevention = prevention;
+  let translationPath = 'native';
+
+  // ── If non-English app language, check if Kindwise actually localized the content ──
+  if (language !== 'en' && kwLang !== 'en') {
+    const descIsEnglish = looksLikeEnglish(description);
+    const treatmentIsEnglish = treatment.some((t) => looksLikeEnglish(t));
+    const needsFallback = descIsEnglish || treatmentIsEnglish;
+
+    if (needsFallback) {
+      console.log(`[Translation] Kindwise returned English content for lang=${kwLang}. Checking cache...`);
+
+      const key = cacheKey(description, treatment, prevention, language);
+      const cached = translationCache.get(key);
+
+      if (cached) {
+        console.log(`[Translation] Cache HIT for lang=${language}. Using cached translation.`);
+        finalDescription = cached.description;
+        finalTreatment = cached.treatment;
+        finalPrevention = cached.prevention;
+        translationPath = 'fallback-cached';
+      } else {
+        console.log(`[Translation] Cache MISS. Calling Gemini translation edge function...`);
+        const translated = await translateViaGemini(description, treatment, prevention, language);
+
+        if (translated) {
+          console.log(`[Translation] Gemini fallback succeeded for lang=${language}.`);
+          finalDescription = translated.description;
+          finalTreatment = translated.treatment;
+          finalPrevention = translated.prevention;
+          translationCache.set(key, translated);
+          translationPath = 'fallback-gemini';
+        } else {
+          console.warn(`[Translation] Gemini fallback FAILED for lang=${language}. Using original English text.`);
+          translationPath = 'fallback-failed';
+        }
+      }
+    } else {
+      console.log(`[Translation] Kindwise natively localized content for lang=${kwLang}. No fallback needed.`);
+      translationPath = 'native';
+    }
+  } else {
+    console.log(`[Translation] English app language — no translation needed.`);
+    translationPath = 'none';
+  }
+
+  console.log(`[Translation] Final path used: ${translationPath}`);
+
+  const recommendation = [...finalPrevention, ...finalTreatment].join(' ') || 'Consult your local agricultural officer for treatment advice.';
 
   return {
     result: {
@@ -170,9 +321,9 @@ export async function classifyCropImage(
       confidence,
       level: getConfidenceLevel(confidence),
       recommendation,
-      preventionSteps: prevention,
-      treatmentSteps: treatment,
-      description,
+      preventionSteps: finalPrevention,
+      treatmentSteps: finalTreatment,
+      description: finalDescription,
       detectedCropName: topCrop.name,
       source: 'ai',
     },
