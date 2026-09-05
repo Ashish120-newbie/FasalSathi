@@ -27,6 +27,7 @@ export interface TranslationKey {
   scanScanALeaf: string;
   scanClearPhotos: string;
   scanTakePhoto: string;
+  scanUploadFromGallery: string;
   scanChangePhoto: string;
   scanPhotoReady: string;
   scanDiagnosisFailed: string;
@@ -192,7 +193,7 @@ export const translations: Record<Language, TranslationKey> = {
     navScan: 'Scan', navFertilizer: 'Fertilizer', navSchemes: 'Schemes', navHistory: 'History', navHelpline: 'Helpline',
     scanGreeting: 'Good morning, farmer', scanTitle: 'Check your crop health', scanSubtitle: 'Take a clear photo of an affected leaf, fruit, or plant part. FasalSathi will help you understand what your crop needs.',
     scanQuickDiagnosis: 'Quick diagnosis', scanScanALeaf: 'Scan a crop', scanClearPhotos: 'Clear photos give better results.',
-    scanTakePhoto: 'Take photo or upload', scanChangePhoto: 'Change photo', scanPhotoReady: 'Photo ready', scanDiagnosisFailed: 'Diagnosis failed',
+    scanTakePhoto: 'Take photo', scanUploadFromGallery: 'or upload from gallery', scanChangePhoto: 'Change photo', scanPhotoReady: 'Photo ready', scanDiagnosisFailed: 'Diagnosis failed',
     scanTellAboutCrop: 'Tell us about the crop', scanThisHelpsImprove: 'This helps improve the diagnosis',
     scanCropType: 'Crop type', scanGrowthStage: 'Growth stage', scanAnalysing: 'Analysing your photo...', scanAnalysingLong: 'Analysing your photo — this can take up to 30 seconds...', scanAnalyseThis: 'Analyse this crop', scanUseSample: 'Use sample photo & analyse',
     scanPhotoStays: 'Your photo stays on this device first, even without internet.',
@@ -253,7 +254,7 @@ export const translations: Record<Language, TranslationKey> = {
     navScan: 'स्कैन', navFertilizer: 'खाद', navSchemes: 'योजनाएं', navHistory: 'इतिहास', navHelpline: 'हेल्पलाइन',
     scanGreeting: 'सुप्रभात, किसान', scanTitle: 'अपनी फसल का स्वास्थ्य जांचें', scanSubtitle: 'प्रभावित पत्ती, फल, या पौधे के हिस्से की एक स्पष्ट फोटो लें। FasalSathi आपको समझने में मदद करेगा कि आपकी फसल को क्या चाहिए।',
     scanQuickDiagnosis: 'त्वरित निदान', scanScanALeaf: 'फसल स्कैन करें', scanClearPhotos: 'स्पष्ट फोटो से बेहतर परिणाम मिलते हैं।',
-    scanTakePhoto: 'फोटो लें या अपलोड करें', scanChangePhoto: 'फोटो बदलें', scanPhotoReady: 'फोटो तैयार', scanDiagnosisFailed: 'निदान विफल',
+    scanTakePhoto: 'फोटो लें', scanUploadFromGallery: 'या गैलरी से अपलोड करें', scanChangePhoto: 'फोटो बदलें', scanPhotoReady: 'फोटो तैयार', scanDiagnosisFailed: 'निदान विफल',
     scanTellAboutCrop: 'फसल के बारे में बताएं', scanThisHelpsImprove: 'इससे निदान में सुधार होता है',
     scanCropType: 'फसल का प्रकार', scanGrowthStage: 'वृद्धि चरण', scanAnalysing: 'आपकी फोटो का विश्लेषण हो रहा है...', scanAnalysingLong: 'आपकी फोटो का विश्लेषण हो रहा है — इसमें 30 सेकंड तक लग सकते हैं...', scanAnalyseThis: 'इस फसल का विश्लेषण करें', scanUseSample: 'नमूना फोटो उपयोग करें और विश्लेषण करें',
     scanPhotoStays: 'आपकी फोटो इस डिवाइस पर पहले रहती है, बिना इंटरनेट के भी।',
@@ -314,7 +315,7 @@ export const translations: Record<Language, TranslationKey> = {
     navScan: 'স্ক্যান', navFertilizer: 'সার', navSchemes: 'প্রকল্প', navHistory: 'ইতিহাস', navHelpline: 'হেল্পলাইন',
     scanGreeting: 'সুপ্রভাত, কৃষক', scanTitle: 'আপনার ফসলের স্বাস্থ্য পরীক্ষা করুন', scanSubtitle: 'আক্রান্ত পাতা, ফল, বা গাছের অংশের একটি পরিষ্কার ছবি নিন। FasalSathi আপনাকে বুঝতে সাহায্য করবে আপনার ফসলের কী প্রয়োজন।',
     scanQuickDiagnosis: 'দ্রুত নির্ণয়', scanScanALeaf: 'ফসল স্ক্যান করুন', scanClearPhotos: 'পরিষ্কার ছবিতে ভালো ফলাফল পাওয়া যায়।',
-    scanTakePhoto: 'ছবি নিন বা আপলোড করুন', scanChangePhoto: 'ছবি পরিবর্তন করুন', scanPhotoReady: 'ছবি প্রস্তুত', scanDiagnosisFailed: 'নির্ণয় ব্যর্থ',
+    scanTakePhoto: 'ছবি নিন', scanUploadFromGallery: 'বা গ্যালারি থেকে আপলোড করুন', scanChangePhoto: 'ছবি পরিবর্তন করুন', scanPhotoReady: 'ছবি প্রস্তুত', scanDiagnosisFailed: 'নির্ণয় ব্যর্থ',
     scanTellAboutCrop: 'ফসল সম্পর্কে বলুন', scanThisHelpsImprove: 'এটি নির্ণয় উন্নত করতে সাহায্য করে',
     scanCropType: 'ফসলের ধরন', scanGrowthStage: 'বৃদ্ধির পর্যায়', scanAnalysing: 'আপনার ছবি বিশ্লেষণ হচ্ছে...', scanAnalysingLong: 'আপনার ছবি বিশ্লেষণ হচ্ছে — এতে 30 সেকেন্ড পর্যন্ত সময় লাগতে পারে...', scanAnalyseThis: 'এই ফসল বিশ্লেষণ করুন', scanUseSample: 'নমুনা ছবি ব্যবহার করুন ও বিশ্লেষণ করুন',
     scanPhotoStays: 'আপনার ছবি ইন্টারনেট ছাড়াই এই ডিভাইসে থাকে।',
@@ -375,7 +376,7 @@ export const translations: Record<Language, TranslationKey> = {
     navScan: 'స్కాన్', navFertilizer: 'ఎరువు', navSchemes: 'పథకాలు', navHistory: 'చరిత్ర', navHelpline: 'హెల్ప్‌లైన్',
     scanGreeting: 'శుభోదయం, రైతు', scanTitle: 'మీ పంట ఆరోగ్యాన్ని తనిఖీ చేయండి', scanSubtitle: 'ప్రభావిత ఆకు, పండు, లేదా మొక్క భాగం యొక్క స్పష్టమైన ఫోటో తీయండి. FasalSathi మీ పంటకు ఏమి అవసరమో అర్థం చేసుకోవడంలో సహాయపడుతుంది.',
     scanQuickDiagnosis: 'త్వరిత నిర్ధారణ', scanScanALeaf: 'పంటను స్కాన్ చేయండి', scanClearPhotos: 'స్పష్టమైన ఫోటోలు మంచి ఫలితాలను ఇస్తాయి.',
-    scanTakePhoto: 'ఫోటో తీయండి లేదా అప్‌లోడ్ చేయండి', scanChangePhoto: 'ఫోటో మార్చండి', scanPhotoReady: 'ఫోటో సిద్ధం', scanDiagnosisFailed: 'నిర్ధారణ విఫలమైంది',
+    scanTakePhoto: 'ఫోటో తీయండి', scanUploadFromGallery: 'లేదా గ్యాలరీ నుండి అప్‌లోడ్ చేయండి', scanChangePhoto: 'ఫోటో మార్చండి', scanPhotoReady: 'ఫోటో సిద్ధం', scanDiagnosisFailed: 'నిర్ధారణ విఫలమైంది',
     scanTellAboutCrop: 'పంట గురించి చెప్పండి', scanThisHelpsImprove: 'ఇది నిర్ధారణను మెరుగుపరచడంలో సహాయపడుతుంది',
     scanCropType: 'పంట రకం', scanGrowthStage: 'ఎదుగు దశ', scanAnalysing: 'మీ ఫోటోను విశ్లేషిస్తోంది...', scanAnalysingLong: 'మీ ఫోటోను విశ్లేషిస్తోంది — ఇందుకు 30 సెకన్ల వరకు పట్టవచ్చు...', scanAnalyseThis: 'ఈ పంటను విశ్లేషించండి', scanUseSample: 'నమూనా ఫోటో ఉపయోగించి విశ్లేషించండి',
     scanPhotoStays: 'మీ ఫోటో ఇంటర్నెట్ లేకుండానే ఈ పరికరంలో ఉంటుంది.',
@@ -436,7 +437,7 @@ export const translations: Record<Language, TranslationKey> = {
     navScan: 'स्कॅन', navFertilizer: 'खत', navSchemes: 'योजना', navHistory: 'इतिहास', navHelpline: 'हेल्पलाइन',
     scanGreeting: 'सुप्रभात, शेतकरी', scanTitle: 'तुमच्या पिकाचे आरोग्य तपासा', scanSubtitle: 'बाधित पान, फळ, किंवा झाडाच्या भागाची स्पष्ट फोटो घ्या. FasalSathi तुम्हाला समजून घेण्यास मदत करेल की तुमच्या पिकाला काय हवे आहे.',
     scanQuickDiagnosis: 'त्वरित निदान', scanScanALeaf: 'पीक स्कॅन करा', scanClearPhotos: 'स्पष्ट फोटो देतात चांगले निकाल.',
-    scanTakePhoto: 'फोटो घ्या किंवा अपलोड करा', scanChangePhoto: 'फोटो बदला', scanPhotoReady: 'फोटो तयार', scanDiagnosisFailed: 'निदान अयशस्वी',
+    scanTakePhoto: 'फोटो घ्या', scanUploadFromGallery: 'किंवा गॅलरीमधून अपलोड करा', scanChangePhoto: 'फोटो बदला', scanPhotoReady: 'फोटो तयार', scanDiagnosisFailed: 'निदान अयशस्वी',
     scanTellAboutCrop: 'पीक सांगा', scanThisHelpsImprove: 'यामुळे निदान सुधारते',
     scanCropType: 'पीक प्रकार', scanGrowthStage: 'वाढीचा टप्पा', scanAnalysing: 'तुमची फोटो विश्लेषण होत आहे...', scanAnalysingLong: 'तुमची फोटो विश्लेषण होत आहे — यात 30 सेकंद लागू शकतात...', scanAnalyseThis: 'या पिकाचे विश्लेषण करा', scanUseSample: 'नमुना फोटो वापरा आणि विश्लेषण करा',
     scanPhotoStays: 'तुमची फोटो इंटरनेटविना या डिव्हाइसवर आधी राहते.',
@@ -497,7 +498,7 @@ export const translations: Record<Language, TranslationKey> = {
     navScan: 'ஸ்கேன்', navFertilizer: 'உரம்', navSchemes: 'திட்டங்கள்', navHistory: 'வரலாறு', navHelpline: 'ஹெல்ப்லைன்',
     scanGreeting: 'காலை வணக்கம், விவசாயி', scanTitle: 'உங்கள் பயிரின் ஆரோக்கியத்தை சரிபார்க்கவும்', scanSubtitle: 'பாதிக்கப்பட்ட இலை, கனி, அல்லது செடியின் பகுதியின் தெளிவான புகைப்படத்தை எடுக்கவும். FasalSathi உங்கள் பயிருக்கு என்ன தேவை என்பதைப் புரிந்துகொள்ள உதவும்.',
     scanQuickDiagnosis: 'விரைவான கண்டறிதல்', scanScanALeaf: 'பயிரை ஸ்கேன் செய்யவும்', scanClearPhotos: 'தெளிவான புகைப்படங்கள் சிறந்த முடிவுகளைத் தரும்.',
-    scanTakePhoto: 'புகைப்படம் எடுக்கவும் அல்லது பதிவேற்றவும்', scanChangePhoto: 'புகைப்படத்தை மாற்றவும்', scanPhotoReady: 'புகைப்படம் தயார்', scanDiagnosisFailed: 'கண்டறிதல் தோல்வி',
+    scanTakePhoto: 'புகைப்படம் எடுக்கவும்', scanUploadFromGallery: 'அல்லது கேலரியிலிருந்து பதிவேற்றவும்', scanChangePhoto: 'புகைப்படத்தை மாற்றவும்', scanPhotoReady: 'புகைப்படம் தயார்', scanDiagnosisFailed: 'கண்டறிதல் தோல்வி',
     scanTellAboutCrop: 'பயிரைப் பற்றி சொல்லுங்கள்', scanThisHelpsImprove: 'இது கண்டறிதலை மேம்படுத்த உதவுகிறது',
     scanCropType: 'பயிர் வகை', scanGrowthStage: 'வளர்ச்சி நிலை', scanAnalysing: 'உங்கள் புகைப்படம் ஆய்வாகிறது...', scanAnalysingLong: 'உங்கள் புகைப்படம் ஆய்வாகிறது — இதில் 30 விநாடிகள் வரை ஆகலாம்...', scanAnalyseThis: 'இந்த பயிரை ஆய்வு செய்யவும்', scanUseSample: 'மாதிரி புகைப்படம் பயன்படுத்தி ஆய்வு செய்யவும்',
     scanPhotoStays: 'இணையம் இல்லாமலே உங்கள் புகைப்படம் இந்த சாதனத்தில் இருக்கும்.',

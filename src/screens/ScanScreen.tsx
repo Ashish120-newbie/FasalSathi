@@ -188,7 +188,7 @@ export function ScanScreen({ onResult }: ScanScreenProps) {
           onClick={() => galleryRef.current?.click()}
           className="block mt-2 mx-auto text-sm text-[#5F6E52] underline underline-offset-2 text-center"
         >
-          or upload from gallery
+          {t.scanUploadFromGallery}
         </button>
         <input ref={galleryRef} type="file" accept="image/*" className="hidden" onChange={(event) => handleFile(event.target.files?.[0])} />
       </div>
