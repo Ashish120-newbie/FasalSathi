@@ -1,4 +1,4 @@
-import type { CropId, FertilizerPlan, GrowthStage } from './types';
+import type { CropId, FertilizerPlan, StageResult } from './types';
 
 const baseNpk: Record<CropId, { n: number; p: number; k: number }> = {
   wheat: { n: 120, p: 60, k: 40 },
@@ -19,33 +19,137 @@ const baseNpk: Record<CropId, { n: number; p: number; k: number }> = {
   okra: { n: 80, p: 50, k: 50 },
 };
 
-const schedules: Record<CropId, { timing: string; action: string }[]> = {
-  wheat: [{ timing: 'At sowing', action: 'Apply full phosphorus and potassium with basal dose' }, { timing: '21–25 days', action: 'Apply half nitrogen as first top dressing' }, { timing: '45–50 days', action: 'Apply remaining nitrogen' }],
-  rice: [{ timing: 'At transplanting', action: 'Apply full phosphorus and half potassium' }, { timing: '20–25 days', action: 'Apply half nitrogen as top dressing' }, { timing: '40–45 days', action: 'Apply remaining nitrogen and potassium' }],
-  cotton: [{ timing: 'At sowing', action: 'Apply full phosphorus and potassium' }, { timing: '30–35 days', action: 'Apply half nitrogen near the plant row' }, { timing: '60–70 days', action: 'Apply remaining nitrogen before flowering' }],
-  tomato: [{ timing: 'At transplanting', action: 'Mix compost and full phosphorus in the planting hole' }, { timing: '20–25 days', action: 'Apply first nitrogen and potassium dose' }, { timing: '45–50 days', action: 'Repeat during fruit setting' }],
-  potato: [{ timing: 'At planting', action: 'Apply full phosphorus and potassium in furrows' }, { timing: '25–30 days', action: 'Apply half nitrogen during earthing up' }, { timing: '45 days', action: 'Apply remaining nitrogen' }],
-  sugarcane: [{ timing: 'At planting', action: 'Apply full phosphorus and potassium in furrow' }, { timing: '45–60 days', action: 'Apply half nitrogen before earthing up' }, { timing: '90–100 days', action: 'Apply remaining nitrogen' }],
-  maize: [{ timing: 'At sowing', action: 'Apply full phosphorus and potassium with basal dose' }, { timing: '25–30 days', action: 'Apply half nitrogen as first top dressing' }, { timing: '45–50 days', action: 'Apply remaining nitrogen' }],
-  soybean: [{ timing: 'At sowing', action: 'Apply full phosphorus and potassium as basal dose' }, { timing: '30–35 days', action: 'Apply remaining nitrogen if needed' }],
-  groundnut: [{ timing: 'At sowing', action: 'Apply full phosphorus and potassium with basal dose' }, { timing: '30 days', action: 'Apply gypsum for calcium supply' }],
-  mustard: [{ timing: 'At sowing', action: 'Apply full phosphorus and potassium with basal dose' }, { timing: '30–35 days', action: 'Apply half nitrogen as first top dressing' }, { timing: '50–55 days', action: 'Apply remaining nitrogen' }],
-  chickpea: [{ timing: 'At sowing', action: 'Apply full phosphorus and potassium with basal dose' }, { timing: '35–40 days', action: 'Apply remaining nitrogen if needed' }],
-  onion: [{ timing: 'At transplanting', action: 'Apply full phosphorus and half potassium' }, { timing: '30 days', action: 'Apply half nitrogen as top dressing' }, { timing: '60 days', action: 'Apply remaining nitrogen and potassium' }],
-  chili: [{ timing: 'At transplanting', action: 'Apply full phosphorus and half potassium' }, { timing: '25–30 days', action: 'Apply half nitrogen as first top dressing' }, { timing: '50–60 days', action: 'Apply remaining nitrogen and potassium' }],
-  banana: [{ timing: 'At planting', action: 'Apply full phosphorus and half potassium in pit' }, { timing: '60–90 days', action: 'Apply half nitrogen as first top dressing' }, { timing: '150–180 days', action: 'Apply remaining nitrogen and potassium' }],
-  brinjal: [{ timing: 'At transplanting', action: 'Apply full phosphorus and half potassium' }, { timing: '25–30 days', action: 'Apply half nitrogen as first top dressing' }, { timing: '50–55 days', action: 'Apply remaining nitrogen and potassium' }],
-  okra: [{ timing: 'At sowing', action: 'Apply full phosphorus and potassium as basal dose' }, { timing: '25–30 days', action: 'Apply half nitrogen as top dressing' }, { timing: '45–50 days', action: 'Apply remaining nitrogen' }],
+interface StageSplit {
+  timing: string;
+  note: string;
+  n: number;
+  p: number;
+  k: number;
+}
+
+const stageSplits: Record<CropId, StageSplit[]> = {
+  wheat: [
+    { timing: 'At sowing', note: 'Apply full phosphorus and potassium with basal dose', n: 0, p: 1, k: 1 },
+    { timing: '21–25 days', note: 'Apply half nitrogen as first top dressing', n: 0.5, k: 0, p: 0 },
+    { timing: '45–50 days', note: 'Apply remaining nitrogen', n: 0.5, p: 0, k: 0 },
+  ],
+  rice: [
+    { timing: 'At transplanting', note: 'Apply full phosphorus and half potassium', n: 0, p: 1, k: 0.5 },
+    { timing: '20–25 days', note: 'Apply half nitrogen as top dressing', n: 0.5, p: 0, k: 0 },
+    { timing: '40–45 days', note: 'Apply remaining nitrogen and potassium', n: 0.5, p: 0, k: 0.5 },
+  ],
+  cotton: [
+    { timing: 'At sowing', note: 'Apply full phosphorus and potassium', n: 0, p: 1, k: 1 },
+    { timing: '30–35 days', note: 'Apply half nitrogen near the plant row', n: 0.5, p: 0, k: 0 },
+    { timing: '60–70 days', note: 'Apply remaining nitrogen before flowering', n: 0.5, p: 0, k: 0 },
+  ],
+  tomato: [
+    { timing: 'At transplanting', note: 'Mix compost and full phosphorus in the planting hole', n: 0, p: 1, k: 0.5 },
+    { timing: '20–25 days', note: 'Apply first nitrogen and potassium dose', n: 0.5, p: 0, k: 0.25 },
+    { timing: '45–50 days', note: 'Repeat during fruit setting', n: 0.5, p: 0, k: 0.25 },
+  ],
+  potato: [
+    { timing: 'At planting', note: 'Apply full phosphorus and potassium in furrows', n: 0, p: 1, k: 1 },
+    { timing: '25–30 days', note: 'Apply half nitrogen during earthing up', n: 0.5, p: 0, k: 0 },
+    { timing: '45 days', note: 'Apply remaining nitrogen', n: 0.5, p: 0, k: 0 },
+  ],
+  sugarcane: [
+    { timing: 'At planting', note: 'Apply full phosphorus and potassium in furrow', n: 0, p: 1, k: 1 },
+    { timing: '45–60 days', note: 'Apply half nitrogen before earthing up', n: 0.5, p: 0, k: 0 },
+    { timing: '90–100 days', note: 'Apply remaining nitrogen', n: 0.5, p: 0, k: 0 },
+  ],
+  maize: [
+    { timing: 'At sowing', note: 'Apply full phosphorus and potassium with basal dose', n: 0, p: 1, k: 1 },
+    { timing: '25–30 days', note: 'Apply half nitrogen as first top dressing', n: 0.5, p: 0, k: 0 },
+    { timing: '45–50 days', note: 'Apply remaining nitrogen', n: 0.5, p: 0, k: 0 },
+  ],
+  soybean: [
+    { timing: 'At sowing', note: 'Apply full phosphorus and potassium as basal dose', n: 0, p: 1, k: 1 },
+    { timing: '30–35 days', note: 'Apply remaining nitrogen if needed', n: 1, p: 0, k: 0 },
+  ],
+  groundnut: [
+    { timing: 'At sowing', note: 'Apply full phosphorus and potassium with basal dose', n: 0, p: 1, k: 1 },
+    { timing: '30 days', note: 'Apply gypsum for calcium supply', n: 1, p: 0, k: 0 },
+  ],
+  mustard: [
+    { timing: 'At sowing', note: 'Apply full phosphorus and potassium with basal dose', n: 0, p: 1, k: 1 },
+    { timing: '30–35 days', note: 'Apply half nitrogen as first top dressing', n: 0.5, p: 0, k: 0 },
+    { timing: '50–55 days', note: 'Apply remaining nitrogen', n: 0.5, p: 0, k: 0 },
+  ],
+  chickpea: [
+    { timing: 'At sowing', note: 'Apply full phosphorus and potassium with basal dose', n: 0, p: 1, k: 1 },
+    { timing: '35–40 days', note: 'Apply remaining nitrogen if needed', n: 1, p: 0, k: 0 },
+  ],
+  onion: [
+    { timing: 'At transplanting', note: 'Apply full phosphorus and half potassium', n: 0, p: 1, k: 0.5 },
+    { timing: '30 days', note: 'Apply half nitrogen as top dressing', n: 0.5, p: 0, k: 0 },
+    { timing: '60 days', note: 'Apply remaining nitrogen and potassium', n: 0.5, p: 0, k: 0.5 },
+  ],
+  chili: [
+    { timing: 'At transplanting', note: 'Apply full phosphorus and half potassium', n: 0, p: 1, k: 0.5 },
+    { timing: '25–30 days', note: 'Apply half nitrogen as first top dressing', n: 0.5, p: 0, k: 0 },
+    { timing: '50–60 days', note: 'Apply remaining nitrogen and potassium', n: 0.5, p: 0, k: 0.5 },
+  ],
+  banana: [
+    { timing: 'At planting', note: 'Apply full phosphorus and half potassium in pit', n: 0, p: 1, k: 0.5 },
+    { timing: '60–90 days', note: 'Apply half nitrogen as first top dressing', n: 0.5, p: 0, k: 0 },
+    { timing: '150–180 days', note: 'Apply remaining nitrogen and potassium', n: 0.5, p: 0, k: 0.5 },
+  ],
+  brinjal: [
+    { timing: 'At transplanting', note: 'Apply full phosphorus and half potassium', n: 0, p: 1, k: 0.5 },
+    { timing: '25–30 days', note: 'Apply half nitrogen as first top dressing', n: 0.5, p: 0, k: 0 },
+    { timing: '50–55 days', note: 'Apply remaining nitrogen and potassium', n: 0.5, p: 0, k: 0.5 },
+  ],
+  okra: [
+    { timing: 'At sowing', note: 'Apply full phosphorus and potassium as basal dose', n: 0, p: 1, k: 1 },
+    { timing: '25–30 days', note: 'Apply half nitrogen as top dressing', n: 0.5, p: 0, k: 0 },
+    { timing: '45–50 days', note: 'Apply remaining nitrogen', n: 0.5, p: 0, k: 0 },
+  ],
 };
 
-export function getFertilizerPlan(cropId: CropId, growthStage: GrowthStage): FertilizerPlan {
+const UREA_N_FRACTION = 0.46;
+const DAP_P_FRACTION = 0.46;
+const MOP_K_FRACTION = 0.60;
+
+export function getSupportedCrops(): CropId[] {
+  return Object.keys(baseNpk) as CropId[];
+}
+
+export function getFertilizerPlan(cropId: CropId, landSizeAcres: number): FertilizerPlan {
   const npk = baseNpk[cropId];
-  const factor = growthStage === 'seedling' ? 0.25 : growthStage === 'maturity' ? 0 : 0.5;
+  const splits = stageSplits[cropId];
+  const acres = Math.max(landSizeAcres, 0);
+
+  const totalN = npk.n * acres;
+  const totalP = npk.p * acres;
+  const totalK = npk.k * acres;
+
+  const stages: StageResult[] = splits.map((s) => {
+    const n = Math.round(totalN * s.n);
+    const p = Math.round(totalP * s.p);
+    const k = Math.round(totalK * s.k);
+    return {
+      timing: s.timing,
+      note: s.note,
+      n,
+      p,
+      k,
+      ureaKg: Math.round(n / UREA_N_FRACTION),
+      dapKg: Math.round(p / DAP_P_FRACTION),
+      mopKg: Math.round(k / MOP_K_FRACTION),
+    };
+  });
+
+  const totalUrea = Math.round(totalN / UREA_N_FRACTION);
+  const totalDap = Math.round(totalP / DAP_P_FRACTION);
+  const totalMop = Math.round(totalK / MOP_K_FRACTION);
+
   return {
     cropId,
-    growthStage,
-    npk: { n: Math.round(npk.n * factor), p: Math.round(npk.p * factor), k: Math.round(npk.k * factor) },
-    unitsPerAcre: { urea: Math.round(npk.n * factor * 2.17), dap: Math.round(npk.p * factor * 2.17), mop: Math.round(npk.k * factor * 1.67) },
-    schedule: schedules[cropId],
+    landSizeAcres: acres,
+    totalNpk: { n: Math.round(totalN), p: Math.round(totalP), k: Math.round(totalK) },
+    totalFertilizerKg: { urea: totalUrea, dap: totalDap, mop: totalMop },
+    stages,
+    note: 'These are general recommendations based on standard crop requirements. A soil test gives the most accurate advice. Water after applying fertilizer, unless rain is expected within 24 hours.',
   };
 }
