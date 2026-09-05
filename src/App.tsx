@@ -10,6 +10,8 @@ import { HelplineScreen } from '@/screens/HelplineScreen';
 import { MarketplaceScreen } from '@/screens/MarketplaceScreen';
 import { QueueScreen } from '@/screens/QueueScreen';
 import { ComingSoonScreen } from '@/screens/ComingSoonScreen';
+import { PesticideCalculatorScreen } from '@/screens/PesticideCalculatorScreen';
+import { CostCalculatorScreen } from '@/screens/CostCalculatorScreen';
 import { ProfileScreen } from '@/screens/ProfileScreen';
 import { loadScans, seedScans, updateScan } from '@/data/storage';
 import { cropName, stageLabel } from '@/data/crops';
@@ -86,8 +88,6 @@ function App() {
   }
 
   const comingSoonViews: Partial<Record<View, string>> = {
-    'pesticide-calc': ht.homePesticideCalc,
-    'cost-calc': ht.homeCostCalc,
     'crops': ht.homeCrops,
     'cultivation-tips': ht.homeCultivationTips,
     'pests-diseases': ht.homePestsDiseases,
@@ -98,6 +98,8 @@ function App() {
     ? <DiagnosisScreen scan={activeScan} onBack={() => setActiveScan(null)} onEscalate={handleEscalate} onAskAI={() => openChat(buildChatContextFromScan(activeScan))} />
     : view === 'home' ? <HomeScreen onResult={handleResult} onNavigate={navigate} />
     : view === 'calculator' ? <CalculatorScreen />
+    : view === 'pesticide-calc' ? <PesticideCalculatorScreen />
+    : view === 'cost-calc' ? <CostCalculatorScreen />
     : view === 'schemes' ? <SchemesScreen />
     : view === 'history' ? <HistoryScreen scans={scans} onOpen={setActiveScan} />
     : view === 'helpline' ? <HelplineScreen />
