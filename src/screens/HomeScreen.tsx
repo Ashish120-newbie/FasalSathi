@@ -252,6 +252,7 @@ export function HomeScreen({ onResult, onNavigate }: HomeScreenProps) {
   const [weatherError, setWeatherError] = useState(false);
   const [weatherVisible, setWeatherVisible] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
+  const galleryRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     const scans = loadScans();
@@ -451,6 +452,13 @@ export function HomeScreen({ onResult, onNavigate }: HomeScreenProps) {
               <Camera size={20} /> {imageDataUrl ? t.scanChangePhoto : t.scanTakePhoto}
             </button>
             <input ref={inputRef} type="file" accept="image/*" capture="environment" className="hidden" onChange={(event) => handleFile(event.target.files?.[0])} />
+            <button
+              onClick={() => galleryRef.current?.click()}
+              className="block mt-2 mx-auto text-sm text-[#5F6E52] underline underline-offset-2 text-center"
+            >
+              {t.scanUploadFromGallery}
+            </button>
+            <input ref={galleryRef} type="file" accept="image/*" className="hidden" onChange={(event) => handleFile(event.target.files?.[0])} />
           </div>
         )}
       </div>
