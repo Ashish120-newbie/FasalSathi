@@ -81,12 +81,19 @@ export interface OfficerReview {
   note?: string;
 }
 
+export interface StageResult {
+  timing: string;
+  note: string;
+  n: number; p: number; k: number;
+  ureaKg: number; dapKg: number; mopKg: number;
+}
 export interface FertilizerPlan {
   cropId: CropId;
-  growthStage: GrowthStage;
-  npk: { n: number; p: number; k: number };
-  unitsPerAcre: { urea: number; dap: number; mop: number };
-  schedule: { timing: string; action: string }[];
+  landSizeAcres: number;
+  totalNpk: { n: number; p: number; k: number };
+  totalFertilizerKg: { urea: number; dap: number; mop: number };
+  stages: StageResult[];
+  note?: string;
 }
 
 export interface ChatMessage {
