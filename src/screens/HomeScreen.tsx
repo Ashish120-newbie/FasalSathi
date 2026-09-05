@@ -403,10 +403,10 @@ export function HomeScreen({ onResult, onNavigate }: HomeScreenProps) {
   ];
 
   const library = [
-    { icon: Leaf, label: ht.homeCrops, view: 'crops' as View, isNew: false },
-    { icon: BookOpen, label: ht.homeCultivationTips, view: 'cultivation-tips' as View, isNew: false },
-    { icon: Bug, label: ht.homePestsDiseases, view: 'pests-diseases' as View, isNew: false },
-    { icon: ShieldAlert, label: ht.homePestsDiseaseAlert, view: 'pests-disease-alert' as View, isNew: true },
+    { icon: Leaf, label: ht.homeCrops, view: 'crops' as View, isNew: false, iconBg: 'bg-[#DCEBC7]', iconColor: 'text-[#3B6D11]' },
+    { icon: BookOpen, label: ht.homeCultivationTips, view: 'cultivation-tips' as View, isNew: false, iconBg: 'bg-[#F5E6C8]', iconColor: 'text-[#7A5B12]' },
+    { icon: Bug, label: ht.homePestsDiseases, view: 'pests-diseases' as View, isNew: false, iconBg: 'bg-[#F7D9D9]', iconColor: 'text-[#A32D2D]' },
+    { icon: ShieldAlert, label: ht.homePestsDiseaseAlert, view: 'pests-disease-alert' as View, isNew: true, iconBg: 'bg-[#FBE8CE]', iconColor: 'text-[#8A5A1E]' },
   ];
 
   const helplineTopics = [
@@ -595,20 +595,21 @@ export function HomeScreen({ onResult, onNavigate }: HomeScreenProps) {
       <div className="mt-6">
         <h2 className="heading-display text-[20px] font-bold text-[#1E3A21]">{ht.homeLibrary}</h2>
         <div className="mt-4 grid grid-cols-2 gap-3">
-          {library.map(({ icon: Icon, label, view, isNew }) => (
-            <button
-              key={label}
-              onClick={() => onNavigate(view)}
-              className="card-lift relative flex items-center justify-between rounded-2xl bg-[#EEF3E4] p-4 hover:bg-[#E5EDD8]"
-            >
+          {library.map(({ icon: Icon, label, view, isNew, iconBg, iconColor }) => (
+            <div key={label} className="relative bg-[#EEF3E4] rounded-2xl p-4 flex items-center justify-between">
               {isNew && (
-                <span className="absolute -top-2 -right-2 rounded-full bg-[#E8A33D] px-2 py-0.5 text-[10px] font-medium text-[#412402]">{ht.homeNew}</span>
+                <span className="absolute -top-2 -right-2 bg-[#E8A33D] text-[#412402] text-[10px] font-medium px-2 py-0.5 rounded-full">{ht.homeNew}</span>
               )}
-              <span className="text-[14px] font-semibold leading-tight text-[#1E3A21]">{label}</span>
-              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-white">
-                <Icon size={20} strokeWidth={1.75} className="text-[#2F5233]" />
-              </div>
-            </button>
+              <button
+                onClick={() => onNavigate(view)}
+                className="card-lift flex w-full items-center justify-between"
+              >
+                <span className="text-[14px] font-semibold leading-tight text-[#1E3A21]">{label}</span>
+                <div className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-full ${iconBg}`}>
+                  <Icon size={20} strokeWidth={1.75} className={iconColor} />
+                </div>
+              </button>
+            </div>
           ))}
         </div>
       </div>
