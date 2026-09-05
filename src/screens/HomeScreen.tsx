@@ -1,4 +1,4 @@
-import { Check, ChevronRight, ImagePlus, Info, AlertCircle, Cloud, CloudRain, Sun, Store, BookOpen, Calculator, Bug, Wallet, Sprout, BookMarked, ShieldAlert, Phone, PhoneCall, Users, Wheat, Clock, RefreshCw, CheckCircle2, AlertTriangle, XCircle, Droplets, FlaskConical, Sprout as SproutIcon } from 'lucide-react';
+import { Check, ChevronRight, ImagePlus, Info, AlertCircle, Cloud, CloudRain, Sun, Store, BookOpen, Bug, Wallet, Sprout, Leaf, ShieldAlert, Phone, PhoneCall, Users, Wheat, Clock, RefreshCw, CheckCircle2, AlertTriangle, XCircle, Droplets, FlaskConical, Sprout as SproutIcon } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 import { classifyCropImage } from '@/data/classifier';
 import type { CropId, GrowthStage, ScanRecord } from '@/data/types';
@@ -397,24 +397,17 @@ export function HomeScreen({ onResult, onNavigate }: HomeScreenProps) {
   }
 
   const tools = [
-    { icon: Calculator, label: ht.homeFertilizerCalc, view: 'calculator' as View, isNew: false },
+    { icon: Sprout, label: ht.homeFertilizerCalc, view: 'calculator' as View, isNew: false },
     { icon: Bug, label: ht.homePesticideCalc, view: 'pesticide-calc' as View, isNew: true },
     { icon: Wallet, label: ht.homeCostCalc, view: 'cost-calc' as View, isNew: true },
   ];
 
   const library = [
-    { icon: Sprout, label: ht.homeCrops, view: 'crops' as View, accent: 'green' },
-    { icon: BookMarked, label: ht.homeCultivationTips, view: 'cultivation-tips' as View, accent: 'amber' },
-    { icon: Bug, label: ht.homePestsDiseases, view: 'pests-diseases' as View, accent: 'red' },
-    { icon: ShieldAlert, label: ht.homePestsDiseaseAlert, view: 'pests-disease-alert' as View, accent: 'warning' },
+    { icon: Leaf, label: ht.homeCrops, view: 'crops' as View, isNew: false },
+    { icon: BookOpen, label: ht.homeCultivationTips, view: 'cultivation-tips' as View, isNew: false },
+    { icon: Bug, label: ht.homePestsDiseases, view: 'pests-diseases' as View, isNew: false },
+    { icon: ShieldAlert, label: ht.homePestsDiseaseAlert, view: 'pests-disease-alert' as View, isNew: true },
   ];
-
-  const libraryAccentStyles: Record<string, { iconBg: string; iconColor: string; hoverBorder: string }> = {
-    green: { iconBg: 'bg-forest-100', iconColor: 'text-forest-700', hoverBorder: 'hover:border-forest-300' },
-    amber: { iconBg: 'bg-amber-100', iconColor: 'text-amber-700', hoverBorder: 'hover:border-amber-300' },
-    red: { iconBg: 'bg-error-100', iconColor: 'text-error-700', hoverBorder: 'hover:border-error-300' },
-    warning: { iconBg: 'bg-warning-100', iconColor: 'text-warning-700', hoverBorder: 'hover:border-warning-300' },
-  };
 
   const helplineTopics = [
     { icon: Sprout, label: t.helpCropDiseases },
@@ -577,21 +570,21 @@ export function HomeScreen({ onResult, onNavigate }: HomeScreenProps) {
       {/* Tools */}
       <div className="mt-8 border-t border-forest-100" />
       <div className="mt-6">
-        <h2 className="heading-display text-[20px] font-bold text-forest-900">{ht.homeTools}</h2>
+        <h2 className="heading-display text-[20px] font-bold text-[#1E3A21]">{ht.homeTools}</h2>
         <div className="mt-4 grid grid-cols-3 gap-3">
           {tools.map(({ icon: Icon, label, view, isNew }) => (
             <button
               key={label}
               onClick={() => onNavigate(view)}
-              className="card-lift flex flex-col items-center rounded-2xl border border-forest-100 bg-white p-3 text-center hover:border-forest-200"
+              className="card-lift relative flex flex-col items-center rounded-2xl border border-[#E5E0D3] bg-white p-4 text-center hover:border-[#2F5233]/30"
             >
-              <div className="flex h-12 w-12 items-center justify-center rounded-full bg-forest-50">
-                <Icon size={22} className="text-forest-600" />
-              </div>
-              <span className="mt-2 text-[12px] font-medium leading-tight text-forest-800">{label}</span>
               {isNew && (
-                <span className="mt-1 rounded-full bg-amber-100 px-2 py-0.5 text-[10px] font-semibold text-amber-700">{ht.homeNew}</span>
+                <span className="absolute -top-2 -right-2 rounded-full bg-[#E8A33D] px-2 py-0.5 text-[10px] font-medium text-[#412402]">{ht.homeNew}</span>
               )}
+              <div className="flex h-12 w-12 items-center justify-center rounded-full bg-[#EEF3E4]">
+                <Icon size={22} strokeWidth={1.75} className="text-[#2F5233]" />
+              </div>
+              <span className="mt-2 text-[12px] font-medium leading-tight text-[#1E3A21]">{label}</span>
             </button>
           ))}
         </div>
@@ -600,23 +593,23 @@ export function HomeScreen({ onResult, onNavigate }: HomeScreenProps) {
       {/* Library */}
       <div className="mt-8 border-t border-forest-100" />
       <div className="mt-6">
-        <h2 className="heading-display text-[20px] font-bold text-forest-900">{ht.homeLibrary}</h2>
+        <h2 className="heading-display text-[20px] font-bold text-[#1E3A21]">{ht.homeLibrary}</h2>
         <div className="mt-4 grid grid-cols-2 gap-3">
-          {library.map(({ icon: Icon, label, view, accent }) => {
-            const s = libraryAccentStyles[accent];
-            return (
-              <button
-                key={label}
-                onClick={() => onNavigate(view)}
-                className={`card-lift flex h-[88px] items-center justify-between rounded-2xl border border-forest-100 bg-white px-4 py-4 ${s.hoverBorder} overflow-hidden`}
-              >
-                <span className="relative text-[14px] font-semibold leading-tight text-forest-800">{label}</span>
-                <div className={`relative flex h-10 w-10 shrink-0 items-center justify-center rounded-full ${s.iconBg}`}>
-                  <Icon size={20} className={s.iconColor} />
-                </div>
-              </button>
-            );
-          })}
+          {library.map(({ icon: Icon, label, view, isNew }) => (
+            <button
+              key={label}
+              onClick={() => onNavigate(view)}
+              className="card-lift relative flex items-center justify-between rounded-2xl bg-[#EEF3E4] p-4 hover:bg-[#E5EDD8]"
+            >
+              {isNew && (
+                <span className="absolute -top-2 -right-2 rounded-full bg-[#E8A33D] px-2 py-0.5 text-[10px] font-medium text-[#412402]">{ht.homeNew}</span>
+              )}
+              <span className="text-[14px] font-semibold leading-tight text-[#1E3A21]">{label}</span>
+              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-white">
+                <Icon size={20} strokeWidth={1.75} className="text-[#2F5233]" />
+              </div>
+            </button>
+          ))}
         </div>
       </div>
 
