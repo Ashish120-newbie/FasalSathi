@@ -57,6 +57,12 @@ export interface TranslationKey {
   diagStartAnother: string;
   diagAskAI: string;
   diagAskAIAbout: string;
+  diagAboutIssue: string;
+  diagPrevention: string;
+  diagPreventionDesc: string;
+  diagTreatment: string;
+  diagTreatmentDesc: string;
+  diagTreatmentFallback: string;
   // Calculator
   calcPlanNext: string;
   calcTitle: string;
@@ -197,6 +203,7 @@ export const translations: Record<Language, TranslationKey> = {
     diagOfflineMode: 'Offline knowledge mode', diagOfflineDesc: 'AI photo analysis is unavailable, so this result is based on general crop knowledge. For an exact diagnosis, add a Kindwise API key or call the Kisan helpline.',
     diagAIDisclaimer: 'This is an AI-assisted suggestion, not a final agricultural prescription. For severe damage, contact your nearest agriculture officer.',
     diagEscalate: 'Not sure? Escalate to expert', diagStartAnother: 'Start another scan', diagAskAI: 'Ask AI Assistant', diagAskAIAbout: 'Ask AI Assistant about this',
+    diagAboutIssue: 'About this issue', diagPrevention: 'Prevention', diagPreventionDesc: 'Steps to prevent future occurrences', diagTreatment: 'Treatment', diagTreatmentDesc: 'What to do right now for an active infestation', diagTreatmentFallback: 'For active treatment options, consult your nearest agriculture officer or the Kisan helpline.',
     calcPlanNext: 'Plan your next application', calcTitle: 'Fertilizer calculator', calcSubtitle: 'Get a starting estimate based on crop and growth stage. A soil test gives the most accurate advice.',
     calcFarmDetails: 'Your farm details', calcCropType: 'Crop type', calcFarmSize: 'Farm size', calcAcres: 'Acres', calcHectares: 'Hectares', calcGrowthStage: 'Growth stage',
     calcEstimatedNeed: 'Estimated need', calcFor: 'For', calcNitrogen: 'kg Nitrogen', calcPhosphate: 'kg Phosphate', calcPotash: 'kg Potash',
@@ -257,6 +264,7 @@ export const translations: Record<Language, TranslationKey> = {
     diagOfflineMode: 'ऑफलाइन ज्ञान मोड', diagOfflineDesc: 'AI फोटो विश्लेषण उपलब्ध नहीं है, इसलिए यह परिणाम सामान्य फसल ज्ञान पर आधारित है। सटीक निदान के लिए Kisan हेल्पलाइन पर कॉल करें।',
     diagAIDisclaimer: 'यह AI-सहायता सुझाव है, अंतिम कृषि नुस्खा नहीं। गंभीर क्षति के लिए अपने निकटतम कृषि अधिकारी से संपर्क करें।',
     diagEscalate: 'सुनिश्चित नहीं? विशेषज्ञ को भेजें', diagStartAnother: 'एक और स्कैन शुरू करें', diagAskAI: 'AI सहायक से पूछें', diagAskAIAbout: 'इसके बारे में AI सहायक से पूछें',
+    diagAboutIssue: 'इस समस्या के बारे में', diagPrevention: 'रोकथाम', diagPreventionDesc: 'भविष्य में इसे रोकने के कदम', diagTreatment: 'उपचार', diagTreatmentDesc: 'अभी क्या करें', diagTreatmentFallback: 'सक्रिय उपचार विकल्पों के लिए अपने निकटतम कृषि अधिकारी या किसान हेल्पलाइन से संपर्क करें।',
     calcPlanNext: 'अपनी अगली खाद योजना बनाएं', calcTitle: 'खाद कैलकुलेटर', calcSubtitle: 'फसल और वृद्धि चरण के आधार पर अनुमान पाएं। मिट्टी परीक्षण सबसे सटीक सलाह देता है।',
     calcFarmDetails: 'आपके खेत की जानकारी', calcCropType: 'फसल का प्रकार', calcFarmSize: 'खेत का आकार', calcAcres: 'एकड़', calcHectares: 'हेक्टेयर', calcGrowthStage: 'वृद्धि चरण',
     calcEstimatedNeed: 'अनुमानित आवश्यकता', calcFor: 'के लिए', calcNitrogen: 'किग्रा नाइट्रोजन', calcPhosphate: 'किग्रा फॉस्फेट', calcPotash: 'किग्रा पोटाश',
@@ -317,6 +325,7 @@ export const translations: Record<Language, TranslationKey> = {
     diagOfflineMode: 'অফলাইন জ্ঞান মোড', diagOfflineDesc: 'AI ফটো বিশ্লেষণ অনুপলব্ধ, তাই এই ফলাফল সাধারণ ফসল জ্ঞানের উপর ভিত্তি করে। সঠিক নির্ণয়ের জন্য Kisan হেল্পলাইনে কল করুন।',
     diagAIDisclaimer: 'এটি একটি AI-সহায়তা পরামর্শ, চূড়ান্ত কৃষি নির্দেশ নয়। গুরুতর ক্ষতির জন্য আপনার নিকটতম কৃষি অফিসারের সাথে যোগাযোগ করুন।',
     diagEscalate: 'নিশ্চিত নন? বিশেষজ্ঞের কাছে পাঠান', diagStartAnother: 'আরেকটি স্ক্যান শুরু করুন', diagAskAI: 'AI সহকারীকে জিজ্ঞাসা করুন', diagAskAIAbout: 'এই বিষয়ে AI সহকারীকে জিজ্ঞাসা করুন',
+    diagAboutIssue: 'এই সমস্যা সম্পর্কে', diagPrevention: 'প্রতিরোধ', diagPreventionDesc: 'ভবিষ্যতে এটি রোধ করার পদক্ষেপ', diagTreatment: 'চিকিৎসা', diagTreatmentDesc: 'এখন কী করবেন', diagTreatmentFallback: 'সক্রিয় চিকিৎসার বিকল্পের জন্য আপনার নিকটতম কৃষি অফিসার বা কিসান হেল্পলাইনে যোগাযোগ করুন।',
     calcPlanNext: 'আপনার পরবর্তী সার পরিকল্পনা করুন', calcTitle: 'সার ক্যালকুলেটর', calcSubtitle: 'ফসল এবং বৃদ্ধির পর্যায়ের উপর ভিত্তি করে অনুমান পান। মাটি পরীক্ষা সবচেয়ে নির্ভুল পরামর্শ দেয়।',
     calcFarmDetails: 'আপনার খামারের তথ্য', calcCropType: 'ফসলের ধরন', calcFarmSize: 'খামারের আকার', calcAcres: 'একর', calcHectares: 'হেক্টর', calcGrowthStage: 'বৃদ্ধির পর্যায়',
     calcEstimatedNeed: 'আনুমানিক প্রয়োজন', calcFor: 'জন্য', calcNitrogen: 'কেজি নাইট্রোজেন', calcPhosphate: 'কেজি ফসফেট', calcPotash: 'কেজি পটাশ',
@@ -377,6 +386,7 @@ export const translations: Record<Language, TranslationKey> = {
     diagOfflineMode: 'ఆఫ్‌లైన్ జ్ఞాన మోడ్', diagOfflineDesc: 'AI ఫోటో విశ్లేషణ అందుబాటులో లేదు, కాబట్టి ఈ ఫలితం సాధారణ పంట జ్ఞానంపై ఆధారపడి ఉంది. ఖచ్చితమైన నిర్ధారణ కోసం Kisan హెల్ప్‌లైన్‌కు కాల్ చేయండి.',
     diagAIDisclaimer: 'ఇది AI-సహాయ సూచన, తుది వ్యవసాయ ప్రిస్క్రిప్షన్ కాదు. తీవ్రమైన నష్టం కోసం మీ సమీప వ్యవసాయ అధికారిని సంప్రదించండి.',
     diagEscalate: 'ఖచ్చితం కాదా? నిపుణుడికి పంపండి', diagStartAnother: 'మరొక స్కాన్ ప్రారంభించండి', diagAskAI: 'AI సహాయకుడిని అడగండి', diagAskAIAbout: 'దీని గురించి AI సహాయకుడిని అడగండి',
+    diagAboutIssue: 'ఈ సమస్య గురించి', diagPrevention: 'నివారణ', diagPreventionDesc: 'భవిష్యత్తులో దీన్ని నివారించడానికి చర్యలు', diagTreatment: 'చికిత్స', diagTreatmentDesc: 'ఇప్పుడు ఏమి చేయాలి', diagTreatmentFallback: 'సక్రియ చికిత్స ఎంపికల కోసం మీ సమీప వ్యవసాయ అధికారి లేదా కిసాన్ హెల్ప్‌లైన్‌ను సంప్రదించండి.',
     calcPlanNext: 'మీ తదుపరి ఎరువు ప్రణాళిక చేయండి', calcTitle: 'ఎరువు కాలిక్యులేటర్', calcSubtitle: 'పంట మరియు ఎదుగు దశ ఆధారంగా అంచనా పొందండి. నేల పరీక్ష అత్యంత కచ్చితమైన సలహా ఇస్తుంది.',
     calcFarmDetails: 'మీ పొలం వివరాలు', calcCropType: 'పంట రకం', calcFarmSize: 'పొలం పరిమాణం', calcAcres: 'ఎకరాలు', calcHectares: 'హెక్టార్లు', calcGrowthStage: 'ఎదుగు దశ',
     calcEstimatedNeed: 'అంచనా అవసరం', calcFor: 'కోసం', calcNitrogen: 'కేజీ నత్రజని', calcPhosphate: 'కేజీ ఫాస్ఫేట్', calcPotash: 'కేజీ పొటాష్',
@@ -437,6 +447,7 @@ export const translations: Record<Language, TranslationKey> = {
     diagOfflineMode: 'ऑफलाइन ज्ञान मोड', diagOfflineDesc: 'AI फोटो विश्लेषण उपलब्ध नाही, म्हणून हा निकाल सामान्य पीक ज्ञानावर आधारित आहे. अचूक निदानासाठी Kisan हेल्पलाइनवर कॉल करा.',
     diagAIDisclaimer: 'हा AI-सहाय्यक सूचना आहे, अंतिम कृषी प्रिस्क्रिप्शन नाही. गंभीर नुकसानीसाठी तुमच्या जवळच्या कृषी अधिकाऱ्याशी संपर्क करा.',
     diagEscalate: 'नक्की नाही? तज्ज्ञांकडे पाठवा', diagStartAnother: 'आणखी एक स्कॅन सुरू करा', diagAskAI: 'AI सहाय्यकाला विचारा', diagAskAIAbout: 'याबद्दल AI सहाय्यकाला विचारा',
+    diagAboutIssue: 'या समस्येबद्दल', diagPrevention: 'प्रतिबंध', diagPreventionDesc: 'भविष्यात हे टाळण्यासाठी उपाय', diagTreatment: 'उपचार', diagTreatmentDesc: 'आता काय करावे', diagTreatmentFallback: 'सक्रिय उपचार पर्यायांसाठी तुमच्या जवळच्या कृषी अधिकाऱ्याशी किंवा किसान हेल्पलाईनशी संपर्क करा.',
     calcPlanNext: 'तुमची पुढील खत योजना बनवा', calcTitle: 'खत कॅल्क्युलेटर', calcSubtitle: 'पीक आणि वाढीच्या टप्प्यावर आधारित अंदाज मिळवा. माती चाचणी सर्वात अचूक सल्ला देते.',
     calcFarmDetails: 'तुमच्या शेताची माहिती', calcCropType: 'पीक प्रकार', calcFarmSize: 'शेताचा आकार', calcAcres: 'एकर', calcHectares: 'हेक्टर', calcGrowthStage: 'वाढीचा टप्पा',
     calcEstimatedNeed: 'अंदाजे गरज', calcFor: 'साठी', calcNitrogen: 'किलो नायट्रोजन', calcPhosphate: 'किलो फॉस्फेट', calcPotash: 'किलो पोटॅश',
@@ -497,6 +508,7 @@ export const translations: Record<Language, TranslationKey> = {
     diagOfflineMode: 'ஆஃப்லைன் அறிவு நிலை', diagOfflineDesc: 'AI புகைப்பட பகுப்பாய்வு கிடைக்கவில்லை, எனவே இந்த முடிவு பொதுவான பயிர் அறிவின் அடிப்படையில் உள்ளது. துல்லியமான கண்டறிதலுக்கு Kisan ஹெல்ப்லைனை அழைக்கவும்.',
     diagAIDisclaimer: 'இது AI-உதவி பரிந்துரை, இறுதி வேளாண் பரிந்நுரை அல்ல. கடுமையான சேதத்திற்கு உங்கள் அருகிலுள்ள வேளாண் அதிகாரியை தொடர்பு கொள்ளவும்.',
     diagEscalate: 'உறுதியாக இல்லையா? நிபுணருக்கு அனுப்பவும்', diagStartAnother: 'மற்றொரு ஸ்கேனைத் தொடங்கவும்', diagAskAI: 'AI உதவியாளரிடம் கேளுங்கள்', diagAskAIAbout: 'இதைப் பற்றி AI உதவியாளரிடம் கேளுங்கள்',
+    diagAboutIssue: 'இந்த பிரச்சனை பற்றி', diagPrevention: 'தடுப்பு', diagPreventionDesc: 'எதிர்காலத்தில் இதைத் தடுக்க நடவடிக்கைகள்', diagTreatment: 'சிகிச்சை', diagTreatmentDesc: 'இப்போது என்ன செய்ய வேண்டும்', diagTreatmentFallback: 'செயலில் சிகிச்சை விருப்பங்களுக்கு, உங்கள் அருகிலுள்ள வேளாண் அதிகாரியை அல்லது கிசான் ஹெல்ப்லைனை தொடர்பு கொள்ளவும்.',
     calcPlanNext: 'உங்கள் அடுத்த உர திட்டத்தை உருவாக்கவும்', calcTitle: 'உர கால்குலேட்டர்', calcSubtitle: 'பயிர் மற்றும் வளர்ச்சி நிலை அடிப்படையில் மதிப்பீட்டைப் பெறவும். மண் பரிசோதனை மிகச் சரியான ஆலோசனையைத் தரும்.',
     calcFarmDetails: 'உங்கள் வயல் விவரங்கள்', calcCropType: 'பயிர் வகை', calcFarmSize: 'வயல் அளவு', calcAcres: 'ஏக்கர்', calcHectares: 'ஹெக்டேர்', calcGrowthStage: 'வளர்ச்சி நிலை',
     calcEstimatedNeed: 'மதிப்பிடப்பட்ட தேவை', calcFor: 'க்கு', calcNitrogen: 'கிலோ நைட்ரஜன்', calcPhosphate: 'கிலோ பாஸ்பேட்', calcPotash: 'கிலோ பொட்டாஷ்',

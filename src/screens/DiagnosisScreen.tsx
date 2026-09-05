@@ -1,4 +1,4 @@
-import { ArrowLeft, CheckCircle2, ChevronRight, Info, MessageCircle, PhoneCall, ShieldAlert, WifiOff, Sparkles } from 'lucide-react';
+import { ArrowLeft, CheckCircle2, ChevronRight, Info, MessageCircle, PhoneCall, ShieldAlert, WifiOff } from 'lucide-react';
 import { cropById, cropName } from '@/data/crops';
 import { diseaseById } from '@/data/diseases';
 import type { ScanRecord } from '@/data/types';
@@ -8,15 +8,32 @@ import { useLang } from '@/lib/lang';
 
 interface DiagnosisScreenProps { scan: ScanRecord; onBack: () => void; onEscalate: () => void; onAskAI: () => void; }
 
+function BulletList({ items }: { items: string[] }) {
+  return (
+    <ul className="mt-2 space-y-2">
+      {items.map((step, index) => (
+        <li key={index} className="flex gap-2">
+          <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-forest-400" />
+          <p className="text-sm leading-6 text-forest-800">{step}</p>
+        </li>
+      ))}
+    </ul>
+  );
+}
+
 export function DiagnosisScreen({ scan, onBack, onEscalate, onAskAI }: DiagnosisScreenProps) {
   const { t, lang } = useLang();
   const disease = diseaseById(scan.result.diseaseId);
   const crop = cropById(scan.cropId);
   const lowConfidence = scan.result.level === 'low';
-  const hasAIRecommendation = Boolean(scan.result.recommendation);
   const isOffline = scan.result.source === 'offline';
   const isHealthy = scan.result.diseaseName.toLowerCase() === 'healthy';
   const displayCropName = scan.result.detectedCropName || cropName(scan.cropId, lang);
+
+  const hasAIData = Boolean(scan.result.preventionSteps?.length || scan.result.treatmentSteps?.length);
+  const preventionSteps = scan.result.preventionSteps ?? (hasAIData ? [] : disease.treatment);
+  const treatmentSteps = scan.result.treatmentSteps ?? [];
+  const aboutDescription = scan.result.description || (!hasAIData ? disease.description : '');
 
   return (
     <section className="screen-container animate-slide-up px-4">
@@ -53,9 +70,6 @@ export function DiagnosisScreen({ scan, onBack, onEscalate, onAskAI }: Diagnosis
               </div>
               <ConfidenceBadge level={scan.result.level} confidence={scan.result.confidence} />
             </div>
-            {scan.result.description && (
-              <p className="mt-3 text-sm leading-6 text-forest-600">{scan.result.description}</p>
-            )}
           </div>
 
           {isOffline && (
@@ -68,26 +82,42 @@ export function DiagnosisScreen({ scan, onBack, onEscalate, onAskAI }: Diagnosis
             </div>
           )}
 
+          {aboutDescription && (
+            <div className="mt-6">
+              <h2 className="text-[20px] font-semibold text-forest-900">{t.diagAboutIssue}</h2>
+              <p className="mt-2 text-sm leading-6 text-forest-600">{aboutDescription}</p>
+            </div>
+          )}
+
           <div className="my-8 border-t border-forest-100" />
 
           <div>
             <h2 className="text-[20px] font-semibold text-forest-900">{isHealthy ? 'Crop Health' : t.diagWhatYouCanDo}</h2>
             <p className="mt-0.5 text-[13px] text-forest-400">{isHealthy ? 'Great news from your scan' : t.diagSimpleSteps}</p>
-            {hasAIRecommendation ? (
-              <div className={`mt-3 ${isHealthy ? 'flex items-start gap-2 rounded-lg border border-success-200 bg-success-50 px-3 py-3' : ''}`}>
-                {isHealthy && <CheckCircle2 size={20} className="mt-0.5 shrink-0 text-success-600" />}
+
+            {isHealthy ? (
+              <div className="mt-3 flex items-start gap-2 rounded-lg border border-success-200 bg-success-50 px-3 py-3">
+                <CheckCircle2 size={20} className="mt-0.5 shrink-0 text-success-600" />
                 <p className="text-sm leading-6 text-forest-700">{scan.result.recommendation}</p>
               </div>
             ) : (
               <>
-                <p className="mt-3 text-sm leading-6 text-forest-700">{disease.description}</p>
-                <div className="mt-4 space-y-3">
-                  {disease.treatment.map((step, index) => (
-                    <div key={step} className="flex gap-3">
-                      <span className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-md bg-forest-100 text-xs font-bold text-forest-700">{index + 1}</span>
-                      <p className="text-sm leading-6 text-forest-800">{step}</p>
-                    </div>
-                  ))}
+                {preventionSteps.length > 0 && (
+                  <div className="mt-4">
+                    <h3 className="text-[15px] font-semibold text-forest-800">{t.diagPrevention}</h3>
+                    <p className="text-[12px] text-forest-400">{t.diagPreventionDesc}</p>
+                    <BulletList items={preventionSteps} />
+                  </div>
+                )}
+
+                <div className="mt-5">
+                  <h3 className="text-[15px] font-semibold text-forest-800">{t.diagTreatment}</h3>
+                  <p className="text-[12px] text-forest-400">{t.diagTreatmentDesc}</p>
+                  {treatmentSteps.length > 0 ? (
+                    <BulletList items={treatmentSteps} />
+                  ) : (
+                    <p className="mt-2 rounded-lg bg-forest-50 px-3 py-2.5 text-sm leading-6 text-forest-700">{t.diagTreatmentFallback}</p>
+                  )}
                 </div>
               </>
             )}

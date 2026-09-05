@@ -51,6 +51,8 @@ export interface ClassifierResult {
   affectedArea?: string;
   recommendation?: string;
   description?: string;
+  preventionSteps?: string[];
+  treatmentSteps?: string[];
   detectedCropName?: string;
   source: 'ai' | 'offline';
 }

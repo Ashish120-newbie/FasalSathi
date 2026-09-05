@@ -27,6 +27,7 @@ interface KindwiseSuggestion {
       chemical?: string[];
       prevention?: string[];
     };
+    description?: string;
     common_names?: string[];
     taxonomy?: { class?: string; family?: string; genus?: string; species?: string };
     url?: string;
@@ -64,20 +65,21 @@ function matchDiseaseId(diagnosisName: string, cropId: CropId): string {
   return 'unknown';
 }
 
-function formatTreatment(suggestion: KindwiseSuggestion): string {
+interface TreatmentData {
+  prevention: string[];
+  treatment: string[];
+  description: string;
+}
+
+function extractTreatmentData(suggestion: KindwiseSuggestion): TreatmentData {
   const treatment = suggestion.details?.treatment;
-  if (!treatment) return '';
-  const parts: string[] = [];
-  if (treatment.chemical && treatment.chemical.length > 0) {
-    parts.push(`Chemical: ${treatment.chemical.join('. ')}.`);
-  }
-  if (treatment.biological && treatment.biological.length > 0) {
-    parts.push(`Biological: ${treatment.biological.join('. ')}.`);
-  }
-  if (treatment.prevention && treatment.prevention.length > 0) {
-    parts.push(`Prevention: ${treatment.prevention.join('. ')}.`);
-  }
-  return parts.join(' ');
+  const prevention = treatment?.prevention ?? [];
+  const treatmentSteps: string[] = [
+    ...(treatment?.chemical ?? []),
+    ...(treatment?.biological ?? []),
+  ];
+  const description = suggestion.details?.description ?? '';
+  return { prevention, treatment: treatmentSteps, description };
 }
 
 export async function classifyCropImage(
@@ -158,7 +160,8 @@ export async function classifyCropImage(
   }
 
   const confidence = Math.round((topDisease.probability ?? 0) * 100);
-  const recommendation = formatTreatment(topDisease) || 'Consult your local agricultural officer for treatment advice.';
+  const { prevention, treatment, description } = extractTreatmentData(topDisease);
+  const recommendation = [...prevention, ...treatment].join(' ') || 'Consult your local agricultural officer for treatment advice.';
 
   return {
     result: {
@@ -167,6 +170,9 @@ export async function classifyCropImage(
       confidence,
       level: getConfidenceLevel(confidence),
       recommendation,
+      preventionSteps: prevention,
+      treatmentSteps: treatment,
+      description,
       detectedCropName: topCrop.name,
       source: 'ai',
     },
