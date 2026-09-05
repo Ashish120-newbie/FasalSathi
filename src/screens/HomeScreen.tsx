@@ -516,6 +516,7 @@ export function HomeScreen({ onResult, onNavigate }: HomeScreenProps) {
           <WeatherSkeleton />
         ) : weather && (
           <>
+            <p className="text-[#5F6E52] text-xs font-semibold uppercase tracking-wide">Weather</p>
             {weatherError && (
               <div className="mb-2 flex items-center gap-2 rounded-xl border border-amber-200 bg-amber-50 px-3 py-2 text-[12px] text-amber-800 animate-fade-in">
                 <AlertCircle size={14} className="shrink-0" />
@@ -554,7 +555,7 @@ export function HomeScreen({ onResult, onNavigate }: HomeScreenProps) {
             </div>
             {weather && !weatherError && weather.hourly.length > 0 && (
               <div className="mt-3">
-                <p className="text-[11px] font-bold uppercase tracking-[0.12em] text-forest-100">Farming Advisory</p>
+                <p className="text-[#5F6E52] text-xs font-semibold uppercase tracking-wide">Farming Advisory</p>
                 <div className="mt-2 space-y-2">
                   <AdvisoryRow icon={Droplets} label="Spray" advisory={computeAdvisories(weather).spray} />
                   <AdvisoryRow icon={FlaskConical} label="Fertilizer" advisory={computeAdvisories(weather).fertilizer} />
