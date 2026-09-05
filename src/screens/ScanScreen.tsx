@@ -71,6 +71,7 @@ export function ScanScreen({ onResult }: ScanScreenProps) {
   const [error, setError] = useState('');
   const [notACrop, setNotACrop] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
+  const galleryRef = useRef<HTMLInputElement>(null);
 
   function handleFile(file?: File) {
     if (!file) return;
@@ -178,11 +179,18 @@ export function ScanScreen({ onResult }: ScanScreenProps) {
         <p className="mt-0.5 text-[13px] leading-5 text-forest-400">{t.scanClearPhotos}</p>
         <button
           onClick={() => inputRef.current?.click()}
-          className="mt-4 flex w-full items-center justify-center gap-2 rounded-[10px] bg-amber-400 px-5 py-2.5 text-[15px] font-semibold text-amber-950 hover:bg-amber-500 transition-colors"
+          className="mt-4 flex w-full items-center justify-center gap-2 rounded-[10px] bg-[#2F5233] px-5 py-2.5 text-[15px] font-semibold text-white hover:bg-[#244028] transition-colors"
         >
           <Camera size={18} /> {imageDataUrl ? t.scanChangePhoto : t.scanTakePhoto}
         </button>
         <input ref={inputRef} type="file" accept="image/*" capture="environment" className="hidden" onChange={(event) => handleFile(event.target.files?.[0])} />
+        <button
+          onClick={() => galleryRef.current?.click()}
+          className="block mt-2 mx-auto text-sm text-[#5F6E52] underline underline-offset-2 text-center"
+        >
+          or upload from gallery
+        </button>
+        <input ref={galleryRef} type="file" accept="image/*" className="hidden" onChange={(event) => handleFile(event.target.files?.[0])} />
       </div>
 
       {fileName && (
