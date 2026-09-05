@@ -69,7 +69,7 @@ export function AppShell({ activeView, onNavigate, children, pendingReviews, cha
       {!chatOpen && (
         <button
           onClick={() => onOpenChat()}
-          className="fixed bottom-[80px] right-4 z-30 flex items-center gap-1.5 rounded-lg bg-forest-700 px-3 py-1.5 text-white hover:bg-forest-800 transition-colors"
+          className="fixed bottom-[96px] right-4 z-30 flex items-center gap-1.5 rounded-lg bg-forest-700 px-3 py-1.5 text-white hover:bg-forest-800 transition-colors"
           aria-label={t.commonAskAI}
         >
           <Bot size={15} className="text-white" />

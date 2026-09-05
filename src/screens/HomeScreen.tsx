@@ -1,4 +1,4 @@
-import { Check, ChevronRight, ImagePlus, Info, AlertCircle, Cloud, CloudRain, Sun, Store, BookOpen, Bug, Calculator, SprayCan, Sprout, Leaf, ShieldAlert, Phone, PhoneCall, Users, Wheat, Clock, RefreshCw, CheckCircle2, AlertTriangle, XCircle, Droplets, FlaskConical, Sprout as SproutIcon } from 'lucide-react';
+import { Check, ChevronRight, ImagePlus, Info, AlertCircle, Cloud, CloudRain, Sun, Store, BookOpen, Bug, Calculator, SprayCan, Sprout, Leaf, ShieldAlert, Phone, PhoneCall, Users, Wheat, Clock, RefreshCw, RotateCw, Camera, CheckCircle2, AlertTriangle, XCircle, Droplets, FlaskConical, Sprout as SproutIcon } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 import { classifyCropImage } from '@/data/classifier';
 import type { CropId, GrowthStage, ScanRecord } from '@/data/types';
@@ -446,9 +446,9 @@ export function HomeScreen({ onResult, onNavigate }: HomeScreenProps) {
             <p className="mt-0.5 text-[13px] leading-5 text-forest-400">{t.scanClearPhotos}</p>
             <button
               onClick={() => inputRef.current?.click()}
-              className="press-scale mt-4 flex w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-b from-amber-300 to-amber-400 px-5 py-3 text-[15px] font-semibold text-amber-950 shadow-[inset_0_1px_0_rgba(255,255,255,0.45),inset_0_-2px_4px_rgba(120,60,0,0.15),0_6px_16px_rgba(247,168,32,0.35),0_2px_4px_rgba(0,0,0,0.08)] hover:from-amber-400 hover:to-amber-500 hover:shadow-[inset_0_1px_0_rgba(255,255,255,0.5),inset_0_-2px_4px_rgba(120,60,0,0.2),0_8px_20px_rgba(247,168,32,0.4),0_2px_4px_rgba(0,0,0,0.1)] transition-all duration-200"
+              className="press-scale mt-4 flex w-full items-center justify-center gap-2 rounded-xl bg-[#2F5233] px-5 py-3 text-[15px] font-semibold text-white hover:bg-[#2F5233]/90 transition-colors duration-200"
             >
-              <ScanIcon size={20} /> {imageDataUrl ? t.scanChangePhoto : t.scanTakePhoto}
+              <Camera size={20} /> {imageDataUrl ? t.scanChangePhoto : t.scanTakePhoto}
             </button>
             <input ref={inputRef} type="file" accept="image/*" capture="environment" className="hidden" onChange={(event) => handleFile(event.target.files?.[0])} />
           </div>
@@ -525,21 +525,21 @@ export function HomeScreen({ onResult, onNavigate }: HomeScreenProps) {
                 </button>
               </div>
             )}
-            <div className={`rounded-2xl bg-gradient-to-br from-forest-700 to-teal-700 p-4 text-white shadow-[0_4px_14px_rgba(44,98,64,0.2)] transition-all duration-500 ${weatherVisible ? 'opacity-100 translate-y-0 scale-100' : 'opacity-0 translate-y-2 scale-[0.97]'} ${weatherVisible ? 'animate-weather-in' : ''}`}>
+            <div className={`rounded-2xl bg-[#1E3A21] p-4 text-white transition-all duration-500 ${weatherVisible ? 'opacity-100 translate-y-0 scale-100' : 'opacity-0 translate-y-2 scale-[0.97]'} ${weatherVisible ? 'animate-weather-in' : ''}`}>
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-[12px] font-medium text-forest-100">{ht.homeWeatherLocation}</p>
                   <p className="mt-0.5 text-[15px] font-semibold">{weather.location}</p>
                 </div>
                 <div className="flex items-center gap-2">
-                  <Sun size={28} className="text-amber-200" />
+                  <Sun size={28} strokeWidth={1.75} className="text-amber-200" />
                   <span className="text-[28px] font-bold leading-none">{weather.temp}</span>
                 </div>
               </div>
               <div className="mt-2 flex items-center justify-between">
                 <p className="text-[13px] text-forest-100">{weather.condition}</p>
                 <p className="flex items-center gap-1 text-[11px] text-forest-200">
-                  <Clock size={11} /> {ht.homeWeatherUpdated} {formatUpdatedAgo(weather.updatedAt, lang)}
+                  <RotateCw size={11} strokeWidth={1.75} /> {ht.homeWeatherUpdated} {formatUpdatedAgo(weather.updatedAt, lang)}
                 </p>
               </div>
               <div className="mt-4 flex gap-2">
