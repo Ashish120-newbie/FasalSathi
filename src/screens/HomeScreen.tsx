@@ -1,4 +1,4 @@
-import { Check, ChevronRight, ImagePlus, Info, AlertCircle, Cloud, CloudRain, Sun, Store, BookOpen, Bug, Wallet, Sprout, Leaf, ShieldAlert, Phone, PhoneCall, Users, Wheat, Clock, RefreshCw, CheckCircle2, AlertTriangle, XCircle, Droplets, FlaskConical, Sprout as SproutIcon } from 'lucide-react';
+import { Check, ChevronRight, ImagePlus, Info, AlertCircle, Cloud, CloudRain, Sun, Store, BookOpen, Bug, Calculator, SprayCan, Sprout, Leaf, ShieldAlert, Phone, PhoneCall, Users, Wheat, Clock, RefreshCw, CheckCircle2, AlertTriangle, XCircle, Droplets, FlaskConical, Sprout as SproutIcon } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 import { classifyCropImage } from '@/data/classifier';
 import type { CropId, GrowthStage, ScanRecord } from '@/data/types';
@@ -397,9 +397,9 @@ export function HomeScreen({ onResult, onNavigate }: HomeScreenProps) {
   }
 
   const tools = [
-    { icon: Sprout, label: ht.homeFertilizerCalc, view: 'calculator' as View, isNew: false },
-    { icon: Bug, label: ht.homePesticideCalc, view: 'pesticide-calc' as View, isNew: true },
-    { icon: Wallet, label: ht.homeCostCalc, view: 'cost-calc' as View, isNew: true },
+    { icon: FlaskConical, label: ht.homeFertilizerCalc, view: 'calculator' as View, isNew: false, iconBg: 'bg-[#E3EDD3]', iconColor: 'text-[#2F5233]' },
+    { icon: SprayCan, label: ht.homePesticideCalc, view: 'pesticide-calc' as View, isNew: true, iconBg: 'bg-[#FBE8CE]', iconColor: 'text-[#8A5A1E]' },
+    { icon: Calculator, label: ht.homeCostCalc, view: 'cost-calc' as View, isNew: true, iconBg: 'bg-[#F5E6C8]', iconColor: 'text-[#7A5B12]' },
   ];
 
   const library = [
@@ -572,7 +572,7 @@ export function HomeScreen({ onResult, onNavigate }: HomeScreenProps) {
       <div className="mt-6">
         <h2 className="heading-display text-[20px] font-bold text-[#1E3A21]">{ht.homeTools}</h2>
         <div className="mt-4 grid grid-cols-3 gap-3">
-          {tools.map(({ icon: Icon, label, view, isNew }) => (
+          {tools.map(({ icon: Icon, label, view, isNew, iconBg, iconColor }) => (
             <button
               key={label}
               onClick={() => onNavigate(view)}
@@ -581,8 +581,8 @@ export function HomeScreen({ onResult, onNavigate }: HomeScreenProps) {
               {isNew && (
                 <span className="absolute -top-2 -right-2 rounded-full bg-[#E8A33D] px-2 py-0.5 text-[10px] font-medium text-[#412402]">{ht.homeNew}</span>
               )}
-              <div className="flex h-12 w-12 items-center justify-center rounded-full bg-[#EEF3E4]">
-                <Icon size={22} strokeWidth={1.75} className="text-[#2F5233]" />
+              <div className={`flex h-11 w-11 items-center justify-center rounded-xl ${iconBg}`}>
+                <Icon size={20} strokeWidth={1.75} className={iconColor} />
               </div>
               <span className="mt-2 text-[12px] font-medium leading-tight text-[#1E3A21]">{label}</span>
             </button>
