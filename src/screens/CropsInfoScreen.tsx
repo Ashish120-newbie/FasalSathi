@@ -2,8 +2,16 @@ import { useMemo, useState } from 'react';
 import { ChevronDown, Search, Sprout } from 'lucide-react';
 import { crops, cropName } from '@/data/crops';
 import { cropInfo } from '@/data/cropInfo';
-import type { CropId } from '@/data/types';
 import { useLang } from '@/lib/lang';
+
+function displayLabel(key: string, lang: ReturnType<typeof useLang>['lang']): { emoji: string; name: string } {
+  const crop = crops.find((c) => c.id === key);
+  if (crop) {
+    return { emoji: crop.emoji, name: cropName(crop.id, lang) };
+  }
+  const pretty = key.replace(/_/g, ' ').replace(/\b\w/g, (m) => m.toUpperCase());
+  return { emoji: '🌱', name: pretty };
+}
 
 function DetailRow({ label, value }: { label: string; value: string }) {
   return (
@@ -14,11 +22,10 @@ function DetailRow({ label, value }: { label: string; value: string }) {
   );
 }
 
-function CropCard({ cropId }: { cropId: CropId }) {
-  const { lang } = useLang();
+function CropCard({ cropKey, lang }: { cropKey: string; lang: ReturnType<typeof useLang>['lang'] }) {
   const [expanded, setExpanded] = useState(false);
-  const crop = crops.find((c) => c.id === cropId)!;
-  const info = cropInfo[cropId];
+  const info = cropInfo[cropKey];
+  const { emoji, name } = displayLabel(cropKey, lang);
 
   return (
     <div className="overflow-hidden rounded-xl border border-forest-100 bg-white">
@@ -28,8 +35,8 @@ function CropCard({ cropId }: { cropId: CropId }) {
       >
         <div className="min-w-0 flex-1">
           <div className="flex items-center gap-2">
-            <span className="text-base">{crop.emoji}</span>
-            <h3 className="truncate text-[15px] font-semibold text-forest-900">{cropName(cropId, lang)}</h3>
+            <span className="text-base">{emoji}</span>
+            <h3 className="truncate text-[15px] font-semibold text-forest-900">{name}</h3>
           </div>
           <p className="mt-0.5 truncate text-[12px] text-forest-400">{info.season}</p>
         </div>
@@ -65,11 +72,13 @@ export function CropsInfoScreen() {
   const { t, lang } = useLang();
   const [query, setQuery] = useState('');
 
+  const allKeys = useMemo(() => Object.keys(cropInfo), []);
+
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase();
-    if (!q) return crops;
-    return crops.filter((c) => cropName(c.id, lang).toLowerCase().includes(q));
-  }, [query, lang]);
+    if (!q) return allKeys;
+    return allKeys.filter((key) => displayLabel(key, lang).name.toLowerCase().includes(q));
+  }, [allKeys, query, lang]);
 
   return (
     <section className="screen-container animate-fade-in px-4">
@@ -99,7 +108,7 @@ export function CropsInfoScreen() {
             <p className="text-sm font-medium text-forest-600">{t.ciNoResults}</p>
           </div>
         ) : (
-          filtered.map((c) => <CropCard key={c.id} cropId={c.id} />)
+          filtered.map((key) => <CropCard key={key} cropKey={key} lang={lang} />)
         )}
       </div>
     </section>
