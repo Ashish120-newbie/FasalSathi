@@ -11,6 +11,7 @@ import { MarketplaceScreen } from '@/screens/MarketplaceScreen';
 import { QueueScreen } from '@/screens/QueueScreen';
 import { ComingSoonScreen } from '@/screens/ComingSoonScreen';
 import { PestsAndDiseasesScreen } from '@/screens/PestsAndDiseasesScreen';
+import { CropsInfoScreen } from '@/screens/CropsInfoScreen';
 import { PesticideCalculatorScreen } from '@/screens/PesticideCalculatorScreen';
 import { CostCalculatorScreen } from '@/screens/CostCalculatorScreen';
 import { ProfileScreen } from '@/screens/ProfileScreen';
@@ -89,9 +90,7 @@ function App() {
   }
 
   const comingSoonViews: Partial<Record<View, string>> = {
-    'crops': ht.homeCrops,
     'cultivation-tips': ht.homeCultivationTips,
-    'pests-diseases': ht.homePestsDiseases,
     'pests-disease-alert': ht.homePestsDiseaseAlert,
   };
 
@@ -106,6 +105,7 @@ function App() {
     : view === 'helpline' ? <HelplineScreen />
     : view === 'marketplace' ? <MarketplaceScreen />
     : view === 'pests-diseases' ? <PestsAndDiseasesScreen />
+    : view === 'crops' ? <CropsInfoScreen />
     : view === 'profile' ? <ProfileScreen />
     : view === 'queue' ? <QueueScreen scans={scans} onBack={() => navigate('home')} onUpdate={handleUpdate} />
     : comingSoonViews[view] ? <ComingSoonScreen title={comingSoonViews[view]!} />

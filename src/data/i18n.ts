@@ -190,6 +190,11 @@ export interface TranslationKey {
   padSubtitle: string;
   padSearch: string;
   padNoResults: string;
+  // Crops info library
+  ciTitle: string;
+  ciSubtitle: string;
+  ciSearch: string;
+  ciNoResults: string;
 }
 
 export const translations: Record<Language, TranslationKey> = {
@@ -254,6 +259,7 @@ export const translations: Record<Language, TranslationKey> = {
     commonBack: 'Back', commonMoreTools: 'More tools', commonWorksOffline: 'FasalSathi works offline', commonWorksOfflineDesc: 'Your scans are saved on this phone first and sync when a connection is available.',
     commonNotifications: 'Notifications', commonOpenMenu: 'Open menu', commonCloseMenu: 'Close menu', commonAskAI: 'Ask AI assistant', commonOfficerQueue: 'Officer review queue', schemesVerifiedDate: 'Verified: ', 
     padTitle: 'Pests & Diseases', padSubtitle: 'Browse common crop diseases, symptoms, and treatments.', padSearch: 'Search diseases...', padNoResults: 'No diseases match your search.', 
+    ciTitle: 'Crop Guide', ciSubtitle: 'Season, water, soil, and tips for each crop.', ciSearch: 'Search crops...', ciNoResults: 'No crops match your search.', 
   },
   hi: {
     appName: 'FasalSathi', appTagline: 'फसल की पहचान, सही समाधान',
@@ -316,6 +322,7 @@ export const translations: Record<Language, TranslationKey> = {
     commonBack: 'वापस', commonMoreTools: 'अधिक उपकरण', commonWorksOffline: 'FasalSathi ऑफलाइन काम करता है', commonWorksOfflineDesc: 'आपके स्कैन इस फोन पर पहले सहेजे जाते हैं और कनेक्शन उपलब्ध होने पर सिंक होते हैं।',
     commonNotifications: 'सूचनाएं', commonOpenMenu: 'मेन्यू खोलें', commonCloseMenu: 'मेन्यू बंद करें', commonAskAI: 'AI सहायक से पूछें', commonOfficerQueue: 'अधिकारी समीक्षा कतार', schemesVerifiedDate: 'सत्यापित: ', 
     padTitle: 'कीट एवं रोग', padSubtitle: 'सामान्य फसल रोग, लक्षण और उपचार देखें।', padSearch: 'रोग खोजें...', padNoResults: 'कोई रोग आपकी खोज से मेल नहीं खाता।', 
+    ciTitle: 'फसल गाइड', ciSubtitle: 'प्रत्येक फसल के लिए मौसम, जल, मिट्टी और सुझाव।', ciSearch: 'फसलें खोजें...', ciNoResults: 'कोई फसल आपकी खोज से मेल नहीं खाती।', 
   },
   bn: {
     appName: 'FasalSathi', appTagline: 'ফসলের পরিচয়, সঠিক সমাধান',
@@ -378,6 +385,7 @@ export const translations: Record<Language, TranslationKey> = {
     commonBack: 'ফিরে যান', commonMoreTools: 'আরও সরঞ্জাম', commonWorksOffline: 'FasalSathi অফলাইনে কাজ করে', commonWorksOfflineDesc: 'আপনার স্ক্যান এই ফোনে প্রথমে সংরক্ষিত হয় এবং সংযোগ উপলব্ধ হলে সিঙ্ক হয়।',
     commonNotifications: 'বিজ্ঞপ্তি', commonOpenMenu: 'মেনু খুলুন', commonCloseMenu: 'মেনু বন্ধ করুন', commonAskAI: 'AI সহকারীকে জিজ্ঞাসা করুন', commonOfficerQueue: 'অফিসার পর্যালোচনা সারি', schemesVerifiedDate: 'যাচাইকৃত: ', 
     padTitle: 'পোকা ও রোগ', padSubtitle: 'সাধারণ ফসল রোগ, লক্ষণ এবং চিকিৎসা দেখুন।', padSearch: 'রোগ খুঁজুন...', padNoResults: 'কোনো রোগ আপনার অনুসন্ধানের সাথে মেলে না।', 
+    ciTitle: 'ফসল গাইড', ciSubtitle: 'প্রতিটি ফসলের জন্য ঋতু, জল, মাটি এবং টিপস।', ciSearch: 'ফসল খুঁজুন...', ciNoResults: 'কোনো ফসল আপনার অনুসন্ধানের সাথে মেলে না।', 
   },
   te: {
     appName: 'FasalSathi', appTagline: 'పంట గుర్తింపు, సరైన పరిష్కారం',
@@ -440,6 +448,7 @@ export const translations: Record<Language, TranslationKey> = {
     commonBack: 'వెనుకకు', commonMoreTools: 'మరిన్ని సాధనాలు', commonWorksOffline: 'FasalSathi ఆఫ్‌లైన్‌లో పనిచేస్తుంది', commonWorksOfflineDesc: 'మీ స్కాన్‌లు ముందుగా ఈ ఫోన్‌లో సేవ్ అవుతాయి మరియు కనెక్షన్ అందుబాటులో ఉన్నప్పుడు సింక్ అవుతాయి.',
     commonNotifications: 'నోటిఫికేషన్‌లు', commonOpenMenu: 'మెను తెరవండి', commonCloseMenu: 'మెను మూసివేయండి', commonAskAI: 'AI సహాయకుడిని అడగండి', commonOfficerQueue: 'అధికారి సమీక్ష క్యూ', schemesVerifiedDate: 'ధృవీకరించబడింది: ', 
     padTitle: 'పురుగులు & వ్యాధులు', padSubtitle: 'సాధారణ పంట వ్యాధులు, లక్షణాలు మరియు చికిత్సలను బ్రౌజ్ చేయండి.', padSearch: 'వ్యాధులను శోధించండి...', padNoResults: 'మీ శోధనతో ఏ వ్యాధులు సరిపోలవు.', 
+    ciTitle: 'పంట గైడ్', ciSubtitle: 'ప్రతి పంటకు సీజన్, నీరు, నేల మరియు చిట్కాలు.', ciSearch: 'పంటలను శోధించండి...', ciNoResults: 'మీ శోధనతో ఏ పంటలు సరిపోలవు.', 
   },
   mr: {
     appName: 'FasalSathi', appTagline: 'पिकाची ओळख, योग्य उपाय',
@@ -502,6 +511,7 @@ export const translations: Record<Language, TranslationKey> = {
     commonBack: 'मागे', commonMoreTools: 'अधिक साधने', commonWorksOffline: 'FasalSathi ऑफलाइन काम करते', commonWorksOfflineDesc: 'तुमची स्कॅन आधी या फोनवर जतन होतात आणि कनेक्शन उपलब्ध असल्यास सिंक होतात.',
     commonNotifications: 'सूचना', commonOpenMenu: 'मेन्यू उघडा', commonCloseMenu: 'मेन्यू बंद करा', commonAskAI: 'AI सहाय्यकाला विचारा', commonOfficerQueue: 'अधिकारी समीक्षा रांग', schemesVerifiedDate: 'प्रमाणित: ', 
     padTitle: 'कीड व रोग', padSubtitle: 'सामान्य पीक रोग, लक्षणे आणि उपचार पहा.', padSearch: 'रोग शोधा...', padNoResults: 'तुमच्या शोधाशी कोणतेही रोग जुळत नाहीत.', 
+    ciTitle: 'पीक गाइड', ciSubtitle: 'प्रत्येक पिकासाठी ऋतू, पाणी, माती आणि टिप्स.', ciSearch: 'पीक शोधा...', ciNoResults: 'तुमच्या शोधाशी कोणतेही पीक जुळत नाही.', 
   },
   ta: {
     appName: 'FasalSathi', appTagline: 'பயிர் அடையாளம், சரியான தீர்வு',
@@ -564,5 +574,6 @@ export const translations: Record<Language, TranslationKey> = {
     commonBack: 'பின்செல்', commonMoreTools: 'மேலும் கருவிகள்', commonWorksOffline: 'FasalSathi ஆஃப்லைனில் வேலை செய்கிறது', commonWorksOfflineDesc: 'உங்கள் ஸ்கேன்கள் முதலில் இந்த ஃபோனில் சேமிக்கப்படுகின்றன மற்றும் இணைப்பு கிடைக்கும்போது ஒத்திசைக்கப்படுகின்றன.',
     commonNotifications: 'அறிவிப்புகள்', commonOpenMenu: 'மெனுவைத் திறக்கவும்', commonCloseMenu: 'மெனுவை மூடவும்', commonAskAI: 'AI உதவியாளரிடம் கேளுங்கள்', commonOfficerQueue: 'அதிகாரி மதிப்பாய்வு வரிசை', schemesVerifiedDate: 'சரிபார்க்கப்பட்டது: ', 
     padTitle: 'பூச்சிகள் & நோய்கள்', padSubtitle: 'பொதுவான பயிர் நோய்கள், அறிகுறிகள் மற்றும் சிகிச்சைகளை உலாவவும்.', padSearch: 'நோய்களைத் தேடவும்...', padNoResults: 'உங்கள் தேடலுடன் எந்த நோய்களும் பொருந்தவில்லை.', 
+    ciTitle: 'பயிர் வழிகாட்டி', ciSubtitle: 'ஒவ்வொரு பயிருக்கும் பருவம், நீர், மண் மற்றும் குறிப்புகள்.', ciSearch: 'பயிர்களைத் தேடவும்...', ciNoResults: 'உங்கள் தேடலுடன் எந்த பயிர்களும் பொருந்தவில்லை.', 
   },
 };
