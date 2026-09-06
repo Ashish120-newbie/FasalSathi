@@ -511,9 +511,7 @@ export function HomeScreen({ onResult, onNavigate }: HomeScreenProps) {
         </button>
       )}
 
-      <p className="mt-3 flex items-center justify-center gap-1.5 text-center text-[11px] text-forest-400">
-        <Info size={12} /> {t.scanPhotoStays}
-      </p>
+
 
       {/* Weather Forecast */}
       <div className="mt-8 border-t border-forest-100" />
