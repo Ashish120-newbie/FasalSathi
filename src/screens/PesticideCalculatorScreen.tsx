@@ -8,20 +8,24 @@ import { useHomeLang } from '@/data/i18n-home';
 interface PestOption {
   id: string;
   label: string;
-  ratePerAcre: number;
-  unit: string;
+  labelHi: string;
+  productName: string;
+  dosagePerLiterWater: number; // ml or g per liter of spray water
+  unit: 'ml' | 'g';
 }
 
+// Standard label-rate dosages per liter of spray water (common product examples)
 const pestOptions: PestOption[] = [
-  { id: 'aphids', label: 'Aphids', ratePerAcre: 0.5, unit: 'L' },
-  { id: 'whitefly', label: 'Whitefly', ratePerAcre: 0.6, unit: 'L' },
-  { id: 'fungal-blight', label: 'Fungal blight', ratePerAcre: 1.0, unit: 'L' },
-  { id: 'bollworm', label: 'Bollworm', ratePerAcre: 0.8, unit: 'L' },
-  { id: 'thrips', label: 'Thrips', ratePerAcre: 0.4, unit: 'L' },
-  { id: 'leaf-miner', label: 'Leaf miner', ratePerAcre: 0.5, unit: 'L' },
+  { id: 'aphids', label: 'Aphids', labelHi: 'माहू (एफिड्स)', productName: 'Imidacloprid 17.8% SL', dosagePerLiterWater: 0.3, unit: 'ml' },
+  { id: 'whitefly', label: 'Whitefly', labelHi: 'सफेद मक्खी', productName: 'Imidacloprid 17.8% SL', dosagePerLiterWater: 0.3, unit: 'ml' },
+  { id: 'fungal-blight', label: 'Fungal blight', labelHi: 'फफूंद झुलसा', productName: 'Mancozeb 75% WP', dosagePerLiterWater: 2, unit: 'g' },
+  { id: 'bollworm', label: 'Bollworm', labelHi: 'सुंडी (बॉलवर्म)', productName: 'Cypermethrin 10% EC', dosagePerLiterWater: 1, unit: 'ml' },
+  { id: 'thrips', label: 'Thrips', labelHi: 'थ्रिप्स', productName: 'Imidacloprid 17.8% SL', dosagePerLiterWater: 0.3, unit: 'ml' },
+  { id: 'leaf-miner', label: 'Leaf miner', labelHi: 'पत्ती सुरंगक', productName: 'Cypermethrin 10% EC', dosagePerLiterWater: 1, unit: 'ml' },
 ];
 
-const WATER_PER_ACRE_L = 200;
+const WATER_PER_ACRE_L = 200; // standard knapsack/boom sprayer volume per acre
+const HECTARE_TO_ACRE = 2.471;
 
 export function PesticideCalculatorScreen() {
   const { t, lang } = useLang();
@@ -30,16 +34,27 @@ export function PesticideCalculatorScreen() {
   const [area, setArea] = useState('1');
   const [unit, setUnit] = useState<'acres' | 'hectares'>('acres');
   const [pestId, setPestId] = useState('aphids');
-  const [concentration, setConcentration] = useState('10');
   const [submitted, setSubmitted] = useState(false);
+  const [error, setError] = useState('');
 
-  const acres = Math.max(Number(area) || 0, 0) * (unit === 'hectares' ? 2.471 : 1);
+  const acres = Math.max(Number(area) || 0, 0) * (unit === 'hectares' ? HECTARE_TO_ACRE : 1);
   const pest = pestOptions.find((p) => p.id === pestId) ?? pestOptions[0];
-  const conc = Math.max(Number(concentration) || 0, 0);
 
-  const dosage = acres * pest.ratePerAcre;
-  const waterRequired = acres * WATER_PER_ACRE_L;
-  const productAmount = conc > 0 ? (dosage * conc) / 10 : dosage;
+  const waterRequiredL = acres * WATER_PER_ACRE_L;
+  const productAmountRaw = pest.dosagePerLiterWater * waterRequiredL; // in ml or g
+  const productAmountDisplay = productAmountRaw >= 1000
+    ? { value: (productAmountRaw / 1000).toFixed(2), unit: pest.unit === 'ml' ? 'L' : 'kg' }
+    : { value: productAmountRaw.toFixed(0), unit: pest.unit };
+
+  function handleCalculate() {
+    if (!area || Number(area) <= 0) {
+      setError(lang === 'hi' ? 'कृपया खेत का सही आकार दर्ज करें।' : 'Please enter a valid farm size.');
+      setSubmitted(false);
+      return;
+    }
+    setError('');
+    setSubmitted(true);
+  }
 
   return (
     <section className="screen-container animate-fade-in px-4">
@@ -60,6 +75,11 @@ export function PesticideCalculatorScreen() {
         <select value={cropId} onChange={(e) => setCropId(e.target.value as CropId)} className="select-field">
           {crops.map((crop) => <option key={crop.id} value={crop.id}>{crop.emoji} {cropName(crop.id, lang)}</option>)}
         </select>
+        <p className="mt-1 text-[11px] text-forest-400">
+          {lang === 'hi'
+            ? 'नोट: खुराक कीट के प्रकार पर आधारित है, फसल जानकारी के लिए है।'
+            : 'Note: dosage is based on pest type — crop is for your reference.'}
+        </p>
 
         <label className="mt-4 mb-2 block text-[13px] font-semibold text-forest-700">{t.calcFarmSize}</label>
         <div className="flex gap-2">
@@ -74,19 +94,16 @@ export function PesticideCalculatorScreen() {
           {lang === 'hi' ? 'कीट या रोग का प्रकार' : 'Pest or disease type'}
         </label>
         <select value={pestId} onChange={(e) => setPestId(e.target.value)} className="select-field">
-          {pestOptions.map((p) => <option key={p.id} value={p.id}>{p.label}</option>)}
+          {pestOptions.map((p) => <option key={p.id} value={p.id}>{lang === 'hi' ? p.labelHi : p.label}</option>)}
         </select>
+        <p className="mt-1 text-[11px] text-forest-400">
+          {lang === 'hi' ? 'अनुशंसित उत्पाद' : 'Recommended product'}: {pest.productName}
+        </p>
 
-        <label className="mt-4 mb-2 block text-[13px] font-semibold text-forest-700">
-          {lang === 'hi' ? 'उत्पाद सांद्रता (% या g/L)' : 'Product concentration (% or g/L)'}
-        </label>
-        <input inputMode="decimal" value={concentration} onChange={(e) => setConcentration(e.target.value)} className="input-field" placeholder="10" />
+        {error && <p className="mt-2 text-[13px] font-medium text-red-600">{error}</p>}
       </div>
 
-      <button
-        onClick={() => setSubmitted(true)}
-        className="btn-amber mt-6 w-full"
-      >
+      <button onClick={handleCalculate} className="btn-amber mt-6 w-full">
         {lang === 'hi' ? 'गणना करें' : 'Calculate'}
       </button>
 
@@ -108,14 +125,14 @@ export function PesticideCalculatorScreen() {
             <div className="mt-5 grid grid-cols-2 gap-3">
               <div className="rounded-lg bg-forest-50 px-3 py-4 text-center">
                 <Scale size={16} className="mx-auto mb-1 text-forest-400" />
-                <p className="text-2xl font-bold text-forest-800">{productAmount.toFixed(2)}</p>
+                <p className="text-2xl font-bold text-forest-800">{productAmountDisplay.value}</p>
                 <p className="mt-0.5 text-[11px] font-medium text-forest-500">
-                  {lang === 'hi' ? 'उत्पाद मात्रा (L)' : 'Product amount (L)'}
+                  {pest.productName} ({productAmountDisplay.unit})
                 </p>
               </div>
               <div className="rounded-lg bg-forest-50 px-3 py-4 text-center">
                 <Droplets size={16} className="mx-auto mb-1 text-forest-400" />
-                <p className="text-2xl font-bold text-forest-800">{Math.round(waterRequired)}</p>
+                <p className="text-2xl font-bold text-forest-800">{Math.round(waterRequiredL)}</p>
                 <p className="mt-0.5 text-[11px] font-medium text-forest-500">
                   {lang === 'hi' ? 'पानी (L)' : 'Water (L)'}
                 </p>
@@ -127,16 +144,16 @@ export function PesticideCalculatorScreen() {
                 {lang === 'hi' ? 'अनुशंसित खुराक' : 'Recommended dosage'}
               </p>
               <p className="mt-1 text-[13px] leading-5 text-forest-600">
-                {dosage.toFixed(2)} {pest.unit} {lang === 'hi' ? 'प्रति एकड़' : 'per acre'} × {acres.toFixed(2)} {unit === 'acres' ? t.calcAcres.toLowerCase() : t.calcHectares.toLowerCase()} = <span className="font-bold text-forest-900">{productAmount.toFixed(2)} {pest.unit}</span>
+                {pest.dosagePerLiterWater} {pest.unit} {lang === 'hi' ? 'प्रति लीटर पानी' : 'per liter of water'} × {Math.round(waterRequiredL)} L = <span className="font-bold text-forest-900">{productAmountDisplay.value} {productAmountDisplay.unit}</span>
               </p>
               <p className="mt-1 text-[13px] leading-5 text-forest-600">
-                {lang === 'hi' ? 'छिड़काव के लिए कुल पानी' : 'Total water for spraying'}: <span className="font-bold text-forest-900">{Math.round(waterRequired)} L</span>
+                {lang === 'hi' ? 'कुल पानी की आवश्यकता' : 'Total water needed'}: <span className="font-bold text-forest-900">{Math.round(waterRequiredL)} L</span> ({WATER_PER_ACRE_L} L/{lang === 'hi' ? 'एकड़' : 'acre'})
               </p>
             </div>
 
             <div className="mt-4 flex gap-2 rounded-lg bg-amber-50 px-3 py-2.5 text-xs leading-5 text-amber-900">
               <AlertTriangle size={15} className="mt-0.5 shrink-0 text-amber-700" />
-              <span>{lang === 'hi' ? 'हमेशा उत्पाद लेबल का पालन करें — यह एक सामान्य अनुमान है।' : 'Always follow the product label — this is a general estimate.'}</span>
+              <span>{lang === 'hi' ? 'हमेशा उत्पाद लेबल का पालन करें — यह एक सामान्य अनुमान है।' : 'Always follow the product label — this is a general estimate based on standard rates.'}</span>
             </div>
           </div>
         </>
