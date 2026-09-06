@@ -445,20 +445,18 @@ export function HomeScreen({ onResult, onNavigate }: HomeScreenProps) {
             <p className="section-label">{t.scanQuickDiagnosis}</p>
             <h2 className="heading-display mt-1 text-[20px] font-bold text-forest-900">{t.scanScanALeaf}</h2>
             <p className="mt-0.5 text-[13px] leading-5 text-forest-400">{t.scanClearPhotos}</p>
-            <button
-              onClick={() => inputRef.current?.click()}
-              className="press-scale mt-4 flex w-full items-center justify-center gap-2 rounded-xl bg-[#2F5233] px-5 py-3 text-[15px] font-semibold text-white hover:bg-[#2F5233]/90 transition-colors duration-200"
+            <label
+              className="press-scale mt-4 flex w-full cursor-pointer items-center justify-center gap-2 rounded-xl bg-[#2F5233] px-5 py-3 text-[15px] font-semibold text-white hover:bg-[#2F5233]/90 transition-colors duration-200"
             >
               <Camera size={20} /> {imageDataUrl ? t.scanChangePhoto : t.scanTakePhoto}
-            </button>
-            <input ref={inputRef} type="file" accept="image/*" capture="environment" className="hidden" onChange={(event) => handleFile(event.target.files?.[0])} />
-            <button
-              onClick={() => galleryRef.current?.click()}
-              className="block mt-2 mx-auto text-sm text-[#5F6E52] underline underline-offset-2 text-center"
+              <input ref={inputRef} type="file" accept="image/*" capture="environment" className="sr-only" onChange={(event) => handleFile(event.target.files?.[0])} />
+            </label>
+            <label
+              className="block mt-2 mx-auto cursor-pointer text-sm text-[#5F6E52] underline underline-offset-2 text-center"
             >
               {t.scanUploadFromGallery}
-            </button>
-            <input ref={galleryRef} type="file" accept="image/*" className="hidden" onChange={(event) => handleFile(event.target.files?.[0])} />
+              <input ref={galleryRef} type="file" accept="image/*" className="sr-only" onChange={(event) => handleFile(event.target.files?.[0])} />
+            </label>
           </div>
         )}
       </div>
