@@ -7,7 +7,7 @@ export interface CropInfo {
   tip: string;
 }
 
-export const cropInfo: Record<CropId, CropInfo> = {
+export const cropInfo: Record<string, CropInfo> = {
   // Original 16 Crops
   wheat: { season: 'Rabi (Oct–Nov sowing, Mar–Apr harvest)', water: '4–6 irrigations, moderate need', soil: 'Well-drained loam, pH 6.0–7.5', tip: 'First irrigation at 20–25 days is the most critical for yield.' },
   rice: { season: 'Kharif (Jun–Jul sowing, Oct–Nov harvest)', water: 'High — standing water 5cm during vegetative stage', soil: 'Clayey loam, retains water well', tip: 'Transplant 25–30 day old seedlings for best establishment.' },
