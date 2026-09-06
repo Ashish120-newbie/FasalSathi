@@ -359,6 +359,54 @@ export async function removeBookmark(schemeId: string): Promise<void> {
 }
 
 // ──────────────────────────────────────────────────────────────
+// Treatment Detail — Gemini-powered specific treatment lookup
+// ──────────────────────────────────────────────────────────────
+
+export interface TreatmentDetail {
+  biological: string;
+  chemical: string;
+  organic: string;
+  manual: string;
+}
+
+const treatmentCache = new Map<string, TreatmentDetail>();
+
+export async function fetchTreatmentDetail(
+  diseaseName: string,
+  cropName: string
+): Promise<TreatmentDetail> {
+  const cacheKey = `${diseaseName}::${cropName}`.toLowerCase();
+  const cached = treatmentCache.get(cacheKey);
+  if (cached) return cached;
+
+  const { data: sessionData } = await supabase.auth.getSession();
+  const accessToken = sessionData.session?.access_token;
+
+  const response = await fetch(
+    `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/treatment-detail`,
+    {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        ...(accessToken ? { Authorization: `Bearer ${accessToken}` } : {}),
+        apikey: import.meta.env.VITE_SUPABASE_ANON_KEY,
+      },
+      body: JSON.stringify({ diseaseName, cropName }),
+    }
+  );
+
+  if (!response.ok) {
+    const body = await response.json().catch(() => ({}));
+    throw new Error(body.error || 'Could not fetch treatment details.');
+  }
+
+  const { treatment } = await response.json();
+  const result = treatment as TreatmentDetail;
+  treatmentCache.set(cacheKey, result);
+  return result;
+}
+
+// ──────────────────────────────────────────────────────────────
 // Scheme Recommendations — structured matching, NOT AI-generated
 // ──────────────────────────────────────────────────────────────
 

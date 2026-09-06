@@ -9,3 +9,6 @@ verify_jwt = true
 
 [functions.ai-translate]
 verify_jwt = true
+
+[functions.treatment-detail]
+verify_jwt = true

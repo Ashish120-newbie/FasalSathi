@@ -1,7 +1,9 @@
-import { ArrowLeft, CheckCircle2, ChevronRight, Info, MessageCircle, PhoneCall, ShieldAlert, WifiOff } from 'lucide-react';
+import { useEffect, useState } from 'react';
+import { ArrowLeft, CheckCircle2, ChevronRight, Info, Loader2, MessageCircle, PhoneCall, ShieldAlert, WifiOff } from 'lucide-react';
 import { cropById, cropName } from '@/data/crops';
 import { diseaseById } from '@/data/diseases';
 import type { ScanRecord } from '@/data/types';
+import { fetchTreatmentDetail, type TreatmentDetail } from '@/lib/api';
 import { ConfidenceBadge } from '@/components/ConfidenceBadge';
 import { LeafImage } from '@/components/LeafImage';
 import { useLang } from '@/lib/lang';
@@ -21,6 +23,27 @@ function BulletList({ items }: { items: string[] }) {
   );
 }
 
+function TreatmentDetailSection({ detail }: { detail: TreatmentDetail }) {
+  const { t } = useLang();
+  const rows = [
+    { label: t.diagTreatmentBiological, value: detail.biological },
+    { label: t.diagTreatmentChemical, value: detail.chemical },
+    { label: t.diagTreatmentOrganic, value: detail.organic },
+    { label: t.diagTreatmentManual, value: detail.manual },
+  ].filter((r) => r.value && r.value.trim().length > 0);
+
+  return (
+    <div className="mt-2 space-y-3">
+      {rows.map((row, i) => (
+        <div key={i} className="rounded-lg bg-forest-50 px-3 py-2.5">
+          <h4 className="text-[13px] font-semibold text-forest-800">{row.label}</h4>
+          <p className="mt-1 text-sm leading-6 text-forest-700">{row.value}</p>
+        </div>
+      ))}
+    </div>
+  );
+}
+
 export function DiagnosisScreen({ scan, onBack, onEscalate, onAskAI }: DiagnosisScreenProps) {
   const { t, lang } = useLang();
   const disease = diseaseById(scan.result.diseaseId);
@@ -34,6 +57,32 @@ export function DiagnosisScreen({ scan, onBack, onEscalate, onAskAI }: Diagnosis
   const preventionSteps = scan.result.preventionSteps ?? (hasAIData ? [] : disease.treatment);
   const treatmentSteps = scan.result.treatmentSteps ?? [];
   const aboutDescription = scan.result.description || (!hasAIData ? disease.description : '');
+
+  const needsTreatmentLookup = !isHealthy && !lowConfidence && treatmentSteps.length === 0;
+  const [treatmentDetail, setTreatmentDetail] = useState<TreatmentDetail | null>(null);
+  const [treatmentLoading, setTreatmentLoading] = useState(false);
+  const [treatmentError, setTreatmentError] = useState(false);
+
+  useEffect(() => {
+    if (!needsTreatmentLookup) return;
+    let cancelled = false;
+    setTreatmentLoading(true);
+    setTreatmentError(false);
+    fetchTreatmentDetail(scan.result.diseaseName, displayCropName)
+      .then((detail) => {
+        if (!cancelled) {
+          setTreatmentDetail(detail);
+          setTreatmentLoading(false);
+        }
+      })
+      .catch(() => {
+        if (!cancelled) {
+          setTreatmentError(true);
+          setTreatmentLoading(false);
+        }
+      });
+    return () => { cancelled = true; };
+  }, [needsTreatmentLookup, scan.result.diseaseName, displayCropName]);
 
   return (
     <section className="screen-container animate-slide-up px-4">
@@ -115,9 +164,16 @@ export function DiagnosisScreen({ scan, onBack, onEscalate, onAskAI }: Diagnosis
                   <p className="text-[12px] text-forest-400">{t.diagTreatmentDesc}</p>
                   {treatmentSteps.length > 0 ? (
                     <BulletList items={treatmentSteps} />
-                  ) : (
+                  ) : treatmentLoading ? (
+                    <div className="mt-2 flex items-center gap-2 rounded-lg bg-forest-50 px-3 py-2.5 text-sm text-forest-600">
+                      <Loader2 size={16} className="animate-spin" />
+                      <span>{t.diagTreatmentLoading}</span>
+                    </div>
+                  ) : treatmentDetail ? (
+                    <TreatmentDetailSection detail={treatmentDetail} />
+                  ) : treatmentError ? (
                     <p className="mt-2 rounded-lg bg-forest-50 px-3 py-2.5 text-sm leading-6 text-forest-700">{t.diagTreatmentFallback}</p>
-                  )}
+                  ) : null}
                 </div>
               </>
             )}
