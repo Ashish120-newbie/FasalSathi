@@ -10,6 +10,7 @@ import { HelplineScreen } from '@/screens/HelplineScreen';
 import { MarketplaceScreen } from '@/screens/MarketplaceScreen';
 import { QueueScreen } from '@/screens/QueueScreen';
 import { ComingSoonScreen } from '@/screens/ComingSoonScreen';
+import { PestAlertScreen } from '@/screens/PestAlertScreen';
 import { CultivationTipsScreen } from '@/screens/CultivationTipsScreen';
 import { PestsAndDiseasesScreen } from '@/screens/PestsAndDiseasesScreen';
 import { CropsInfoScreen } from '@/screens/CropsInfoScreen';
@@ -90,9 +91,7 @@ function App() {
     return <AuthScreen />;
   }
 
-  const comingSoonViews: Partial<Record<View, string>> = {
-    'pests-disease-alert': ht.homePestsDiseaseAlert,
-  };
+  const comingSoonViews: Partial<Record<View, string>> = {};
 
   const screen = activeScan
     ? <DiagnosisScreen scan={activeScan} onBack={() => setActiveScan(null)} onEscalate={handleEscalate} onAskAI={() => openChat(buildChatContextFromScan(activeScan))} />
@@ -104,6 +103,7 @@ function App() {
     : view === 'history' ? <HistoryScreen scans={scans} onOpen={setActiveScan} />
     : view === 'helpline' ? <HelplineScreen />
     : view === 'marketplace' ? <MarketplaceScreen />
+    : view === 'pests-disease-alert' ? <PestAlertScreen />
     : view === 'pests-diseases' ? <PestsAndDiseasesScreen />
     : view === 'cultivation-tips' ? <CultivationTipsScreen />
     : view === 'crops' ? <CropsInfoScreen />
