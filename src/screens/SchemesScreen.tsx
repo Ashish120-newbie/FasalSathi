@@ -2,6 +2,7 @@ import { ArrowRight, BookOpen, Bookmark, ExternalLink, MapPin, Search, SlidersHo
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { cropName, crops } from '@/data/crops';
 import { farmerCategories, schemeCategories, schemes, states, type FarmerCategory, type SchemeCategory, type SchemeDetail } from '@/data/schemes';
+import { getHindiScheme } from '@/data/schemes.hi';
 import type { CropId } from '@/data/types';
 import { useAuth } from '@/lib/auth';
 import { useLang } from '@/lib/lang';
@@ -35,6 +36,11 @@ export function SchemesScreen() {
 
   const activeSchemes = useMemo(() => schemes.filter((s) => s.isActive), []);
 
+  const displaySchemes = useMemo(
+    () => (lang === 'hi' ? activeSchemes.map(getHindiScheme) : activeSchemes),
+    [activeSchemes, lang],
+  );
+
   useEffect(() => {
     if (!user) return;
     listBookmarks()
@@ -43,7 +49,7 @@ export function SchemesScreen() {
   }, [user]);
 
   const filtered = useMemo(() => {
-    return activeSchemes.filter((scheme) => {
+    return displaySchemes.filter((scheme) => {
       const matchesQuery = `${scheme.name} ${scheme.description} ${scheme.benefits}`.toLowerCase().includes(query.toLowerCase());
       const matchesCrop = crop === 'all' || scheme.eligibleCrops === 'all' || (scheme.eligibleCrops as CropId[]).includes(crop);
       const matchesState = state === 'all' || scheme.applicableStates.includes('All India') || scheme.applicableStates.includes(state);
@@ -51,7 +57,7 @@ export function SchemesScreen() {
       const matchesFarmerCat = farmerCat === 'all' || scheme.eligibleFarmerCategories.includes('all') || scheme.eligibleFarmerCategories.includes(farmerCat);
       return matchesQuery && matchesCrop && matchesState && matchesCategory && matchesFarmerCat;
     });
-  }, [activeSchemes, query, crop, state, category, farmerCat]);
+  }, [displaySchemes, query, crop, state, category, farmerCat]);
 
   useEffect(() => {
     let count = 0;
@@ -70,8 +76,8 @@ export function SchemesScreen() {
       farmSizeAcres: null,
       farmerCategory: null,
     };
-    return getRecommendedSchemes(ctx).slice(0, 4);
-  }, [profile]);
+    return getRecommendedSchemes(ctx).slice(0, 4).map(lang === 'hi' ? getHindiScheme : (s) => s);
+  }, [profile, lang]);
 
   const toggleBookmark = useCallback(async (schemeId: string) => {
     if (!user) return;
