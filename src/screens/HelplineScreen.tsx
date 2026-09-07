@@ -49,12 +49,11 @@ export function HelplineScreen() {
           <h2 className="mt-1 text-[18px] font-semibold text-forest-900">{t.helpKiranDesc}</h2>
           <p className="mt-0.5 text-[13px] leading-5 text-forest-400">{t.helpKiranMinistry}</p>
           <a
-          
-  href={`tel:${kiranNumber.replace(/-/g, '')}`}
-  className="mt-3 flex w-full items-center justify-center gap-2 rounded-lg bg-amber-400 px-5 py-2.5 text-base font-semibold text-amber-950 hover:bg-amber-500 transition-colors"
->
-  <Phone size={19} /> {t.helpCall} {kiranNumber}
-</a>
+            href={`tel:${kiranNumber.replace(/-/g, '')}`}
+            className="mt-3 flex w-full items-center justify-center gap-2 rounded-lg bg-amber-400 px-5 py-2.5 text-base font-semibold text-amber-950 hover:bg-amber-500 transition-colors"
+          >
+            <Phone size={19} /> {t.helpCall} {kiranNumber}
+          </a>
           <p className="mt-2 text-center text-xs text-forest-400">{t.helpKiranHours}</p>
         </div>
       </div>

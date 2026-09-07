@@ -8,7 +8,11 @@ export type SchemeCategory =
   | 'soil_health'
   | 'organic_farming'
   | 'irrigation'
-  | 'price_support';
+  | 'price_support'
+  | 'women_farmers'
+  | 'livestock_dairy'
+  | 'horticulture'
+  | 'market_access';
 
 export type FarmerCategory =
   | 'all'
@@ -66,6 +70,10 @@ export const schemeCategories: { id: SchemeCategory; label: string }[] = [
   { id: 'organic_farming', label: 'Organic Farming' },
   { id: 'irrigation', label: 'Irrigation' },
   { id: 'price_support', label: 'Price Support' },
+  { id: 'women_farmers', label: 'Women Farmers' },
+  { id: 'livestock_dairy', label: 'Livestock & Dairy' },
+  { id: 'horticulture', label: 'Horticulture' },
+  { id: 'market_access', label: 'Market Access' },
 ];
 
 export const farmerCategories: { id: FarmerCategory; label: string }[] = [
@@ -373,14 +381,14 @@ export const schemes: SchemeDetail[] = [
     name: 'Mahila Kisan Sashaktikaran Pariyojana (MKSP)',
     description:
       'Empowerment of women farmers through capacity building, sustainable agriculture practices, and access to resources and markets.',
-    category: 'income_support',
+    category: 'women_farmers',
     ministry: 'Ministry of Rural Development',
     applicableStates: ['All India'],
     eligibleCrops: 'all',
     eligibleFarmerCategories: ['women', 'small_marginal'],
     farmSizeCriteria: null,
     benefits:
-      'Training, capacity building, and support for sustainable agriculture practices. Implemented through NGOs and community organizations. Funding shared between Centre and State.',
+      'Training, capacity building, and support for sustainable agriculture practices specifically for women farmers, delivered through Self Help Groups. Funding shared between Centre and State.',
     eligibility:
       'Women farmers and women Self Help Groups (SHGs) engaged in agriculture and allied activities, particularly from small and marginal holdings.',
     requiredDocuments: [
@@ -398,6 +406,221 @@ export const schemes: SchemeDetail[] = [
     ],
     officialUrl: 'https://aajeevika.gov.in',
     sourceName: 'aajeevika.gov.in (Ministry of Rural Development)',
+    lastVerifiedDate: '2025-06-15',
+    isActive: true,
+  },
+  {
+    id: 'nlm',
+    name: 'National Livestock Mission',
+    description:
+      'Financial support and subsidies for livestock rearing, poultry, and fodder development to supplement farm income.',
+    category: 'livestock_dairy',
+    ministry: 'Ministry of Fisheries, Animal Husbandry & Dairying',
+    applicableStates: ['All India'],
+    eligibleCrops: 'all',
+    eligibleFarmerCategories: ['all', 'small_marginal', 'large', 'women'],
+    farmSizeCriteria: null,
+    benefits:
+      'Financial support and subsidies for livestock rearing, poultry, and fodder development to supplement farm income.',
+    eligibility:
+      'Farmers, entrepreneurs, and SHGs engaged in or planning livestock-related activities.',
+    requiredDocuments: [
+      'Aadhaar card',
+      'Land records or proof of premises',
+      'Bank account details',
+      'Project proposal for livestock activity',
+    ],
+    applicationProcess: [
+      'Apply through the state animal husbandry department or nlm.udyamimitra.in',
+      'Submit project proposal and required documents',
+      'Approval and subsidy disbursal as per scheme norms',
+    ],
+    officialUrl: 'https://nlm.udyamimitra.in',
+    sourceName: 'nlm.udyamimitra.in (Ministry of Fisheries, Animal Husbandry & Dairying)',
+    lastVerifiedDate: '2025-06-15',
+    isActive: true,
+  },
+  {
+    id: 'dairy-entrepreneurship',
+    name: 'Dairy Entrepreneurship Development Scheme (DEDS)',
+    description:
+      'Back-ended capital subsidy for setting up small dairy farms, milk processing, and cold chain infrastructure.',
+    category: 'livestock_dairy',
+    ministry: 'NABARD / Ministry of Fisheries, Animal Husbandry & Dairying',
+    applicableStates: ['All India'],
+    eligibleCrops: 'all',
+    eligibleFarmerCategories: ['all', 'small_marginal', 'large', 'women'],
+    farmSizeCriteria: null,
+    benefits:
+      'Back-ended capital subsidy of 25-33% for setting up small dairy farms, milk processing, and cold chain infrastructure.',
+    eligibility:
+      'Farmers, individual entrepreneurs, SHGs, and dairy cooperatives.',
+    requiredDocuments: [
+      'Aadhaar card',
+      'Land records or lease agreement for dairy site',
+      'Bank account details',
+      'Detailed project report (DPR)',
+    ],
+    applicationProcess: [
+      'Prepare a project proposal for your dairy venture',
+      'Apply through a NABARD-accredited bank with the proposal',
+      'Bank sanctions loan and forwards subsidy claim to NABARD',
+      'Subsidy is released after project completion and verification',
+    ],
+    officialUrl: 'https://www.nabard.org',
+    sourceName: 'nabard.org (NABARD)',
+    lastVerifiedDate: '2025-06-15',
+    isActive: true,
+  },
+  {
+    id: 'mif',
+    name: 'Micro Irrigation Fund (MIF)',
+    description:
+      'Additional low-interest funding support (beyond PMKSY subsidy) to expand micro-irrigation coverage, routed through state governments.',
+    category: 'irrigation',
+    ministry: 'NABARD / Ministry of Agriculture & Farmers Welfare',
+    applicableStates: ['All India'],
+    eligibleCrops: 'all',
+    eligibleFarmerCategories: ['all', 'small_marginal', 'large', 'women'],
+    farmSizeCriteria: null,
+    benefits:
+      'Additional low-interest funding support (beyond PMKSY subsidy) to expand micro-irrigation coverage, routed through state governments.',
+    eligibility:
+      'State governments applying on behalf of farmer clusters; individual farmers benefit indirectly through state-implemented projects.',
+    requiredDocuments: [
+      'Aadhaar card',
+      'Land ownership records',
+      'Bank account details',
+    ],
+    applicationProcess: [
+      'Check with your state agriculture/irrigation department for active MIF-funded projects in your area',
+      'Apply through the state micro-irrigation scheme once a project is active',
+      'Receive subsidy and install micro-irrigation system through empanelled suppliers',
+    ],
+    officialUrl: 'https://www.nabard.org',
+    sourceName: 'nabard.org (NABARD)',
+    lastVerifiedDate: '2025-06-15',
+    isActive: true,
+  },
+  {
+    id: 'midh',
+    name: 'Mission for Integrated Development of Horticulture (MIDH)',
+    description:
+      'Subsidies for fruit, vegetable, and flower cultivation, including planting material, protected cultivation (greenhouses), and post-harvest infrastructure.',
+    category: 'horticulture',
+    ministry: 'Ministry of Agriculture & Farmers Welfare',
+    applicableStates: ['All India'],
+    eligibleCrops: 'all',
+    eligibleFarmerCategories: ['all', 'small_marginal', 'large', 'women'],
+    farmSizeCriteria: null,
+    benefits:
+      'Subsidies for fruit, vegetable, and flower cultivation, including planting material, protected cultivation (greenhouses), and post-harvest infrastructure.',
+    eligibility:
+      'Farmers growing or planning to grow horticultural crops (fruits, vegetables, spices, flowers).',
+    requiredDocuments: [
+      'Aadhaar card',
+      'Land ownership records',
+      'Bank account details',
+      'Horticulture project plan (if applicable)',
+    ],
+    applicationProcess: [
+      'Apply through the state horticulture department or midh.gov.in',
+      'Submit land records and project details',
+      'Receive subsidy for planting material, greenhouse, or post-harvest infrastructure',
+    ],
+    officialUrl: 'https://midh.gov.in',
+    sourceName: 'midh.gov.in (Ministry of Agriculture & Farmers Welfare)',
+    lastVerifiedDate: '2025-06-15',
+    isActive: true,
+  },
+  {
+    id: 'fpo-scheme',
+    name: 'Formation and Promotion of 10,000 FPOs',
+    description:
+      'Financial support for Farmer Producer Organisations (FPOs) for collective input purchase, processing, and market access, reducing dependency on individual middlemen.',
+    category: 'market_access',
+    ministry: 'Ministry of Agriculture & Farmers Welfare / NABARD',
+    applicableStates: ['All India'],
+    eligibleCrops: 'all',
+    eligibleFarmerCategories: ['all', 'small_marginal', 'large', 'women'],
+    farmSizeCriteria: null,
+    benefits:
+      'Financial support up to ₹18 lakh per Farmer Producer Organisation (FPO) over 3 years for collective input purchase, processing, and market access, reducing dependency on individual middlemen.',
+    eligibility:
+      'Groups of farmers willing to form a registered Farmer Producer Organisation (minimum group size varies by region).',
+    requiredDocuments: [
+      'Aadhaar cards of member farmers',
+      'Land records of members',
+      'FPO registration documents',
+      'Bank account details of the FPO',
+    ],
+    applicationProcess: [
+      'Contact a Cluster Based Business Organisation (CBBO) in your district or state agriculture department to begin FPO formation',
+      'Register the FPO under the Companies Act',
+      'Receive financial support and capacity building over 3 years',
+    ],
+    officialUrl: 'https://www.nabard.org',
+    sourceName: 'nabard.org (NABARD / Ministry of Agriculture & Farmers Welfare)',
+    lastVerifiedDate: '2025-06-15',
+    isActive: true,
+  },
+  {
+    id: 'kalia-model',
+    name: 'State Direct Income Support Schemes (e.g. KALIA, Rythu Bandhu)',
+    description:
+      'Additional state-level direct income support on top of PM-KISAN. Amount and structure vary by state (e.g. Odisha KALIA, Telangana Rythu Bandhu).',
+    category: 'income_support',
+    ministry: 'State Government (varies by state)',
+    applicableStates: ['All India'],
+    eligibleCrops: 'all',
+    eligibleFarmerCategories: ['all', 'small_marginal', 'large', 'tenant', 'women'],
+    farmSizeCriteria: null,
+    benefits:
+      'Additional state-level direct income support on top of PM-KISAN, amount and structure vary by state (e.g. Odisha KALIA, Telangana Rythu Bandhu).',
+    eligibility:
+      'Varies by state, check your specific state scheme for landholding and eligibility criteria.',
+    requiredDocuments: [
+      'Aadhaar card',
+      'Land ownership or tenancy records',
+      'Bank account details',
+    ],
+    applicationProcess: [
+      'Contact your state agriculture department or Common Service Centre for the state-specific scheme active in your area',
+      'Register with land records and Aadhaar',
+      'Receive direct income support in your bank account',
+    ],
+    officialUrl: 'https://www.myscheme.gov.in',
+    sourceName: 'myscheme.gov.in (Government of India)',
+    lastVerifiedDate: '2025-06-15',
+    isActive: true,
+  },
+  {
+    id: 'krishi-udan',
+    name: 'Krishi UDAN 2.0',
+    description:
+      'Subsidized air freight for perishable agricultural produce (fruits, vegetables, fish) to improve market access and reduce post-harvest losses.',
+    category: 'market_access',
+    ministry: 'Ministry of Civil Aviation / Ministry of Agriculture & Farmers Welfare',
+    applicableStates: ['All India'],
+    eligibleCrops: 'all',
+    eligibleFarmerCategories: ['all', 'small_marginal', 'large', 'women'],
+    farmSizeCriteria: null,
+    benefits:
+      'Subsidized air freight for perishable agricultural produce (fruits, vegetables, fish) to improve market access and reduce post-harvest losses.',
+    eligibility:
+      'Farmers, FPOs, and exporters shipping perishable produce from eligible airports.',
+    requiredDocuments: [
+      'Aadhaar card or business registration',
+      'Produce details and phytosanitary certificate (if applicable)',
+      'Bank account details',
+    ],
+    applicationProcess: [
+      'Coordinate through your state agriculture department or an FPO with export/logistics experience',
+      'Ship perishable produce from eligible airports with subsidized freight',
+      'Freight subsidy is applied at participating airports',
+    ],
+    officialUrl: 'https://www.civilaviation.gov.in',
+    sourceName: 'civilaviation.gov.in (Ministry of Civil Aviation)',
     lastVerifiedDate: '2025-06-15',
     isActive: true,
   },
