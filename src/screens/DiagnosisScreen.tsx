@@ -58,6 +58,15 @@ export function DiagnosisScreen({ scan, onBack, onEscalate, onAskAI }: Diagnosis
   const treatmentSteps = scan.result.treatmentSteps ?? [];
   const aboutDescription = scan.result.description || (!hasAIData ? disease.description : '');
 
+  // DIAGNOSTIC: Check translation status for disease name and description
+  console.log('[DiagnosisScreen Translation Diagnostics]', {
+    currentLanguage: lang,
+    diseaseName_rawEnglish: scan.result.diseaseName,
+    aboutDescription_rawEnglish: aboutDescription,
+    aiTranslate_isBeingCalled: false,
+    reason: 'useBatchTranslation hook is not used on this screen — disease name and description are rendered directly without any translation call',
+  });
+
   const needsTreatmentLookup = !isHealthy && !lowConfidence && treatmentSteps.length === 0;
   const [treatmentDetail, setTreatmentDetail] = useState<TreatmentDetail | null>(null);
   const [treatmentLoading, setTreatmentLoading] = useState(false);
