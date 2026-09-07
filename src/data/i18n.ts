@@ -108,6 +108,7 @@ export interface TranslationKey {
   helpKiranDesc: string;
   helpKiranHours: string;
   helpKiranMinistry: string;
+  helpKiranIntro: string;
   helpWhatAsk: string;
   helpAdvisorsReady: string;
   helpCropDiseases: string;
@@ -255,6 +256,7 @@ export const translations: Record<Language, TranslationKey> = {
     helpKCC: 'Kisan Call Centre', helpFreeHelpline: 'Free farmer helpline', helpMinistry: 'Ministry of Agriculture & Farmers Welfare, Government of India',
     helpCall: 'Call', helpTollFree: 'Toll-free · Available 6 AM–10 PM, 7 days a week',
     helpSupportLabel: 'Need support? Free helplines available', helpKiran: 'KIRAN Mental Health Helpline', helpKiranDesc: 'Emotional and mental health support, in your local language', helpKiranHours: 'Toll-free · Available 24 hours, 7 days a week', helpKiranMinistry: 'Ministry of Social Justice & Empowerment, Government of India',
+    helpKiranIntro: 'Farming can be demanding and stressful at times. If you ever feel overwhelmed, free and confidential support is just a call away.',
     helpWhatAsk: 'What you can ask about', helpAdvisorsReady: 'The advisors are ready to help with',
     helpCropDiseases: 'Crop diseases and pests', helpFertilizer: 'Which fertilizer or pesticide to use', helpWeather: 'Weather-related crop problems', helpAnimal: 'Animal husbandry and fisheries',
     helpLocalLang: 'Local language support', helpLocalLangDesc: 'Assistance is provided in your local language',
@@ -321,6 +323,7 @@ export const translations: Record<Language, TranslationKey> = {
     helpKCC: 'किसान कॉल सेंटर', helpFreeHelpline: 'मुफ्त किसान हेल्पलाइन', helpMinistry: 'कृषि एवं किसान कल्याण मंत्रालय, भारत सरकार',
     helpCall: 'कॉल करें', helpTollFree: 'टोल-फ्री · सुबह 6 बजे से रात 10 बजे तक, सप्ताह के 7 दिन',
     helpSupportLabel: 'सहायता चाहिए? मुफ्त हेल्पलाइन उपलब्ध हैं', helpKiran: 'KIRAN मानसिक स्वास्थ्य हेल्पलाइन', helpKiranDesc: 'भावनात्मक और मानसिक स्वास्थ्य सहायता, आपकी स्थानीय भाषा में', helpKiranHours: 'टोल-फ्री · 24 घंटे, सप्ताह के 7 दिन उपलब्ध', helpKiranMinistry: 'सामाजिक न्याय एवं अधिकारिता मंत्रालय, भारत सरकार',
+    helpKiranIntro: 'खेती कभी-कभी थकाऊ और तनावपूर्ण हो सकती है। यदि कभी आप अभिभूत महसूस करें, तो मुफ्त और गोपनीय सहायता बस एक कॉल दूर है।',
     helpWhatAsk: 'आप किस बारे में पूछ सकते हैं', helpAdvisorsReady: 'सलाहकार मदद के लिए तैयार हैं',
     helpCropDiseases: 'फसल रोग और कीट', helpFertilizer: 'कौन सी खाद या कीटनाशक उपयोग करें', helpWeather: 'मौसम संबंधी फसल समस्याएं', helpAnimal: 'पशुपालन और मत्स्य पालन',
     helpLocalLang: 'स्थानीय भाषा सहायता', helpLocalLangDesc: 'आपकी स्थानीय भाषा में सहायता दी जाती है',
@@ -387,6 +390,7 @@ export const translations: Record<Language, TranslationKey> = {
     helpKCC: 'কিসান কল সেন্টার', helpFreeHelpline: 'বিনামূল্য কৃষক হেল্পলাইন', helpMinistry: 'কৃষি ও কৃষক কল্যাণ মন্ত্রণালয়, ভারত সরকার',
     helpCall: 'কল করুন', helpTollFree: 'টোল-ফ্রি · সকাল ৬টা থেকে রাত ১০টা পর্যন্ত, সপ্তাহে ৭ দিন',
     helpSupportLabel: 'সহায়তা দরকার? বিনামূল্য হেল্পলাইন উপলব্ধ', helpKiran: 'KIRAN মানসিক স্বাস্থ্য হেল্পলাইন', helpKiranDesc: 'আবেগজনিত ও মানসিক স্বাস্থ্য সহায়তা, আপনার স্থানীয় ভাষায়', helpKiranHours: 'টোল-ফ্রি · ২৪ ঘন্টা, সপ্তাহে ৭ দিন উপলব্ধ', helpKiranMinistry: 'সামাজিক ন্যায় ও ক্ষমতায়ন মন্ত্রণালয়, ভারত সরকার',
+    helpKiranIntro: 'কৃষি কখনও কখনও ক্লান্তিকর ও চাপপূর্ণ হতে পারে। আপনি যদি কখনও পরাস্ত বোধ করেন, বিনামূল্য ও গোপনীয় সহায়তা মাত্র একটি কল দূরে।',
     helpWhatAsk: 'আপনি কী সম্পর্কে জিজ্ঞাসা করতে পারেন', helpAdvisorsReady: 'উপদেষ্টারা সাহায্য করতে প্রস্তুত',
     helpCropDiseases: 'ফসল রোগ ও পোকামাকড়', helpFertilizer: 'কোন সার বা কীটনাশক ব্যবহার করবেন', helpWeather: 'আবহাওয়া সংক্রান্ত ফসল সমস্যা', helpAnimal: 'পশুপালন ও মৎস্য চাষ',
     helpLocalLang: 'স্থানীয় ভাষা সহায়তা', helpLocalLangDesc: 'আপনার স্থানীয় ভাষায় সহায়তা দেওয়া হয়',
@@ -453,6 +457,7 @@ export const translations: Record<Language, TranslationKey> = {
     helpKCC: 'కిసాన్ కాల్ సెంటర్', helpFreeHelpline: 'ఉచిత రైతు హెల్ప్‌లైన్', helpMinistry: 'వ్యవసాయ & రైతు సంక్షేమ మంత్రిత్వ శాఖ, భారత ప్రభుత్వం',
     helpCall: 'కాల్ చేయండి', helpTollFree: 'టోల్-ఫ్రీ · ఉదయం 6 గం. నుండి రాత్రి 10 గం. వరకు, వారంలో 7 రోజులు',
     helpSupportLabel: 'సహాయం కావాలా? ఉచిత హెల్ప్‌లైన్‌లు అందుబాటులో ఉన్నాయి', helpKiran: 'KIRAN మానసిక ఆరోగ్య హెల్ప్‌లైన్', helpKiranDesc: 'భావోద్వేగ మరియు మానసిక ఆరోగ్య సహాయం, మీ స్థానిక భాషలో', helpKiranHours: 'టోల్-ఫ్రీ · 24 గంటలు, వారంలో 7 రోజులు అందుబాటులో', helpKiranMinistry: 'సామాజిక న్యాయ & సాధికార మంత్రిత్వ శాఖ, భారత ప్రభుత్వం',
+    helpKiranIntro: 'వ్యవసాయం కొన్నిసార్లు అలసిపోయేదిగా మరియు ఒత్తిడితో కూడుకున్నదిగా ఉండవచ్చు. మీరు ఎప్పుడైనా అధిక ఒత్తిడిని అనుభవిస్తే, ఉచిత మరియు గోప్య సహాయం కేవలం ఒక కాల్ దూరంలో ఉంది.',
     helpWhatAsk: 'మీరు దేని గురించి అడగవచ్చు', helpAdvisorsReady: 'సలహాదారులు సహాయం చేయడానికి సిద్ధంగా ఉన్నారు',
     helpCropDiseases: 'పంట వ్యాధులు మరియు పురుగులు', helpFertilizer: 'ఏ ఎరువు లేదా పురుగుమందు ఉపయోగించాలి', helpWeather: 'వాతావరణ సంబంధిత పంట సమస్యలు', helpAnimal: 'పశువుల పెంపకం మరియు మత్స్య పరిశ్రమ',
     helpLocalLang: 'స్థానిక భాషా మద్దతు', helpLocalLangDesc: 'మీ స్థానిక భాషలో సహాయం అందించబడుతుంది',
@@ -519,6 +524,7 @@ export const translations: Record<Language, TranslationKey> = {
     helpKCC: 'किसान कॉल सेंटर', helpFreeHelpline: 'मोफत शेतकरी हेल्पलाइन', helpMinistry: 'कृषी आणि शेतकरी कल्याण मंत्रालय, भारत सरकार',
     helpCall: 'कॉल करा', helpTollFree: 'टोल-फ्री · सकाळ 6 ते रात्री 10, आठवड्याचे 7 दिवस',
     helpSupportLabel: 'मदत हवी आहे? मोफत हेल्पलाइन उपलब्ध आहेत', helpKiran: 'KIRAN मानसिक आरोग्य हेल्पलाइन', helpKiranDesc: 'भावनिक आणि मानसिक आरोग्य मदत, तुमच्या स्थानिक भाषेत', helpKiranHours: 'टोल-फ्री · 24 तास, आठवड्याचे 7 दिवस उपलब्ध', helpKiranMinistry: 'सामाजिक न्याय आणि सक्षमीकरण मंत्रालय, भारत सरकार',
+    helpKiranIntro: 'शेती कधीकधी थकवणारी आणि तणावपूर्ण असू शकते. जर तुम्ही कधी जास्त तणावाखाली असाल, तर मोफत आणि गोपनीय मदत फक्त एका कॉलवर उपलब्ध आहे.',
     helpWhatAsk: 'तुम्ही कशाबद्दल विचारू शकता', helpAdvisorsReady: 'सल्लागार मदतीसाठी तयार आहेत',
     helpCropDiseases: 'पीक रोग आणि कीड', helpFertilizer: 'कोणते खत किंवा कीटनाशक वापरावे', helpWeather: 'हवामानाशी संबंधित पीक समस्या', helpAnimal: 'पशुसंवर्धन आणि मत्स्यपालन',
     helpLocalLang: 'स्थानिक भाषा समर्थन', helpLocalLangDesc: 'तुमच्या स्थानिक भाषेत मदत दिली जाते',
@@ -585,6 +591,7 @@ export const translations: Record<Language, TranslationKey> = {
     helpKCC: 'கிசான் கால் சென்டர்', helpFreeHelpline: 'இலவச விவசாயி ஹெல்ப்லைன்', helpMinistry: 'வேளாண்மை & விவசாயிகள் நலத்துறை அமைச்சகம், இந்திய அரசாங்கம்',
     helpCall: 'அழைக்கவும்', helpTollFree: 'டோல்-ஃப்ரீ · காலை 6 மணி முதல் இரவு 10 மணி வரை, வாரம் 7 நாட்கள்',
     helpSupportLabel: 'உதவி தேவையா? இலவச ஹெல்ப்லைன்கள் கிடைக்கின்றன', helpKiran: 'KIRAN மனநல ஹெல்ப்லைன்', helpKiranDesc: 'உணர்ச்சி மற்றும் மனநல உதவி, உங்கள் உள்ளூர் மொழியில்', helpKiranHours: 'டோல்-ஃப்ரீ · 24 மணிநேரம், வாரம் 7 நாட்கள் கிடைக்கிறது', helpKiranMinistry: 'சமூக நீதி & அதிகாரமளிப்பு அமைச்சகம், இந்திய அரசாங்கம்',
+    helpKiranIntro: 'விவசாயம் சில நேரங்களில் களைப்பானதாகவும் மன அழுத்தம் நிறைந்ததாகவும் இருக்கலாம். நீங்கள் எப்போதாவது அதிக மன அழுத்தத்தில் இருந்தால், இலவச மற்றும் ரகசிய உதவி ஒரு அழைப்பில் கிடைக்கிறது.',
     helpWhatAsk: 'நீங்கள் எதைப் பற்றி கேட்கலாம்', helpAdvisorsReady: 'ஆலோசகர்கள் உதவ தயாராக உள்ளனர்',
     helpCropDiseases: 'பயிர் நோய்கள் மற்றும் பூச்சிகள்', helpFertilizer: 'எந்த உரம் அல்லது பூச்சிக்கொல்லி பயன்படுத்துவது', helpWeather: 'வானிலை தொடர்பான பயிர் பிரச்சினைகள்', helpAnimal: 'கால்நடை வளர்ப்பு மற்றும் மீன்வளர்ப்பு',
     helpLocalLang: 'உள்ளூர் மொழி ஆதரவு', helpLocalLangDesc: 'உங்கள் உள்ளூர் மொழியில் உதவி வழங்கப்படுகிறது',

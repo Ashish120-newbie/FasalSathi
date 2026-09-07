@@ -629,12 +629,10 @@ export function HomeScreen({ onResult, onNavigate }: HomeScreenProps) {
         <h2 className="heading-display mt-1 text-[20px] font-bold text-forest-900">{t.helpTitle}</h2>
         <p className="mt-0.5 text-[13px] leading-5 text-forest-400">{t.helpSubtitle}</p>
 
-        <div className="mt-4 space-y-4">
-          <div>
+        <div className="mt-5 space-y-4">
+          {/* Kisan Call Centre */}
+          <div className="rounded-xl border border-forest-100 bg-white p-4">
             <p className="section-label">{t.helpKCC}</p>
-            <h3 className="heading-display mt-1 flex items-center gap-2 text-[18px] font-bold text-forest-900">
-              <Phone size={18} className="text-forest-600" /> {t.helpFreeHelpline}
-            </h3>
             <p className="mt-0.5 text-[13px] leading-5 text-forest-400">{t.helpMinistry}</p>
             <a
               href="tel:18001801551"
@@ -645,16 +643,17 @@ export function HomeScreen({ onResult, onNavigate }: HomeScreenProps) {
             <p className="mt-2 text-center text-xs text-forest-400">{t.helpTollFree}</p>
           </div>
 
+          {/* KIRAN Mental Health Helpline */}
           <div className="rounded-xl border border-forest-100 bg-white p-4">
             <div className="flex items-center gap-1.5">
-              <HeartHandshake size={15} className="text-forest-500" />
+              <HeartHandshake size={15} className="text-teal-600" />
               <p className="section-label">{t.helpKiran}</p>
             </div>
-            <h3 className="mt-1 text-[18px] font-semibold text-forest-900">{t.helpKiranDesc}</h3>
-            <p className="mt-0.5 text-[13px] leading-5 text-forest-400">{t.helpKiranMinistry}</p>
+            <p className="mt-1.5 text-[13px] leading-5 text-forest-500">{t.helpKiranIntro}</p>
+            <p className="mt-1.5 text-[13px] leading-5 text-forest-400">{t.helpKiranMinistry}</p>
             <a
               href="tel:18005990019"
-              className="mt-3 flex w-full items-center justify-center gap-2 rounded-lg bg-forest-600 px-5 py-2.5 text-base font-semibold text-white hover:bg-forest-700 transition-colors"
+              className="mt-3 flex w-full items-center justify-center gap-2 rounded-xl bg-teal-600 px-5 py-3.5 text-base font-bold text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.25),0_6px_16px_rgba(13,148,136,0.3),0_2px_4px_rgba(0,0,0,0.08)] hover:bg-teal-700 hover:shadow-[inset_0_1px_0_rgba(255,255,255,0.3),0_8px_20px_rgba(13,148,136,0.4),0_2px_4px_rgba(0,0,0,0.1)] transition-all duration-200"
             >
               <Phone size={19} /> {t.helpCall} 1800-599-0019
             </a>
@@ -662,7 +661,7 @@ export function HomeScreen({ onResult, onNavigate }: HomeScreenProps) {
           </div>
         </div>
 
-        <div className="mt-6">
+        <div className="mt-10">
           <h3 className="heading-display text-[18px] font-bold text-forest-900">{t.helpWhatAsk}</h3>
           <p className="mt-0.5 text-[13px] text-forest-400">{t.helpAdvisorsReady}</p>
           <div className="mt-3 space-y-3">
