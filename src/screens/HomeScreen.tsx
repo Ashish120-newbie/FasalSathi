@@ -1,4 +1,4 @@
-import { Check, ChevronRight, ImagePlus, Info, AlertCircle, Cloud, CloudRain, Sun, Store, BookOpen, Bug, Calculator, SprayCan, Sprout, Leaf, ShieldAlert, Phone, PhoneCall, Users, Wheat, Clock, RefreshCw, RotateCw, Camera, CheckCircle2, AlertTriangle, XCircle, Droplets, FlaskConical, Sprout as SproutIcon } from 'lucide-react';
+import { Check, ChevronRight, ImagePlus, Info, AlertCircle, Cloud, CloudRain, Sun, Store, BookOpen, Bug, Calculator, SprayCan, Sprout, Leaf, ShieldAlert, Phone, PhoneCall, Users, Wheat, Clock, RefreshCw, RotateCw, Camera, CheckCircle2, AlertTriangle, XCircle, Droplets, FlaskConical, Sprout as SproutIcon, HeartHandshake } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 import { classifyCropImage } from '@/data/classifier';
 import type { CropId, GrowthStage, ScanRecord } from '@/data/types';
@@ -629,19 +629,37 @@ export function HomeScreen({ onResult, onNavigate }: HomeScreenProps) {
         <h2 className="heading-display mt-1 text-[20px] font-bold text-forest-900">{t.helpTitle}</h2>
         <p className="mt-0.5 text-[13px] leading-5 text-forest-400">{t.helpSubtitle}</p>
 
-        <div className="mt-4">
-          <p className="section-label">{t.helpKCC}</p>
-          <h3 className="heading-display mt-1 flex items-center gap-2 text-[18px] font-bold text-forest-900">
-            <Phone size={18} className="text-forest-600" /> {t.helpFreeHelpline}
-          </h3>
-          <p className="mt-0.5 text-[13px] leading-5 text-forest-400">{t.helpMinistry}</p>
-          <a
-            href="tel:18001801551"
-            className="press-scale mt-3 flex w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-b from-amber-300 to-amber-400 px-5 py-3.5 text-base font-bold text-amber-950 shadow-[inset_0_1px_0_rgba(255,255,255,0.45),inset_0_-2px_4px_rgba(120,60,0,0.15),0_6px_16px_rgba(247,168,32,0.35),0_2px_4px_rgba(0,0,0,0.08)] hover:from-amber-400 hover:to-amber-500 hover:shadow-[inset_0_1px_0_rgba(255,255,255,0.5),inset_0_-2px_4px_rgba(120,60,0,0.2),0_8px_20px_rgba(247,168,32,0.4),0_2px_4px_rgba(0,0,0,0.1)] transition-all duration-200"
-          >
-            <PhoneCall size={20} /> {t.helpCall} 1800-180-1551
-          </a>
-          <p className="mt-2 text-center text-xs text-forest-400">{t.helpTollFree}</p>
+        <div className="mt-4 space-y-4">
+          <div>
+            <p className="section-label">{t.helpKCC}</p>
+            <h3 className="heading-display mt-1 flex items-center gap-2 text-[18px] font-bold text-forest-900">
+              <Phone size={18} className="text-forest-600" /> {t.helpFreeHelpline}
+            </h3>
+            <p className="mt-0.5 text-[13px] leading-5 text-forest-400">{t.helpMinistry}</p>
+            <a
+              href="tel:18001801551"
+              className="press-scale mt-3 flex w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-b from-amber-300 to-amber-400 px-5 py-3.5 text-base font-bold text-amber-950 shadow-[inset_0_1px_0_rgba(255,255,255,0.45),inset_0_-2px_4px_rgba(120,60,0,0.15),0_6px_16px_rgba(247,168,32,0.35),0_2px_4px_rgba(0,0,0,0.08)] hover:from-amber-400 hover:to-amber-500 hover:shadow-[inset_0_1px_0_rgba(255,255,255,0.5),inset_0_-2px_4px_rgba(120,60,0,0.2),0_8px_20px_rgba(247,168,32,0.4),0_2px_4px_rgba(0,0,0,0.1)] transition-all duration-200"
+            >
+              <PhoneCall size={20} /> {t.helpCall} 1800-180-1551
+            </a>
+            <p className="mt-2 text-center text-xs text-forest-400">{t.helpTollFree}</p>
+          </div>
+
+          <div className="rounded-xl border border-forest-100 bg-white p-4">
+            <div className="flex items-center gap-1.5">
+              <HeartHandshake size={15} className="text-forest-500" />
+              <p className="section-label">{t.helpKiran}</p>
+            </div>
+            <h3 className="mt-1 text-[18px] font-semibold text-forest-900">{t.helpKiranDesc}</h3>
+            <p className="mt-0.5 text-[13px] leading-5 text-forest-400">{t.helpKiranMinistry}</p>
+            <a
+              href="tel:18005990019"
+              className="mt-3 flex w-full items-center justify-center gap-2 rounded-lg bg-forest-600 px-5 py-2.5 text-base font-semibold text-white hover:bg-forest-700 transition-colors"
+            >
+              <Phone size={19} /> {t.helpCall} 1800-599-0019
+            </a>
+            <p className="mt-2 text-center text-xs text-forest-400">{t.helpKiranHours}</p>
+          </div>
         </div>
 
         <div className="mt-6">
