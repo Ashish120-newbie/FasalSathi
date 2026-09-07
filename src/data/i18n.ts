@@ -226,6 +226,26 @@ export interface TranslationKey {
   paLoading: string;
   paWeatherError: string;
   paRetry: string;
+  // Scheme category labels
+  catIncomeSupport: string;
+  catInsurance: string;
+  catCredit: string;
+  catSubsidy: string;
+  catSoilHealth: string;
+  catOrganicFarming: string;
+  catIrrigation: string;
+  catPriceSupport: string;
+  catWomenFarmers: string;
+  catLivestockDairy: string;
+  catHorticulture: string;
+  catMarketAccess: string;
+  // Farmer category labels
+  fcAll: string;
+  fcSmallMarginal: string;
+  fcLarge: string;
+  fcTenant: string;
+  fcWomen: string;
+  fcOrganic: string;
 }
 
 export const translations: Record<Language, TranslationKey> = {
@@ -295,6 +315,8 @@ export const translations: Record<Language, TranslationKey> = {
     ciTitle: 'Crop Guide', ciSubtitle: 'Season, water, soil, and tips for each crop.', ciSearch: 'Search crops...', ciNoResults: 'No crops match your search.', 
     ctTitle: 'Cultivation Tips', ctSubtitle: 'Practical guidance for sowing, irrigation, harvesting, and more.', ctSearch: 'Search crops...', ctNoResults: 'No crops match your search.', ctSowing: 'Sowing & planting', ctSpacing: 'Spacing & plant density', ctIrrigation: 'Irrigation', ctFertilization: 'Fertilization', ctPestWatch: 'Pest & disease watch', ctHarvest: 'Harvest', ctStorage: 'Storage', 
     paTitle: 'Pest & Disease Alert', paSubtitle: 'Weather-based disease risk for your area', paNoRisk: 'No elevated disease risk detected for current conditions.', paDisclaimer: 'Risk estimates are based on general weather-disease correlations, not confirmed outbreaks. Always inspect your crop directly.', paHigh: 'High', paModerate: 'Moderate', paLoading: 'Checking weather conditions...', paWeatherError: 'Unable to fetch weather data. Please try again.', paRetry: 'Retry', 
+    catIncomeSupport: 'Income Support', catInsurance: 'Insurance', catCredit: 'Credit & Loans', catSubsidy: 'Subsidy', catSoilHealth: 'Soil Health', catOrganicFarming: 'Organic Farming', catIrrigation: 'Irrigation', catPriceSupport: 'Price Support', catWomenFarmers: 'Women Farmers', catLivestockDairy: 'Livestock & Dairy', catHorticulture: 'Horticulture', catMarketAccess: 'Market Access', 
+    fcAll: 'All Farmers', fcSmallMarginal: 'Small & Marginal', fcLarge: 'Large Farmers', fcTenant: 'Tenant / Sharecropper', fcWomen: 'Women Farmers', fcOrganic: 'Organic Farmers', 
   },
   hi: {
     appName: 'FasalSathi', appTagline: 'फसल की पहचान, सही समाधान',
@@ -362,6 +384,8 @@ export const translations: Record<Language, TranslationKey> = {
     ciTitle: 'फसल गाइड', ciSubtitle: 'प्रत्येक फसल के लिए मौसम, जल, मिट्टी और सुझाव।', ciSearch: 'फसलें खोजें...', ciNoResults: 'कोई फसल आपकी खोज से मेल नहीं खाती।', 
     ctTitle: 'खेती युक्तियां', ctSubtitle: 'बुवाई, सिंचाई, कटाई और अधिक के लिए व्यावहारिक मार्गदर्शन।', ctSearch: 'फसलें खोजें...', ctNoResults: 'कोई फसल आपकी खोज से मेल नहीं खाती।', ctSowing: 'बुवाई और रोपण', ctSpacing: 'दूरी और पौधा घनत्व', ctIrrigation: 'सिंचाई', ctFertilization: 'खाद और उर्वरक', ctPestWatch: 'कीट और रोग निगरानी', ctHarvest: 'कटाई', ctStorage: 'भंडारण', 
     paTitle: 'कीट एवं रोग अलर्ट', paSubtitle: 'आपके क्षेत्र के लिए मौसम आधारित रोग जोखिम', paNoRisk: 'वर्तमान परिस्थितियों के लिए कोई बढ़ा हुआ रोग जोखिम नहीं पाया गया।', paDisclaimer: 'जोखिम अनुमान सामान्य मौसम-रोग संबंधों पर आधारित हैं, पुष्ट विस्फोटक नहीं। हमेशा अपनी फसल की सीधे जांच करें।', paHigh: 'उच्च', paModerate: 'मध्यम', paLoading: 'मौसम परिस्थितियां जांची जा रही हैं...', paWeatherError: 'मौसम डेटा प्राप्त करने में असमर्थ। कृपया पुनः प्रयास करें।', paRetry: 'पुनः प्रयास करें', 
+    catIncomeSupport: 'आय सहायता', catInsurance: 'बीमा', catCredit: 'क्रेडिट और ऋण', catSubsidy: 'सब्सिडी', catSoilHealth: 'मिट्टी स्वास्थ्य', catOrganicFarming: 'जैविक खेती', catIrrigation: 'सिंचाई', catPriceSupport: 'मूल्य सहायता', catWomenFarmers: 'महिला किसान', catLivestockDairy: 'पशुधन और डेयरी', catHorticulture: 'बागवानी', catMarketAccess: 'बाजार पहुँच', 
+    fcAll: 'सभी किसान', fcSmallMarginal: 'छोटे और सीमांत', fcLarge: 'बड़े किसान', fcTenant: 'बटाईदार / पट्टेदार', fcWomen: 'महिला किसान', fcOrganic: 'जैविक किसान', 
   },
   bn: {
     appName: 'FasalSathi', appTagline: 'ফসলের পরিচয়, সঠিক সমাধান',
@@ -429,6 +453,8 @@ export const translations: Record<Language, TranslationKey> = {
     ciTitle: 'ফসল গাইড', ciSubtitle: 'প্রতিটি ফসলের জন্য ঋতু, জল, মাটি এবং টিপস।', ciSearch: 'ফসল খুঁজুন...', ciNoResults: 'কোনো ফসল আপনার অনুসন্ধানের সাথে মেলে না।', 
     ctTitle: 'চাষ পদ্ধতি', ctSubtitle: 'বপন, সেচ, ফসল কাটা এবং আরও জন্য ব্যবহারিক নির্দেশিকা।', ctSearch: 'ফসল খুঁজুন...', ctNoResults: 'কোনো ফসল আপনার অনুসন্ধানের সাথে মেলে না।', ctSowing: 'বপন ও রোপণ', ctSpacing: 'দূরত্ব ও উদ্ভিদ ঘনত্ব', ctIrrigation: 'সেচ', ctFertilization: 'সার প্রয়োগ', ctPestWatch: 'পোকা ও রোগ নজরদারি', ctHarvest: 'ফসল কাটা', ctStorage: 'সংরক্ষণ', 
     paTitle: 'পোকা ও রোগ সতর্কতা', paSubtitle: 'আপনার এলাকার জন্য আবহাওয়া-ভিত্তিক রোগ ঝুঁকি', paNoRisk: 'বর্তমান পরিস্থিতির জন্য কোনো উচ্চ রোগ ঝুঁকি সনাক্ত করা হয়নি।', paDisclaimer: 'ঝুঁকি অনুমান সাধারণ আবহাওয়া-রোগ সম্পর্কের উপর ভিত্তি করে, নিশ্চিত প্রাদুর্ভাব নয়। সর্বদা আপনার ফসল সরাসরি পরীক্ষা করুন।', paHigh: 'উচ্চ', paModerate: 'মধ্যম', paLoading: 'আবহাওয়া পরিস্থিতি পরীক্ষা করা হচ্ছে...', paWeatherError: 'আবহাওয়া ডেটা আনতে অক্ষম। আবার চেষ্টা করুন।', paRetry: 'আবার চেষ্টা করুন', 
+    catIncomeSupport: 'আয় সহায়তা', catInsurance: 'বীমা', catCredit: 'ক্রেডিট ও ঋণ', catSubsidy: 'ভর্তুকি', catSoilHealth: 'মাটির স্বাস্থ্য', catOrganicFarming: 'জৈব চাষ', catIrrigation: 'সেচ', catPriceSupport: 'মূল্য সহায়তা', catWomenFarmers: 'নারী কৃষক', catLivestockDairy: 'পশুপালন ও ডেইরি', catHorticulture: 'বাগান', catMarketAccess: 'বাজার অ্যাক্সেস', 
+    fcAll: 'সব কৃষক', fcSmallMarginal: 'ছোট ও প্রান্তিক', fcLarge: 'বড় কৃষক', fcTenant: 'বর্গাদার / প্ট্টাদার', fcWomen: 'নারী কৃষক', fcOrganic: 'জৈব কৃষক', 
   },
   te: {
     appName: 'FasalSathi', appTagline: 'పంట గుర్తింపు, సరైన పరిష్కారం',
@@ -496,6 +522,8 @@ export const translations: Record<Language, TranslationKey> = {
     ciTitle: 'పంట గైడ్', ciSubtitle: 'ప్రతి పంటకు సీజన్, నీరు, నేల మరియు చిట్కాలు.', ciSearch: 'పంటలను శోధించండి...', ciNoResults: 'మీ శోధనతో ఏ పంటలు సరిపోలవు.', 
     ctTitle: 'సాగు చిట్కాలు', ctSubtitle: 'విత్తన, నీటిపారుదల, పంట కోత మరియు మరిన్నింటికి ఆచరణీయ మార్గదర్శకం.', ctSearch: 'పంటలను శోధించండి...', ctNoResults: 'మీ శోధనతో ఏ పంటలు సరిపోలవు.', ctSowing: 'విత్తనం మరియు నాటు', ctSpacing: 'దూరం మరియు మొక్క సాంద్రత', ctIrrigation: 'నీటిపారుదల', ctFertilization: 'ఎరువు ప్రయోగం', ctPestWatch: 'పురుగు మరియు వ్యాధి పర్యవేక్షణ', ctHarvest: 'పంట కోత', ctStorage: 'నిల్వ', 
     paTitle: 'పురుగు & వ్యాధి హెచ్చరిక', paSubtitle: 'మీ ప్రాంతం కోసం వాతావరణ ఆధారిత వ్యాధి ప్రమాదం', paNoRisk: 'ప్రస్తుత పరిస్థితులకు ఎలాంటి అధిక వ్యాధి ప్రమాదం గుర్తించబడలేదు.', paDisclaimer: 'ప్రమాద అంచనాలు సాధారణ వాతావరణ-వ్యాధి సంబంధాలపై ఆధారపడి ఉంటాయి, నిర్ధారిత వ్యాధి వ్యాప్తులు కాదు. ఎల్లప్పుడూ మీ పంటను నేరుగా పరిశీలించండి.', paHigh: 'అధిక', paModerate: 'మధ్యమ', paLoading: 'వాతావరణ పరిస్థితులను తనిఖీ చేస్తోంది...', paWeatherError: 'వాతావరణ డేటా పొందడం సాధ్యం కాలేదు. దయచేసి మళ్లీ ప్రయత్నించండి.', paRetry: 'మళ్లీ ప్రయత్నించండి', 
+    catIncomeSupport: 'ఆదాయ సహాయం', catInsurance: 'బీమా', catCredit: 'క్రెడిట్ & రుణాలు', catSubsidy: 'రాయితీ', catSoilHealth: 'నేల ఆరోగ్యం', catOrganicFarming: 'సేంద్రీయ వ్యవసాయం', catIrrigation: 'నీటిపారుదల', catPriceSupport: 'ధర మద్దతు', catWomenFarmers: 'మహిళా రైతులు', catLivestockDairy: 'పశువులు & డెయిరీ', catHorticulture: 'ఉద్యానవనం', catMarketAccess: 'మార్కెట్ యాక్సెస్', 
+    fcAll: 'అన్ని రైతులు', fcSmallMarginal: 'చిన్న & సాహసిక', fcLarge: 'పెద్ద రైతులు', fcTenant: 'కౌలుదారు / పట్టాదారు', fcWomen: 'మహిళా రైతులు', fcOrganic: 'సేంద్రీయ రైతులు', 
   },
   mr: {
     appName: 'FasalSathi', appTagline: 'पिकाची ओळख, योग्य उपाय',
@@ -563,6 +591,8 @@ export const translations: Record<Language, TranslationKey> = {
     ciTitle: 'पीक गाइड', ciSubtitle: 'प्रत्येक पिकासाठी ऋतू, पाणी, माती आणि टिप्स.', ciSearch: 'पीक शोधा...', ciNoResults: 'तुमच्या शोधाशी कोणतेही पीक जुळत नाही.', 
     ctTitle: 'लागवड टिप्स', ctSubtitle: 'पेरणी, ओलित, कापणी आणि बरेच काही यासाठी व्यावहारिक मार्गदर्शन.', ctSearch: 'पीक शोधा...', ctNoResults: 'तुमच्या शोधाशी कोणतेही पीक जुळत नाही.', ctSowing: 'पेरणी आणि लागवड', ctSpacing: 'अंतर आणि रोप घनता', ctIrrigation: 'ओलित', ctFertilization: 'खत वापर', ctPestWatch: 'कीड आणि रोग निरीक्षण', ctHarvest: 'कापणी', ctStorage: 'साठवण', 
     paTitle: 'कीड व रोग सतर्कता', paSubtitle: 'तुमच्या भागासाठी हवामान-आधारित रोग जोखीम', paNoRisk: 'सद्य परिस्थितीसाठी कोणताही वाढलेला रोग जोखीम आढळला नाही.', paDisclaimer: 'जोखीम अंदाज सामान्य हवामान-रोग संबंधांवर आधारित आहेत, निश्चित साथीचे रोग नाही. नेहमी तुमच्या पिकाची थेट तपासणी करा.', paHigh: 'उच्च', paModerate: 'मध्यम', paLoading: 'हवामान परिस्थिती तपासली जात आहे...', paWeatherError: 'हवामान डेटा मिळवण्यात अक्षम. कृपया पुन्हा प्रयत्न करा.', paRetry: 'पुन्हा प्रयत्न करा', 
+    catIncomeSupport: 'आय सहाय्य', catInsurance: 'विमा', catCredit: 'कर्ज व क्रेडिट', catSubsidy: 'अनुदान', catSoilHealth: 'माती आरोग्य', catOrganicFarming: 'सेंद्रिय शेती', catIrrigation: 'ओलित', catPriceSupport: 'किंमत सहाय्य', catWomenFarmers: 'महिला शेतकरी', catLivestockDairy: 'पशुसंवर्धन व डेअरी', catHorticulture: 'बागायती', catMarketAccess: 'बाजार प्रवेश', 
+    fcAll: 'सर्व शेतकरी', fcSmallMarginal: 'लहान व सीमांत', fcLarge: 'मोठे शेतकरी', fcTenant: 'कौलू / भाडेकरू', fcWomen: 'महिला शेतकरी', fcOrganic: 'सेंद्रिय शेतकरी', 
   },
   ta: {
     appName: 'FasalSathi', appTagline: 'பயிர் அடையாளம், சரியான தீர்வு',
@@ -630,5 +660,7 @@ export const translations: Record<Language, TranslationKey> = {
     ciTitle: 'பயிர் வழிகாட்டி', ciSubtitle: 'ஒவ்வொரு பயிருக்கும் பருவம், நீர், மண் மற்றும் குறிப்புகள்.', ciSearch: 'பயிர்களைத் தேடவும்...', ciNoResults: 'உங்கள் தேடலுடன் எந்த பயிர்களும் பொருந்தவில்லை.', 
     ctTitle: 'சாகுபடி குறிப்புகள்', ctSubtitle: 'விதைப்பு, நீர்ப்பாசன, அறுவடை மற்றும் பலவற்றிற்கான நடைமுறை வழிகாட்டி.', ctSearch: 'பயிர்களைத் தேடவும்...', ctNoResults: 'உங்கள் தேடலுடன் எந்த பயிர்களும் பொருந்தவில்லை.', ctSowing: 'விதைப்பு மற்றும் நடவு', ctSpacing: 'இடைவெளி மற்றும் செடி அடர்த்தி', ctIrrigation: 'நீர்ப்பாசனம்', ctFertilization: 'உரம் பயன்பாடு', ctPestWatch: 'பூச்சி மற்றும் நோய் கண்காணிப்பு', ctHarvest: 'அறுவடை', ctStorage: 'சேமிப்பு', 
     paTitle: 'பூச்சி & நோய எச்சரிக்கை', paSubtitle: 'உங்கள் பகுதிக்கான வானிலை அடிப்படையிலான நோய ஆபத்து', paNoRisk: 'தற்போதைய நிலைகளுக்கு எந்த அதிகரித்த நோய ஆபத்தும் கண்டறியப்படவில்லை.', paDisclaimer: 'ஆபத்து கணிப்புகள் பொதுவான வானிலை-நோய தொடர்புகளின் அடிப்படையில், உறுதிப்படுத்தப்பட்ட வெடிப்புகள் அல்ல. எப்போதும் உங்கள் பயிரை நேரடியாக சரிபார்க்கவும்.', paHigh: 'உயர்', paModerate: 'மிதம்', paLoading: 'வானிலை நிலைகளை சரிபார்க்கிறது...', paWeatherError: 'வானிலை தரவை பெற முடியவில்லை. மீண்டும் முயற்சிக்கவும்.', paRetry: 'மீண்டும் முயற்சிக்கவும்', 
+    catIncomeSupport: 'வருமான உதவி', catInsurance: 'காப்பீடு', catCredit: 'கடன் & நிதி', catSubsidy: 'மானியம்', catSoilHealth: 'மண் ஆரோக்கியம்', catOrganicFarming: 'இயற்கை வேளாண்மை', catIrrigation: 'நீர்ப்பாசனம்', catPriceSupport: 'விலை ஆதரவு', catWomenFarmers: 'பெண் விவசாயிகள்', catLivestockDairy: 'கால்நடை & பால்', catHorticulture: 'தோட்டக்கலை', catMarketAccess: 'சந்தை அணுகல்', 
+    fcAll: 'அனைத்து விவசாயிகள்', fcSmallMarginal: 'சிறு & விளாம்பல்', fcLarge: 'பெரிய விவசாயிகள்', fcTenant: 'குத்தகை / பகிர்வு', fcWomen: 'பெண் விவசாயிகள்', fcOrganic: 'இயற்கை விவசாயிகள்', 
   },
 };
