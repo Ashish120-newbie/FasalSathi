@@ -8,7 +8,7 @@ verify_jwt = true
 verify_jwt = true
 
 [functions.ai-translate]
-verify_jwt = true
+verify_jwt = false
 
 [functions.treatment-detail]
 verify_jwt = true

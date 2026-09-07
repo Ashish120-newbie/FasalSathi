@@ -71,7 +71,7 @@ ${texts.map((t, i) => `[${i + 1}] ${t}`).join("\n\n")}`;
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           contents: [{ parts: [{ text: prompt }] }],
-          generationConfig: { temperature: 0.2, maxOutputTokens: 2000 },
+          generationConfig: { temperature: 0.2, maxOutputTokens: 8000 },
         }),
         signal: controller.signal,
       });

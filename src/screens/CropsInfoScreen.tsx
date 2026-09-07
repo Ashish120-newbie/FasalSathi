@@ -3,6 +3,8 @@ import { ChevronDown, Search, Sprout } from 'lucide-react';
 import { crops, cropName } from '@/data/crops';
 import { cropInfo } from '@/data/cropInfo';
 import { useLang } from '@/lib/lang';
+import { useBatchTranslation } from '@/lib/useBatchTranslation';
+import { libraryLabels } from '@/data/libraryLabels';
 
 function displayLabel(key: string, lang: ReturnType<typeof useLang>['lang']): { emoji: string; name: string } {
   const crop = crops.find((c) => c.id === key);
@@ -27,6 +29,10 @@ function CropCard({ cropKey, lang }: { cropKey: string; lang: ReturnType<typeof 
   const info = cropInfo[cropKey];
   const { emoji, name } = displayLabel(cropKey, lang);
 
+  const texts = useMemo(() => [info.season, info.water, info.soil, info.tip], [info]);
+  const translated = useBatchTranslation(texts, lang, expanded);
+  const labels = libraryLabels[lang];
+
   return (
     <div className="overflow-hidden rounded-xl border border-forest-100 bg-white">
       <button
@@ -38,7 +44,7 @@ function CropCard({ cropKey, lang }: { cropKey: string; lang: ReturnType<typeof 
             <span className="text-base">{emoji}</span>
             <h3 className="truncate text-[15px] font-semibold text-forest-900">{name}</h3>
           </div>
-          <p className="mt-0.5 truncate text-[12px] text-forest-400">{info.season}</p>
+          <p className="mt-0.5 truncate text-[12px] text-forest-400">{translated[0]}</p>
         </div>
         <ChevronDown
           size={18}
@@ -48,17 +54,17 @@ function CropCard({ cropKey, lang }: { cropKey: string; lang: ReturnType<typeof 
 
       {expanded && (
         <div className="border-t border-forest-100 px-4 py-4">
-          <DetailRow label={lang === 'hi' ? 'मौसम' : 'Season'} value={info.season} />
-          <DetailRow label={lang === 'hi' ? 'जल आवश्यकता' : 'Water needs'} value={info.water} />
-          <DetailRow label={lang === 'hi' ? 'मिट्टी' : 'Soil'} value={info.soil} />
+          <DetailRow label={labels.season} value={translated[0]} />
+          <DetailRow label={labels.waterNeeds} value={translated[1]} />
+          <DetailRow label={labels.soil} value={translated[2]} />
           <div className="mt-4 rounded-lg bg-forest-50 px-3 py-2.5">
             <div className="flex items-start gap-2">
               <Sprout size={16} className="mt-0.5 shrink-0 text-forest-600" />
               <div>
                 <h4 className="text-[13px] font-semibold text-forest-800">
-                  {lang === 'hi' ? 'व्यावहारिक सुझाव' : 'Practical tip'}
+                  {labels.practicalTip}
                 </h4>
-                <p className="mt-1 text-sm leading-6 text-forest-600">{info.tip}</p>
+                <p className="mt-1 text-sm leading-6 text-forest-600">{translated[3]}</p>
               </div>
             </div>
           </div>
@@ -99,7 +105,7 @@ export function CropsInfoScreen() {
       </div>
 
       <p className="mt-3 text-[12px] text-forest-400">
-        {filtered.length} {lang === 'hi' ? 'फसलें' : 'crops'}
+        {filtered.length} {libraryLabels[lang].crops}
       </p>
 
       <div className="mt-3 space-y-3 pb-6">

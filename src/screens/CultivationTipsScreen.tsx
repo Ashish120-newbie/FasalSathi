@@ -5,6 +5,8 @@ import { cultivationTips, type CultivationTipCategory } from '@/data/cultivation
 import type { CropId } from '@/data/types';
 import type { Language } from '@/data/i18n';
 import { useLang } from '@/lib/lang';
+import { useBatchTranslation } from '@/lib/useBatchTranslation';
+import { libraryLabels } from '@/data/libraryLabels';
 
 const categoryOrder: (keyof CultivationTipCategory)[] = [
   'sowing',
@@ -60,6 +62,32 @@ function CropTipCard({ cropId, lang, t }: { cropId: CropId; lang: Language; t: R
   const tips = cultivationTips[cropId];
   if (!tips) return null;
 
+  const allTexts = useMemo(() => {
+    const texts: string[] = [];
+    for (const catKey of categoryOrder) {
+      for (const tip of tips[catKey]) {
+        texts.push(tip);
+      }
+    }
+    return texts;
+  }, [tips]);
+
+  const translatedTexts = useBatchTranslation(allTexts, lang, expanded);
+
+  const translatedTips = useMemo<CultivationTipCategory>(() => {
+    const result = {} as CultivationTipCategory;
+    let idx = 0;
+    for (const catKey of categoryOrder) {
+      const arr: string[] = [];
+      for (let i = 0; i < tips[catKey].length; i++) {
+        arr.push(translatedTexts[idx] ?? tips[catKey][i]);
+        idx++;
+      }
+      result[catKey] = arr;
+    }
+    return result;
+  }, [tips, translatedTexts]);
+
   return (
     <div className="overflow-hidden rounded-xl border border-forest-100 bg-white">
       <button
@@ -71,7 +99,7 @@ function CropTipCard({ cropId, lang, t }: { cropId: CropId; lang: Language; t: R
             <span className="text-base">{crop.emoji}</span>
             <h3 className="truncate text-[15px] font-semibold text-forest-900">{cropName(cropId, lang)}</h3>
           </div>
-          <p className="mt-0.5 truncate text-[12px] text-forest-400">{categoryOrder.length} categories</p>
+          <p className="mt-0.5 truncate text-[12px] text-forest-400">{categoryOrder.length} {libraryLabels[lang].categories}</p>
         </div>
         <ChevronDown
           size={18}
@@ -85,7 +113,7 @@ function CropTipCard({ cropId, lang, t }: { cropId: CropId; lang: Language; t: R
             <TipCategoryBlock
               key={catKey}
               label={categoryLabel(catKey, t)}
-              tips={tips[catKey]}
+              tips={translatedTips[catKey]}
             />
           ))}
         </div>
@@ -128,7 +156,7 @@ export function CultivationTipsScreen() {
       </div>
 
       <p className="mt-3 text-[12px] text-forest-400">
-        {filtered.length} {lang === 'hi' ? 'फसलें' : 'crops'}
+        {filtered.length} {libraryLabels[lang].crops}
       </p>
 
       <div className="mt-3 space-y-3 pb-6">

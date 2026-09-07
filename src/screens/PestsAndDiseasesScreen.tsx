@@ -1,10 +1,12 @@
 import { useMemo, useState } from 'react';
-import { ArrowLeft, ChevronDown, Leaf, Search } from 'lucide-react';
+import { ChevronDown, Leaf, Search } from 'lucide-react';
 import { diseases } from '@/data/diseases';
 import { crops, cropById, cropName } from '@/data/crops';
 import type { CropId, Disease } from '@/data/types';
 import type { Language } from '@/data/i18n';
 import { useLang } from '@/lib/lang';
+import { useBatchTranslation } from '@/lib/useBatchTranslation';
+import { libraryLabels } from '@/data/libraryLabels';
 
 const severityStyles: Record<Disease['severity'], { bg: string; text: string; border: string }> = {
   mild: { bg: 'bg-success-50', text: 'text-success-700', border: 'border-success-200' },
@@ -37,10 +39,23 @@ function BulletList({ items }: { items: string[] }) {
 function DiseaseCard({ disease, lang }: { disease: Disease; lang: Language }) {
   const [expanded, setExpanded] = useState(false);
   const crop = cropById(disease.cropId);
+  const labels = libraryLabels[lang];
+
   const severityLabel =
-    disease.severity === 'mild' ? (lang === 'hi' ? 'हल्का' : 'Mild') :
-    disease.severity === 'moderate' ? (lang === 'hi' ? 'मध्यम' : 'Moderate') :
-    lang === 'hi' ? 'गंभीर' : 'Severe';
+    disease.severity === 'mild' ? labels.mild :
+    disease.severity === 'moderate' ? labels.moderate :
+    labels.severe;
+
+  const texts = useMemo(
+    () => [disease.name, disease.description, ...disease.symptoms, ...disease.treatment],
+    [disease],
+  );
+  const translated = useBatchTranslation(texts, lang, expanded);
+
+  const translatedName = translated[0] ?? disease.name;
+  const translatedDesc = translated[1] ?? disease.description;
+  const translatedSymptoms = disease.symptoms.map((_, i) => translated[2 + i] ?? disease.symptoms[i]);
+  const translatedTreatment = disease.treatment.map((_, i) => translated[2 + disease.symptoms.length + i] ?? disease.treatment[i]);
 
   return (
     <div className="overflow-hidden rounded-xl border border-forest-100 bg-white">
@@ -51,7 +66,7 @@ function DiseaseCard({ disease, lang }: { disease: Disease; lang: Language }) {
         <div className="min-w-0 flex-1">
           <div className="flex items-center gap-2">
             <span className="text-base">{crop.emoji}</span>
-            <h3 className="truncate text-[15px] font-semibold text-forest-900">{disease.name}</h3>
+            <h3 className="truncate text-[15px] font-semibold text-forest-900">{translatedName}</h3>
           </div>
           <p className="mt-0.5 text-[12px] text-forest-400">{cropName(disease.cropId, lang)}</p>
         </div>
@@ -66,20 +81,20 @@ function DiseaseCard({ disease, lang }: { disease: Disease; lang: Language }) {
 
       {expanded && (
         <div className="border-t border-forest-100 px-4 py-4">
-          <p className="text-sm leading-6 text-forest-600">{disease.description}</p>
+          <p className="text-sm leading-6 text-forest-600">{translatedDesc}</p>
 
           <div className="mt-4">
             <h4 className="text-[13px] font-semibold text-forest-800">
-              {lang === 'hi' ? 'लक्षण' : 'Symptoms'}
+              {labels.symptoms}
             </h4>
-            <BulletList items={disease.symptoms} />
+            <BulletList items={translatedSymptoms} />
           </div>
 
           <div className="mt-4">
             <h4 className="text-[13px] font-semibold text-forest-800">
-              {lang === 'hi' ? 'उपचार' : 'Treatment'}
+              {labels.treatment}
             </h4>
-            <BulletList items={disease.treatment} />
+            <BulletList items={translatedTreatment} />
           </div>
         </div>
       )}
@@ -111,8 +126,6 @@ export function PestsAndDiseasesScreen() {
     return list;
   }, [selectedCrop, query]);
 
-  const allCropsLabel = lang === 'hi' ? 'सभी फसलें' : 'All crops';
-
   return (
     <section className="screen-container animate-fade-in px-4">
       <h1 className="heading-display pt-4 text-[28px] font-bold leading-tight tracking-tight text-forest-900">
@@ -140,7 +153,7 @@ export function PestsAndDiseasesScreen() {
               : 'border-forest-200 bg-white text-forest-600 hover:bg-forest-50'
           }`}
         >
-          <span className="flex items-center gap-1.5"><Leaf size={14} /> {allCropsLabel}</span>
+          <span className="flex items-center gap-1.5"><Leaf size={14} /> {libraryLabels[lang].allCrops}</span>
         </button>
         {cropsWithDiseases.map((c) => (
           <button
@@ -158,7 +171,7 @@ export function PestsAndDiseasesScreen() {
       </div>
 
       <p className="mt-3 text-[12px] text-forest-400">
-        {filtered.length} {lang === 'hi' ? 'प्रविष्टियां' : 'entries'}
+        {filtered.length} {libraryLabels[lang].entries}
       </p>
 
       <div className="mt-3 space-y-3 pb-6">

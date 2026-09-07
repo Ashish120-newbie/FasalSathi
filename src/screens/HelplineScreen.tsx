@@ -1,9 +1,11 @@
-import { Clock, Phone, PhoneCall, Sprout, Users, Wheat } from 'lucide-react';
+import { Clock, HeartHandshake, Phone, PhoneCall, Sprout, Users, Wheat } from 'lucide-react';
 import { useLang } from '@/lib/lang';
 import Card14 from '@/components/ui/card-14';
+
 export function HelplineScreen() {
   const { t } = useLang();
   const kccNumber = '1800-180-1551';
+  const kiranNumber = '1800-599-0019';
   const topics = [
     { icon: Sprout, label: t.helpCropDiseases },
     { icon: Wheat, label: t.helpFertilizer },
@@ -19,17 +21,41 @@ export function HelplineScreen() {
         <p className="mt-2 max-w-md text-[14px] leading-6 text-forest-400">{t.helpSubtitle}</p>
       </div>
 
-      <div className="mt-8">
-        <p className="section-label">{t.helpKCC}</p>
-        <h2 className="mt-1 text-[20px] font-semibold text-forest-900">{t.helpFreeHelpline}</h2>
-        <p className="mt-0.5 text-[13px] leading-5 text-forest-400">{t.helpMinistry}</p>
-        <a
-          href={`tel:${kccNumber.replace(/-/g, '')}`}
-          className="mt-4 flex w-full items-center justify-center gap-2 rounded-lg bg-amber-400 px-5 py-2.5 text-base font-semibold text-amber-950 hover:bg-amber-500 transition-colors"
-        >
-          <Phone size={19} /> {t.helpCall} {kccNumber}
-        </a>
-        <p className="mt-2 text-center text-xs text-forest-400">{t.helpTollFree}</p>
+      <div className="mt-6 rounded-xl bg-forest-50 px-4 py-3">
+        <p className="text-center text-[14px] font-medium text-forest-700">{t.helpSupportLabel}</p>
+      </div>
+
+      <div className="mt-4 space-y-4">
+        {/* Kisan Call Centre */}
+        <div className="rounded-xl border border-forest-100 bg-white p-4">
+          <p className="section-label">{t.helpKCC}</p>
+          <h2 className="mt-1 text-[18px] font-semibold text-forest-900">{t.helpFreeHelpline}</h2>
+          <p className="mt-0.5 text-[13px] leading-5 text-forest-400">{t.helpMinistry}</p>
+          <a
+            href={`tel:${kccNumber.replace(/-/g, '')}`}
+            className="mt-3 flex w-full items-center justify-center gap-2 rounded-lg bg-amber-400 px-5 py-2.5 text-base font-semibold text-amber-950 hover:bg-amber-500 transition-colors"
+          >
+            <Phone size={19} /> {t.helpCall} {kccNumber}
+          </a>
+          <p className="mt-2 text-center text-xs text-forest-400">{t.helpTollFree}</p>
+        </div>
+
+        {/* KIRAN Mental Health Helpline */}
+        <div className="rounded-xl border border-forest-100 bg-white p-4">
+          <div className="flex items-center gap-1.5">
+            <HeartHandshake size={15} className="text-forest-500" />
+            <p className="section-label">{t.helpKiran}</p>
+          </div>
+          <h2 className="mt-1 text-[18px] font-semibold text-forest-900">{t.helpKiranDesc}</h2>
+          <p className="mt-0.5 text-[13px] leading-5 text-forest-400">{t.helpKiranMinistry}</p>
+          <a
+            href={`tel:${kiranNumber.replace(/-/g, '')}`}
+            className="mt-3 flex w-full items-center justify-center gap-2 rounded-lg bg-forest-600 px-5 py-2.5 text-base font-semibold text-white hover:bg-forest-700 transition-colors"
+          >
+            <Phone size={19} /> {t.helpCall} {kiranNumber}
+          </a>
+          <p className="mt-2 text-center text-xs text-forest-400">{t.helpKiranHours}</p>
+        </div>
       </div>
 
       <div className="my-8 border-t border-forest-100" />
@@ -59,7 +85,7 @@ export function HelplineScreen() {
         <PhoneCall size={15} className="mt-0.5 shrink-0 text-forest-400" />
         <p>{t.helpEscalatedNote}</p>
       </div>
-            <div className="mt-8">
+      <div className="mt-8">
         <Card14 />
       </div>
     </section>
