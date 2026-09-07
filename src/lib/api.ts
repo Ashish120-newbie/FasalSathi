@@ -363,19 +363,20 @@ export async function removeBookmark(schemeId: string): Promise<void> {
 // ──────────────────────────────────────────────────────────────
 
 export interface TreatmentDetail {
-  biological: string;
-  chemical: string;
-  organic: string;
-  manual: string;
+  isConfident: boolean;
+  bullets: string[];
 }
 
 const treatmentCache = new Map<string, TreatmentDetail>();
 
 export async function fetchTreatmentDetail(
   diseaseName: string,
-  cropName: string
+  cropName: string,
+  confidenceScore?: number,
+  confidenceLevel?: 'high' | 'medium' | 'low',
+  diagnosisData?: unknown,
 ): Promise<TreatmentDetail> {
-  const cacheKey = `${diseaseName}::${cropName}`.toLowerCase();
+  const cacheKey = `${diseaseName}::${cropName}::${confidenceLevel ?? 'unknown'}`.toLowerCase();
   const cached = treatmentCache.get(cacheKey);
   if (cached) return cached;
 
@@ -391,7 +392,7 @@ export async function fetchTreatmentDetail(
         ...(accessToken ? { Authorization: `Bearer ${accessToken}` } : {}),
         apikey: import.meta.env.VITE_SUPABASE_ANON_KEY,
       },
-      body: JSON.stringify({ diseaseName, cropName }),
+      body: JSON.stringify({ diseaseName, cropName, confidenceScore, confidenceLevel, diagnosisData }),
     }
   );
 

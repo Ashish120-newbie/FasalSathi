@@ -246,6 +246,24 @@ export interface TranslationKey {
   fcTenant: string;
   fcWomen: string;
   fcOrganic: string;
+  // Scheme detail modal
+  sdmClose: string;
+  sdmAllCrops: string;
+  sdmBenefits: string;
+  sdmEligibility: string;
+  sdmFarmerCategories: string;
+  sdmFarmSize: string;
+  sdmNoSizeReq: string;
+  sdmRequiredDocs: string;
+  sdmApplicationProcess: string;
+  sdmSourceVerification: string;
+  sdmLastVerified: string;
+  sdmActive: string;
+  sdmInactive: string;
+  sdmVerifyNote: string;
+  sdmSaved: string;
+  sdmSaveScheme: string;
+  sdmOfficialWebsite: string;
 }
 
 export const translations: Record<Language, TranslationKey> = {

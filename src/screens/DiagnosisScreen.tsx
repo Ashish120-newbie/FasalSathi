@@ -24,22 +24,9 @@ function BulletList({ items }: { items: string[] }) {
 }
 
 function TreatmentDetailSection({ detail }: { detail: TreatmentDetail }) {
-  const { t } = useLang();
-  const rows = [
-    { label: t.diagTreatmentBiological, value: detail.biological },
-    { label: t.diagTreatmentChemical, value: detail.chemical },
-    { label: t.diagTreatmentOrganic, value: detail.organic },
-    { label: t.diagTreatmentManual, value: detail.manual },
-  ].filter((r) => r.value && r.value.trim().length > 0);
-
   return (
-    <div className="mt-2 space-y-3">
-      {rows.map((row, i) => (
-        <div key={i} className="rounded-lg bg-forest-50 px-3 py-2.5">
-          <h4 className="text-[13px] font-semibold text-forest-800">{row.label}</h4>
-          <p className="mt-1 text-sm leading-6 text-forest-700">{row.value}</p>
-        </div>
-      ))}
+    <div className="mt-2">
+      <BulletList items={detail.bullets} />
     </div>
   );
 }
@@ -58,16 +45,7 @@ export function DiagnosisScreen({ scan, onBack, onEscalate, onAskAI }: Diagnosis
   const treatmentSteps = scan.result.treatmentSteps ?? [];
   const aboutDescription = scan.result.description || (!hasAIData ? disease.description : '');
 
-  // DIAGNOSTIC: Check translation status for disease name and description
-  console.log('[DiagnosisScreen Translation Diagnostics]', {
-    currentLanguage: lang,
-    diseaseName_rawEnglish: scan.result.diseaseName,
-    aboutDescription_rawEnglish: aboutDescription,
-    aiTranslate_isBeingCalled: false,
-    reason: 'useBatchTranslation hook is not used on this screen — disease name and description are rendered directly without any translation call',
-  });
-
-  const needsTreatmentLookup = !isHealthy && !lowConfidence && treatmentSteps.length === 0;
+  const needsTreatmentLookup = !isHealthy && treatmentSteps.length === 0;
   const [treatmentDetail, setTreatmentDetail] = useState<TreatmentDetail | null>(null);
   const [treatmentLoading, setTreatmentLoading] = useState(false);
   const [treatmentError, setTreatmentError] = useState(false);
@@ -77,7 +55,7 @@ export function DiagnosisScreen({ scan, onBack, onEscalate, onAskAI }: Diagnosis
     let cancelled = false;
     setTreatmentLoading(true);
     setTreatmentError(false);
-    fetchTreatmentDetail(scan.result.diseaseName, displayCropName)
+    fetchTreatmentDetail(scan.result.diseaseName, displayCropName, scan.result.confidence, scan.result.level, scan.result)
       .then((detail) => {
         if (!cancelled) {
           setTreatmentDetail(detail);
@@ -105,6 +83,7 @@ export function DiagnosisScreen({ scan, onBack, onEscalate, onAskAI }: Diagnosis
       </div>
 
       {lowConfidence ? (
+        <>
         <div className="mt-6 rounded-lg border border-amber-200 bg-amber-50 p-4">
           <div className="flex gap-3">
             <ShieldAlert size={20} className="shrink-0 text-amber-700" />
@@ -117,6 +96,22 @@ export function DiagnosisScreen({ scan, onBack, onEscalate, onAskAI }: Diagnosis
             <PhoneCall size={16} /> {t.diagNotified}
           </div>
         </div>
+
+        {treatmentLoading ? (
+          <div className="mt-4 flex items-center gap-2 rounded-lg bg-forest-50 px-3 py-2.5 text-sm text-forest-600">
+            <Loader2 size={16} className="animate-spin" />
+            <span>{t.diagTreatmentLoading}</span>
+          </div>
+        ) : treatmentDetail ? (
+          <div className="mt-4">
+            <h3 className="text-[15px] font-semibold text-forest-800">{t.diagTreatment}</h3>
+            <p className="text-[12px] text-forest-400">{t.diagTreatmentDesc}</p>
+            <TreatmentDetailSection detail={treatmentDetail} />
+          </div>
+        ) : treatmentError ? (
+          <p className="mt-4 rounded-lg bg-forest-50 px-3 py-2.5 text-sm leading-6 text-forest-700">{t.diagTreatmentFallback}</p>
+        ) : null}
+        </>
       ) : (
         <>
           <div className="mt-6">
