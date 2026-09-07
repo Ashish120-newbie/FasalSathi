@@ -653,7 +653,7 @@ export function HomeScreen({ onResult, onNavigate }: HomeScreenProps) {
             <p className="mt-1.5 text-[13px] leading-5 text-forest-400">{t.helpKiranMinistry}</p>
             <a
               href="tel:18005990019"
-              className="mt-3 flex w-full items-center justify-center gap-2 rounded-xl bg-teal-600 px-5 py-3.5 text-base font-bold text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.25),0_6px_16px_rgba(13,148,136,0.3),0_2px_4px_rgba(0,0,0,0.08)] hover:bg-teal-700 hover:shadow-[inset_0_1px_0_rgba(255,255,255,0.3),0_8px_20px_rgba(13,148,136,0.4),0_2px_4px_rgba(0,0,0,0.1)] transition-all duration-200"
+              className="mt-3 flex w-full items-center justify-center gap-2 rounded-xl bg-[#f7a820] px-5 py-3.5 text-base font-bold text-[#080707] shadow-[inset_0_1px_0_rgba(255,255,255,0.25),0_6px_16px_rgba(247,168,32,0.3),0_2px_4px_rgba(0,0,0,0.08)] hover:bg-[#e89a16] hover:shadow-[inset_0_1px_0_rgba(255,255,255,0.3),0_8px_20px_rgba(247,168,32,0.4),0_2px_4px_rgba(0,0,0,0.1)] transition-all duration-200"
             >
               <Phone size={19} /> {t.helpCall} 1800-599-0019
             </a>
