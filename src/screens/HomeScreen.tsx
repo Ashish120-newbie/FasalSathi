@@ -7,6 +7,7 @@ import { useLang } from '@/lib/lang';
 import { useAuth } from '@/lib/auth';
 import { supabase } from '@/lib/supabase';
 import { useHomeLang } from '@/data/i18n-home';
+import type { HomeTranslationKey } from '@/data/i18n-home';
 import type { View } from '@/components/AppShell';
 import { ScanIcon } from '@/components/BrandIcons';
 import { getWeatherByLocation, getUserLocation, type WeatherResult, type WeatherHourlyEntry } from '@/lib/weatherService';
@@ -105,7 +106,7 @@ interface Advisory {
   message: string;
 }
 
-function computeAdvisories(data: WeatherData): { spray: Advisory; fertilizer: Advisory; sow: Advisory } {
+function computeAdvisories(data: WeatherData, copy: HomeTranslationKey): { spray: Advisory; fertilizer: Advisory; sow: Advisory } {
   const temp = parseInt(data.temp, 10);
   const wind = data.windKph;
   const humidity = data.humidity;
@@ -119,41 +120,41 @@ function computeAdvisories(data: WeatherData): { spray: Advisory; fertilizer: Ad
   // Spray advisory
   let spray: Advisory;
   if (wind > 15) {
-    spray = { status: 'avoid', message: 'Too windy — spray drift risk' };
+    spray = { status: 'avoid', message: copy.advisorySprayWind };
   } else if (temp > 30) {
-    spray = { status: 'avoid', message: 'Too hot — pesticide may evaporate before absorption' };
+    spray = { status: 'avoid', message: copy.advisorySprayHot };
   } else if (rainNext6h) {
-    spray = { status: 'avoid', message: 'Rain expected soon — spray will wash off, wait until after' };
+    spray = { status: 'avoid', message: copy.advisorySprayRain };
   } else if (wind >= 3 && wind <= 15 && temp <= 30) {
-    let msg = 'Good conditions for spraying';
-    if (humidity < 40) msg += ' — low humidity, spray early morning or evening';
+    let msg = copy.advisorySprayGood;
+    if (humidity < 40) msg = copy.advisorySprayGoodDry;
     spray = { status: 'good', message: msg };
   } else {
-    let msg = 'Fair conditions — monitor weather before spraying';
-    if (humidity < 40) msg += ' — low humidity, spray early morning or evening';
+    let msg = copy.advisorySprayFair;
+    if (humidity < 40) msg = copy.advisorySprayFairDry;
     spray = { status: 'caution', message: msg };
   }
 
   // Fertilizer advisory
   let fertilizer: Advisory;
   if (heavyRainNext24h) {
-    fertilizer = { status: 'avoid', message: 'Heavy rain expected — fertilizer may wash away, apply after rain passes' };
+    fertilizer = { status: 'avoid', message: copy.advisoryFertilizerRain };
   } else {
-    fertilizer = { status: 'good', message: 'Good to apply fertilizer — no heavy rain expected in 24 hours' };
+    fertilizer = { status: 'good', message: copy.advisoryFertilizerGood };
   }
 
   // Sowing advisory
   let sow: Advisory;
   if (maxTempForecast > 35 && !anyRainNext3Days) {
-    sow = { status: 'avoid', message: 'Hot, dry conditions ahead — germination may be poor, consider waiting for rain' };
+    sow = { status: 'avoid', message: copy.advisorySowHotDry };
   } else if (heavyRainNext24h) {
-    sow = { status: 'avoid', message: 'Heavy rain expected — risk of seed rot, wait for drier conditions' };
+    sow = { status: 'avoid', message: copy.advisorySowRain };
   } else if (temp >= 15 && temp <= 32 && anyRainNext3Days) {
-    sow = { status: 'good', message: 'Good conditions for sowing — moderate temps with rain expected aids germination' };
+    sow = { status: 'good', message: copy.advisorySowGood };
   } else if (temp >= 15 && temp <= 32) {
-    sow = { status: 'caution', message: 'Temperature is suitable but little rain ahead — ensure soil moisture before sowing' };
+    sow = { status: 'caution', message: copy.advisorySowSuitableDry };
   } else {
-    sow = { status: 'caution', message: 'Check local soil moisture and forecast before sowing' };
+    sow = { status: 'caution', message: copy.advisorySowCheck };
   }
 
   return { spray, fertilizer, sow };
@@ -522,7 +523,7 @@ export function HomeScreen({ onResult, onNavigate }: HomeScreenProps) {
           <WeatherSkeleton />
         ) : weather && (
           <>
-            <p className="text-[#5F6E52] text-xs font-semibold uppercase tracking-wide">Weather</p>
+            <p className="text-[#5F6E52] text-xs font-semibold uppercase tracking-wide">{ht.homeWeatherTitle}</p>
             {weatherError && (
               <div className="mb-2 flex items-center gap-2 rounded-xl border border-amber-200 bg-amber-50 px-3 py-2 text-[12px] text-amber-800 animate-fade-in">
                 <AlertCircle size={14} className="shrink-0" />
@@ -561,13 +562,13 @@ export function HomeScreen({ onResult, onNavigate }: HomeScreenProps) {
             </div>
             {weather && !weatherError && weather.hourly.length > 0 && (
               <div className="mt-3">
-                <p className="text-[#5F6E52] text-xs font-semibold uppercase tracking-wide">Farming Advisory</p>
+                <p className="text-[#5F6E52] text-xs font-semibold uppercase tracking-wide">{ht.homeFarmingAdvisory}</p>
                 <div className="mt-2 space-y-2">
-                  <AdvisoryRow icon={Droplets} label="Spray" advisory={computeAdvisories(weather).spray} />
-                  <AdvisoryRow icon={FlaskConical} label="Fertilizer" advisory={computeAdvisories(weather).fertilizer} />
-                  <AdvisoryRow icon={SproutIcon} label="Sow" advisory={computeAdvisories(weather).sow} />
+                  <AdvisoryRow icon={Droplets} label={ht.homeAdvisorySpray} advisory={computeAdvisories(weather, ht).spray} />
+                  <AdvisoryRow icon={FlaskConical} label={ht.homeAdvisoryFertilizer} advisory={computeAdvisories(weather, ht).fertilizer} />
+                  <AdvisoryRow icon={SproutIcon} label={ht.homeAdvisorySow} advisory={computeAdvisories(weather, ht).sow} />
                 </div>
-                <p className="mt-2 text-[10px] leading-4 text-forest-200">Based on general weather guidelines. Always check pesticide/fertilizer product labels for specific recommendations.</p>
+                <p className="mt-2 text-[10px] leading-4 text-forest-200">{ht.homeAdvisoryDisclaimer}</p>
               </div>
             )}
           </>
