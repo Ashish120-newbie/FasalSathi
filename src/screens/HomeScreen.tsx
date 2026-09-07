@@ -455,7 +455,7 @@ export function HomeScreen({ onResult, onNavigate }: HomeScreenProps) {
               <input ref={inputRef} type="file" accept="image/*" capture="environment" className="sr-only" onChange={(event) => handleFile(event.target.files?.[0])} />
             </label>
             <label
-              className="block mt-2 mx-auto cursor-pointer text-sm text-[#5F6E52] underline underline-offset-2 text-center"
+              className="block mt-2 mx-auto cursor-pointer text-sm text-[#e88c0c] underline underline-offset-2 text-center"
             >
               {t.scanUploadFromGallery}
               <input ref={galleryRef} type="file" accept="image/*" className="sr-only" onChange={(event) => handleFile(event.target.files?.[0])} />
