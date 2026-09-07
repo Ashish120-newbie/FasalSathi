@@ -200,6 +200,17 @@ export interface TranslationKey {
   ciSubtitle: string;
   ciSearch: string;
   ciNoResults: string;
+  ctTitle: string;
+  ctSubtitle: string;
+  ctSearch: string;
+  ctNoResults: string;
+  ctSowing: string;
+  ctSpacing: string;
+  ctIrrigation: string;
+  ctFertilization: string;
+  ctPestWatch: string;
+  ctHarvest: string;
+  ctStorage: string;
 }
 
 export const translations: Record<Language, TranslationKey> = {
@@ -265,6 +276,7 @@ export const translations: Record<Language, TranslationKey> = {
     commonNotifications: 'Notifications', commonOpenMenu: 'Open menu', commonCloseMenu: 'Close menu', commonAskAI: 'Ask AI assistant', commonOfficerQueue: 'Officer review queue', schemesVerifiedDate: 'Verified: ', 
     padTitle: 'Pests & Diseases', padSubtitle: 'Browse common crop diseases, symptoms, and treatments.', padSearch: 'Search diseases...', padNoResults: 'No diseases match your search.', 
     ciTitle: 'Crop Guide', ciSubtitle: 'Season, water, soil, and tips for each crop.', ciSearch: 'Search crops...', ciNoResults: 'No crops match your search.', 
+    ctTitle: 'Cultivation Tips', ctSubtitle: 'Practical guidance for sowing, irrigation, harvesting, and more.', ctSearch: 'Search crops...', ctNoResults: 'No crops match your search.', ctSowing: 'Sowing & planting', ctSpacing: 'Spacing & plant density', ctIrrigation: 'Irrigation', ctFertilization: 'Fertilization', ctPestWatch: 'Pest & disease watch', ctHarvest: 'Harvest', ctStorage: 'Storage', 
   },
   hi: {
     appName: 'FasalSathi', appTagline: 'फसल की पहचान, सही समाधान',
@@ -328,6 +340,7 @@ export const translations: Record<Language, TranslationKey> = {
     commonNotifications: 'सूचनाएं', commonOpenMenu: 'मेन्यू खोलें', commonCloseMenu: 'मेन्यू बंद करें', commonAskAI: 'AI सहायक से पूछें', commonOfficerQueue: 'अधिकारी समीक्षा कतार', schemesVerifiedDate: 'सत्यापित: ', 
     padTitle: 'कीट एवं रोग', padSubtitle: 'सामान्य फसल रोग, लक्षण और उपचार देखें।', padSearch: 'रोग खोजें...', padNoResults: 'कोई रोग आपकी खोज से मेल नहीं खाता।', 
     ciTitle: 'फसल गाइड', ciSubtitle: 'प्रत्येक फसल के लिए मौसम, जल, मिट्टी और सुझाव।', ciSearch: 'फसलें खोजें...', ciNoResults: 'कोई फसल आपकी खोज से मेल नहीं खाती।', 
+    ctTitle: 'खेती युक्तियां', ctSubtitle: 'बुवाई, सिंचाई, कटाई और अधिक के लिए व्यावहारिक मार्गदर्शन।', ctSearch: 'फसलें खोजें...', ctNoResults: 'कोई फसल आपकी खोज से मेल नहीं खाती।', ctSowing: 'बुवाई और रोपण', ctSpacing: 'दूरी और पौधा घनत्व', ctIrrigation: 'सिंचाई', ctFertilization: 'खाद और उर्वरक', ctPestWatch: 'कीट और रोग निगरानी', ctHarvest: 'कटाई', ctStorage: 'भंडारण', 
   },
   bn: {
     appName: 'FasalSathi', appTagline: 'ফসলের পরিচয়, সঠিক সমাধান',
@@ -391,6 +404,7 @@ export const translations: Record<Language, TranslationKey> = {
     commonNotifications: 'বিজ্ঞপ্তি', commonOpenMenu: 'মেনু খুলুন', commonCloseMenu: 'মেনু বন্ধ করুন', commonAskAI: 'AI সহকারীকে জিজ্ঞাসা করুন', commonOfficerQueue: 'অফিসার পর্যালোচনা সারি', schemesVerifiedDate: 'যাচাইকৃত: ', 
     padTitle: 'পোকা ও রোগ', padSubtitle: 'সাধারণ ফসল রোগ, লক্ষণ এবং চিকিৎসা দেখুন।', padSearch: 'রোগ খুঁজুন...', padNoResults: 'কোনো রোগ আপনার অনুসন্ধানের সাথে মেলে না।', 
     ciTitle: 'ফসল গাইড', ciSubtitle: 'প্রতিটি ফসলের জন্য ঋতু, জল, মাটি এবং টিপস।', ciSearch: 'ফসল খুঁজুন...', ciNoResults: 'কোনো ফসল আপনার অনুসন্ধানের সাথে মেলে না।', 
+    ctTitle: 'চাষ পদ্ধতি', ctSubtitle: 'বপন, সেচ, ফসল কাটা এবং আরও জন্য ব্যবহারিক নির্দেশিকা।', ctSearch: 'ফসল খুঁজুন...', ctNoResults: 'কোনো ফসল আপনার অনুসন্ধানের সাথে মেলে না।', ctSowing: 'বপন ও রোপণ', ctSpacing: 'দূরত্ব ও উদ্ভিদ ঘনত্ব', ctIrrigation: 'সেচ', ctFertilization: 'সার প্রয়োগ', ctPestWatch: 'পোকা ও রোগ নজরদারি', ctHarvest: 'ফসল কাটা', ctStorage: 'সংরক্ষণ', 
   },
   te: {
     appName: 'FasalSathi', appTagline: 'పంట గుర్తింపు, సరైన పరిష్కారం',
@@ -454,6 +468,7 @@ export const translations: Record<Language, TranslationKey> = {
     commonNotifications: 'నోటిఫికేషన్‌లు', commonOpenMenu: 'మెను తెరవండి', commonCloseMenu: 'మెను మూసివేయండి', commonAskAI: 'AI సహాయకుడిని అడగండి', commonOfficerQueue: 'అధికారి సమీక్ష క్యూ', schemesVerifiedDate: 'ధృవీకరించబడింది: ', 
     padTitle: 'పురుగులు & వ్యాధులు', padSubtitle: 'సాధారణ పంట వ్యాధులు, లక్షణాలు మరియు చికిత్సలను బ్రౌజ్ చేయండి.', padSearch: 'వ్యాధులను శోధించండి...', padNoResults: 'మీ శోధనతో ఏ వ్యాధులు సరిపోలవు.', 
     ciTitle: 'పంట గైడ్', ciSubtitle: 'ప్రతి పంటకు సీజన్, నీరు, నేల మరియు చిట్కాలు.', ciSearch: 'పంటలను శోధించండి...', ciNoResults: 'మీ శోధనతో ఏ పంటలు సరిపోలవు.', 
+    ctTitle: 'సాగు చిట్కాలు', ctSubtitle: 'విత్తన, నీటిపారుదల, పంట కోత మరియు మరిన్నింటికి ఆచరణీయ మార్గదర్శకం.', ctSearch: 'పంటలను శోధించండి...', ctNoResults: 'మీ శోధనతో ఏ పంటలు సరిపోలవు.', ctSowing: 'విత్తనం మరియు నాటు', ctSpacing: 'దూరం మరియు మొక్క సాంద్రత', ctIrrigation: 'నీటిపారుదల', ctFertilization: 'ఎరువు ప్రయోగం', ctPestWatch: 'పురుగు మరియు వ్యాధి పర్యవేక్షణ', ctHarvest: 'పంట కోత', ctStorage: 'నిల్వ', 
   },
   mr: {
     appName: 'FasalSathi', appTagline: 'पिकाची ओळख, योग्य उपाय',
@@ -517,6 +532,7 @@ export const translations: Record<Language, TranslationKey> = {
     commonNotifications: 'सूचना', commonOpenMenu: 'मेन्यू उघडा', commonCloseMenu: 'मेन्यू बंद करा', commonAskAI: 'AI सहाय्यकाला विचारा', commonOfficerQueue: 'अधिकारी समीक्षा रांग', schemesVerifiedDate: 'प्रमाणित: ', 
     padTitle: 'कीड व रोग', padSubtitle: 'सामान्य पीक रोग, लक्षणे आणि उपचार पहा.', padSearch: 'रोग शोधा...', padNoResults: 'तुमच्या शोधाशी कोणतेही रोग जुळत नाहीत.', 
     ciTitle: 'पीक गाइड', ciSubtitle: 'प्रत्येक पिकासाठी ऋतू, पाणी, माती आणि टिप्स.', ciSearch: 'पीक शोधा...', ciNoResults: 'तुमच्या शोधाशी कोणतेही पीक जुळत नाही.', 
+    ctTitle: 'लागवड टिप्स', ctSubtitle: 'पेरणी, ओलित, कापणी आणि बरेच काही यासाठी व्यावहारिक मार्गदर्शन.', ctSearch: 'पीक शोधा...', ctNoResults: 'तुमच्या शोधाशी कोणतेही पीक जुळत नाही.', ctSowing: 'पेरणी आणि लागवड', ctSpacing: 'अंतर आणि रोप घनता', ctIrrigation: 'ओलित', ctFertilization: 'खत वापर', ctPestWatch: 'कीड आणि रोग निरीक्षण', ctHarvest: 'कापणी', ctStorage: 'साठवण', 
   },
   ta: {
     appName: 'FasalSathi', appTagline: 'பயிர் அடையாளம், சரியான தீர்வு',
@@ -580,5 +596,6 @@ export const translations: Record<Language, TranslationKey> = {
     commonNotifications: 'அறிவிப்புகள்', commonOpenMenu: 'மெனுவைத் திறக்கவும்', commonCloseMenu: 'மெனுவை மூடவும்', commonAskAI: 'AI உதவியாளரிடம் கேளுங்கள்', commonOfficerQueue: 'அதிகாரி மதிப்பாய்வு வரிசை', schemesVerifiedDate: 'சரிபார்க்கப்பட்டது: ', 
     padTitle: 'பூச்சிகள் & நோய்கள்', padSubtitle: 'பொதுவான பயிர் நோய்கள், அறிகுறிகள் மற்றும் சிகிச்சைகளை உலாவவும்.', padSearch: 'நோய்களைத் தேடவும்...', padNoResults: 'உங்கள் தேடலுடன் எந்த நோய்களும் பொருந்தவில்லை.', 
     ciTitle: 'பயிர் வழிகாட்டி', ciSubtitle: 'ஒவ்வொரு பயிருக்கும் பருவம், நீர், மண் மற்றும் குறிப்புகள்.', ciSearch: 'பயிர்களைத் தேடவும்...', ciNoResults: 'உங்கள் தேடலுடன் எந்த பயிர்களும் பொருந்தவில்லை.', 
+    ctTitle: 'சாகுபடி குறிப்புகள்', ctSubtitle: 'விதைப்பு, நீர்ப்பாசன, அறுவடை மற்றும் பலவற்றிற்கான நடைமுறை வழிகாட்டி.', ctSearch: 'பயிர்களைத் தேடவும்...', ctNoResults: 'உங்கள் தேடலுடன் எந்த பயிர்களும் பொருந்தவில்லை.', ctSowing: 'விதைப்பு மற்றும் நடவு', ctSpacing: 'இடைவெளி மற்றும் செடி அடர்த்தி', ctIrrigation: 'நீர்ப்பாசனம்', ctFertilization: 'உரம் பயன்பாடு', ctPestWatch: 'பூச்சி மற்றும் நோய் கண்காணிப்பு', ctHarvest: 'அறுவடை', ctStorage: 'சேமிப்பு', 
   },
 };

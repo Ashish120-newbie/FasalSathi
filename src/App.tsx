@@ -10,6 +10,7 @@ import { HelplineScreen } from '@/screens/HelplineScreen';
 import { MarketplaceScreen } from '@/screens/MarketplaceScreen';
 import { QueueScreen } from '@/screens/QueueScreen';
 import { ComingSoonScreen } from '@/screens/ComingSoonScreen';
+import { CultivationTipsScreen } from '@/screens/CultivationTipsScreen';
 import { PestsAndDiseasesScreen } from '@/screens/PestsAndDiseasesScreen';
 import { CropsInfoScreen } from '@/screens/CropsInfoScreen';
 import { PesticideCalculatorScreen } from '@/screens/PesticideCalculatorScreen';
@@ -90,7 +91,6 @@ function App() {
   }
 
   const comingSoonViews: Partial<Record<View, string>> = {
-    'cultivation-tips': ht.homeCultivationTips,
     'pests-disease-alert': ht.homePestsDiseaseAlert,
   };
 
@@ -105,6 +105,7 @@ function App() {
     : view === 'helpline' ? <HelplineScreen />
     : view === 'marketplace' ? <MarketplaceScreen />
     : view === 'pests-diseases' ? <PestsAndDiseasesScreen />
+    : view === 'cultivation-tips' ? <CultivationTipsScreen />
     : view === 'crops' ? <CropsInfoScreen />
     : view === 'profile' ? <ProfileScreen />
     : view === 'queue' ? <QueueScreen scans={scans} onBack={() => navigate('home')} onUpdate={handleUpdate} />
