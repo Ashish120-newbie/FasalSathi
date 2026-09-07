@@ -14,13 +14,43 @@ type StateFilter = 'all' | string;
 type CategoryFilter = 'all' | SchemeCategory;
 type FarmerCatFilter = 'all' | FarmerCategory;
 
-function categoryLabel(id: string): string {
-  return schemeCategories.find((c) => c.id === id)?.label ?? id;
+export const categoryI18nMap: Record<string, keyof typeof import('@/data/i18n').translations['en']> = {
+  income_support: 'catIncomeSupport',
+  insurance: 'catInsurance',
+  credit: 'catCredit',
+  subsidy: 'catSubsidy',
+  soil_health: 'catSoilHealth',
+  organic_farming: 'catOrganicFarming',
+  irrigation: 'catIrrigation',
+  price_support: 'catPriceSupport',
+  women_farmers: 'catWomenFarmers',
+  livestock_dairy: 'catLivestockDairy',
+  horticulture: 'catHorticulture',
+  market_access: 'catMarketAccess',
+};
+
+export const farmerCatI18nMap: Record<string, keyof typeof import('@/data/i18n').translations['en']> = {
+  all: 'fcAll',
+  small_marginal: 'fcSmallMarginal',
+  large: 'fcLarge',
+  tenant: 'fcTenant',
+  women: 'fcWomen',
+  organic: 'fcOrganic',
+};
+
+function categoryLabel(id: string, t: import('@/data/i18n').TranslationKey): string {
+  const key = categoryI18nMap[id];
+  return key ? t[key] : (schemeCategories.find((c) => c.id === id)?.label ?? id);
+}
+
+function farmerCatLabel(id: string, t: import('@/data/i18n').TranslationKey): string {
+  const key = farmerCatI18nMap[id];
+  return key ? t[key] : (farmerCategories.find((c) => c.id === id)?.label ?? id);
 }
 
 export function SchemesScreen() {
   const { profile, user } = useAuth();
-  const { lang } = useLang();
+  const { lang, t } = useLang();
 
   const [query, setQuery] = useState('');
   const [crop, setCrop] = useState<CropFilter>('all');
@@ -107,9 +137,9 @@ export function SchemesScreen() {
   return (
     <section className="screen-container animate-fade-in px-4">
       <div className="pt-8">
-        <p className="text-[13px] font-medium text-forest-400">Support available for you</p>
-        <h1 className="heading-display mt-1 text-[28px] font-bold leading-tight tracking-tight text-forest-900">Government schemes</h1>
-        <p className="mt-2 text-[14px] leading-6 text-forest-400">Find benefits, insurance and support programmes for farmers.</p>
+        <p className="text-[13px] font-medium text-forest-400">{t.schemesSupport}</p>
+        <h1 className="heading-display mt-1 text-[28px] font-bold leading-tight tracking-tight text-forest-900">{t.schemesTitle}</h1>
+        <p className="mt-2 text-[14px] leading-6 text-forest-400">{t.schemesSubtitle}</p>
       </div>
 
       {recommended.length > 0 && (
@@ -117,9 +147,9 @@ export function SchemesScreen() {
           <div className="mt-8">
             <div className="flex items-center gap-2">
               <BookOpen size={17} className="text-forest-500" />
-              <h2 className="text-[20px] font-semibold text-forest-900">Recommended for you</h2>
+              <h2 className="text-[20px] font-semibold text-forest-900">{t.schemesRecommended}</h2>
             </div>
-            <p className="mt-0.5 text-xs text-forest-400">Based on your profile: {profile?.state ?? 'All India'}</p>
+            <p className="mt-0.5 text-xs text-forest-400">{t.schemesBasedOn}: {profile?.state ?? 'All India'}</p>
             <div className="mt-3 space-y-2">
               {recommended.map((scheme) => (
                 <button
@@ -129,7 +159,7 @@ export function SchemesScreen() {
                 >
                   <div className="min-w-0">
                     <p className="truncate text-sm font-semibold text-forest-900">{scheme.name}</p>
-                    <p className="mt-0.5 truncate text-xs text-forest-500">{categoryLabel(scheme.category)}</p>
+                    <p className="mt-0.5 truncate text-xs text-forest-500">{categoryLabel(scheme.category, t)}</p>
                   </div>
                   <ArrowRight size={15} className="shrink-0 text-forest-400" />
                 </button>
@@ -144,60 +174,60 @@ export function SchemesScreen() {
       <div>
         <div className="relative">
           <Search className="absolute left-3 top-3 text-forest-400" size={18} />
-          <input value={query} onChange={(e) => setQuery(e.target.value)} className="input-field pl-10" placeholder="Search schemes..." />
+          <input value={query} onChange={(e) => setQuery(e.target.value)} className="input-field pl-10" placeholder={t.schemesSearchPlaceholder} />
         </div>
         <button
           onClick={() => setShowFilters((v) => !v)}
           className="mt-3 flex w-full items-center justify-between rounded-lg border border-forest-200 bg-forest-50 px-4 py-2.5 text-sm font-semibold text-forest-700 hover:bg-forest-100 transition-colors"
         >
           <span className="flex items-center gap-2">
-            <SlidersHorizontal size={15} /> Filters
+            <SlidersHorizontal size={15} /> {t.schemesFilters}
             {activeFilters > 0 && <span className="rounded-md bg-forest-600 px-1.5 py-0.5 text-xs text-white">{activeFilters}</span>}
           </span>
-          {activeFilters > 0 && <button onClick={(e) => { e.stopPropagation(); clearFilters(); }} className="text-xs font-medium text-forest-500 hover:text-forest-700">Clear all</button>}
+          {activeFilters > 0 && <button onClick={(e) => { e.stopPropagation(); clearFilters(); }} className="text-xs font-medium text-forest-500 hover:text-forest-700">{t.schemesClearAll}</button>}
         </button>
         {showFilters && (
           <div className="mt-3 space-y-3 animate-slide-up">
             <div>
-              <label className="mb-1.5 block text-xs font-semibold text-forest-600">Crop</label>
+              <label className="mb-1.5 block text-xs font-semibold text-forest-600">{t.schemesCrop}</label>
               <select value={crop} onChange={(e) => setCrop(e.target.value as CropFilter)} className="select-field">
-                <option value="all">All crops</option>
+                <option value="all">{t.schemesAllCrops}</option>
                 {crops.map((c) => <option key={c.id} value={c.id}>{c.emoji} {cropName(c.id, lang)}</option>)}
               </select>
             </div>
             <div>
-              <label className="mb-1.5 block text-xs font-semibold text-forest-600">State</label>
+              <label className="mb-1.5 block text-xs font-semibold text-forest-600">{t.schemesState}</label>
               <select value={state} onChange={(e) => setState(e.target.value)} className="select-field">
-                <option value="all">All states</option>
+                <option value="all">{t.schemesAllStates}</option>
                 {states.filter((s) => s !== 'All India').map((s) => <option key={s} value={s}>{s}</option>)}
               </select>
             </div>
             <div>
-              <label className="mb-1.5 block text-xs font-semibold text-forest-600">Category</label>
+              <label className="mb-1.5 block text-xs font-semibold text-forest-600">{t.schemesCategory}</label>
               <select value={category} onChange={(e) => setCategory(e.target.value as CategoryFilter)} className="select-field">
-                <option value="all">All categories</option>
-                {schemeCategories.map((c) => <option key={c.id} value={c.id}>{c.label}</option>)}
+                <option value="all">{t.schemesAllCategories}</option>
+                {schemeCategories.map((c) => <option key={c.id} value={c.id}>{categoryLabel(c.id, t)}</option>)}
               </select>
             </div>
             <div>
-              <label className="mb-1.5 block text-xs font-semibold text-forest-600">Farmer Category</label>
+              <label className="mb-1.5 block text-xs font-semibold text-forest-600">{t.schemesFarmerCat}</label>
               <select value={farmerCat} onChange={(e) => setFarmerCat(e.target.value as FarmerCatFilter)} className="select-field">
-                <option value="all">All farmer types</option>
-                {farmerCategories.map((c) => <option key={c.id} value={c.id}>{c.label}</option>)}
+                <option value="all">{t.schemesAllFarmerTypes}</option>
+                {farmerCategories.map((c) => <option key={c.id} value={c.id}>{farmerCatLabel(c.id, t)}</option>)}
               </select>
             </div>
           </div>
         )}
       </div>
 
-      <p className="mt-6 mb-3 text-sm font-semibold text-forest-700">{filtered.length} schemes found</p>
+      <p className="mt-6 mb-3 text-sm font-semibold text-forest-700">{filtered.length} {t.schemesFound}</p>
 
       <div className="space-y-4">
         {filtered.map((scheme) => (
           <article key={scheme.id} className="border-b border-forest-100 pb-4">
             <div className="flex items-start justify-between gap-3">
               <button onClick={() => setSelectedScheme(scheme)} className="flex-1 text-left">
-                <span className="text-xs font-medium text-forest-500">{categoryLabel(scheme.category)}</span>
+                <span className="text-xs font-medium text-forest-500">{categoryLabel(scheme.category, t)}</span>
                 <h2 className="mt-1 text-[17px] font-semibold leading-6 text-forest-900">{scheme.name}</h2>
                 <p className="mt-0.5 text-xs font-medium text-forest-500">{scheme.ministry}</p>
               </button>
@@ -213,31 +243,31 @@ export function SchemesScreen() {
             <p className="mt-3 text-sm leading-6 text-forest-700">{scheme.description}</p>
             <div className="mt-3 grid grid-cols-1 gap-2 sm:grid-cols-2">
               <div className="rounded-lg bg-forest-50 px-3 py-2.5">
-                <p className="text-[11px] font-semibold uppercase tracking-wider text-forest-400">Who can apply</p>
+                <p className="text-[11px] font-semibold uppercase tracking-wider text-forest-400">{t.schemesWhoCanApply}</p>
                 <p className="mt-1 text-xs leading-5 text-forest-800">{scheme.eligibility}</p>
               </div>
               <div className="rounded-lg bg-amber-50 px-3 py-2.5">
-                <p className="text-[11px] font-semibold uppercase tracking-wider text-amber-700">Main benefit</p>
+                <p className="text-[11px] font-semibold uppercase tracking-wider text-amber-700">{t.schemesMainBenefit}</p>
                 <p className="mt-1 text-xs leading-5 text-amber-950">{scheme.benefits}</p>
               </div>
             </div>
             <div className="mt-2.5 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-forest-400">
               <span className="flex items-center gap-1"><MapPin size={11} /> {scheme.applicableStates.slice(0, 3).join(', ')}</span>
               {scheme.applicableStates.length > 3 && <span>+{scheme.applicableStates.length - 3} more</span>}
-              <span>Verified: {new Date(scheme.lastVerifiedDate).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })}</span>
+              <span>{t.schemesVerifiedDate}{new Date(scheme.lastVerifiedDate).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })}</span>
             </div>
             <div className="mt-3 flex gap-2">
-              <button onClick={() => setSelectedScheme(scheme)} className="flex-1 rounded-lg border border-forest-200 bg-white py-2 text-sm font-semibold text-forest-700 hover:bg-forest-50 transition-colors">View details</button>
-              <a href={scheme.officialUrl} target="_blank" rel="noreferrer" className="flex items-center gap-1.5 rounded-lg bg-amber-400 px-4 py-2 text-sm font-semibold text-amber-950 hover:bg-amber-500 transition-colors"><ExternalLink size={15} /> Visit</a>
+              <button onClick={() => setSelectedScheme(scheme)} className="flex-1 rounded-lg border border-forest-200 bg-white py-2 text-sm font-semibold text-forest-700 hover:bg-forest-50 transition-colors">{t.schemesViewDetails}</button>
+              <a href={scheme.officialUrl} target="_blank" rel="noreferrer" className="flex items-center gap-1.5 rounded-lg bg-amber-400 px-4 py-2 text-sm font-semibold text-amber-950 hover:bg-amber-500 transition-colors"><ExternalLink size={15} /> {t.schemesVisit}</a>
             </div>
           </article>
         ))}
         {filtered.length === 0 && (
           <div className="py-12 text-center">
             <Sprout className="mx-auto text-forest-300" size={32} />
-            <p className="mt-3 font-semibold text-forest-800">No schemes match those filters</p>
-            <p className="mt-1 text-sm text-forest-500">Try selecting all crops or states.</p>
-            {activeFilters > 0 && <button onClick={clearFilters} className="mt-3 text-sm font-semibold text-forest-600 underline">Clear all filters</button>}
+            <p className="mt-3 font-semibold text-forest-800">{t.schemesNoMatch}</p>
+            <p className="mt-1 text-sm text-forest-500">{t.schemesNoMatchDesc}</p>
+            {activeFilters > 0 && <button onClick={clearFilters} className="mt-3 text-sm font-semibold text-forest-600 underline">{t.schemesClearFilters}</button>}
           </div>
         )}
       </div>

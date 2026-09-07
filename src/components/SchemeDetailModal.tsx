@@ -2,6 +2,8 @@ import { Bookmark, CheckCircle2, ExternalLink, FileText, ListChecks, MapPin, Spr
 import { cropById, cropName } from '@/data/crops';
 import { farmerCategories, schemeCategories, type SchemeDetail } from '@/data/schemes';
 import { useLang } from '@/lib/lang';
+import { categoryI18nMap, farmerCatI18nMap } from '@/screens/SchemesScreen';
+import type { TranslationKey } from '@/data/i18n';
 
 interface SchemeDetailModalProps {
   scheme: SchemeDetail;
@@ -10,23 +12,25 @@ interface SchemeDetailModalProps {
   onClose: () => void;
 }
 
-function categoryLabel(id: string): string {
-  return schemeCategories.find((c) => c.id === id)?.label ?? id;
+function categoryLabel(id: string, t: TranslationKey): string {
+  const key = categoryI18nMap[id];
+  return key ? t[key] : (schemeCategories.find((c) => c.id === id)?.label ?? id);
 }
 
-function farmerCategoryLabel(id: string): string {
-  return farmerCategories.find((c) => c.id === id)?.label ?? id;
+function farmerCategoryLabel(id: string, t: TranslationKey): string {
+  const key = farmerCatI18nMap[id];
+  return key ? t[key] : (farmerCategories.find((c) => c.id === id)?.label ?? id);
 }
 
 export function SchemeDetailModal({ scheme, isBookmarked, onToggleBookmark, onClose }: SchemeDetailModalProps) {
-  const { lang } = useLang();
+  const { lang, t } = useLang();
 
   return (
     <div className="fixed inset-0 z-50 flex items-end bg-forest-950/40 sm:items-center sm:justify-center" onClick={onClose}>
       <div className="max-h-[92vh] w-full max-w-lg overflow-y-auto rounded-t-xl bg-white p-5 sm:rounded-xl" onClick={(e) => e.stopPropagation()}>
         <div className="flex items-start justify-between gap-3">
           <div>
-            <span className="text-xs font-semibold text-forest-500">{categoryLabel(scheme.category)}</span>
+            <span className="text-xs font-semibold text-forest-500">{categoryLabel(scheme.category, t)}</span>
             <h2 className="mt-1 text-xl font-extrabold leading-6 text-forest-900">{scheme.name}</h2>
             <p className="mt-1 text-xs font-semibold text-forest-500">{scheme.ministry}</p>
           </div>
@@ -58,7 +62,7 @@ export function SchemeDetailModal({ scheme, isBookmarked, onToggleBookmark, onCl
           <div className="rounded-lg border border-forest-100 p-4">
             <p className="flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-wider text-forest-400"><UserCircle size={14} /> Farmer Categories</p>
             <div className="mt-2 flex flex-wrap gap-1.5">
-              {scheme.eligibleFarmerCategories.map((fc) => <span key={fc} className="chip bg-moss-50 text-forest-700">{farmerCategoryLabel(fc)}</span>)}
+              {scheme.eligibleFarmerCategories.map((fc) => <span key={fc} className="chip bg-moss-50 text-forest-700">{farmerCategoryLabel(fc, t)}</span>)}
             </div>
           </div>
           <div className="rounded-lg border border-forest-100 p-4">

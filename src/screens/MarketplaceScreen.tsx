@@ -6,6 +6,7 @@ import { useEffect, useState, useCallback } from 'react';
 import { supabase } from '@/lib/supabase';
 import { LocationSelector, type LocationSelection } from '@/components/LocationSelector';
 import { getAllStates, getDistricts, detectStateFromLocation } from 'india-state-district';
+import { useMarketplaceLang, type MarketplaceTranslationKey } from '@/data/i18n-marketplace';
 
 // ── Types ──────────────────────────────────────────────────────
 
@@ -49,12 +50,18 @@ interface SavedLocation {
 
 const STORAGE_KEY = 'fasalsathi_marketplace_location';
 
-const CATEGORY_LABELS: Record<string, string> = {
-  seeds: 'Seeds',
-  fertilizer: 'Fertilizer',
-  pesticide: 'Pesticide',
-  equipment: 'Equipment',
-};
+const CATEGORY_IDS = ['seeds', 'fertilizer', 'pesticide', 'equipment'] as const;
+type CategoryId = (typeof CATEGORY_IDS)[number];
+
+function categoryLabel(id: string, t: MarketplaceTranslationKey): string {
+  switch (id) {
+    case 'seeds': return t.catSeeds;
+    case 'fertilizer': return t.catFertilizer;
+    case 'pesticide': return t.catPesticide;
+    case 'equipment': return t.catEquipment;
+    default: return id;
+  }
+}
 
 const CATEGORY_ICONS: Record<string, typeof Sprout> = {
   seeds: Sprout,
@@ -107,6 +114,7 @@ interface MarketplaceScreenProps {
 }
 
 export function MarketplaceScreen({ highlightProduct }: MarketplaceScreenProps) {
+  const t = useMarketplaceLang();
   const [location, setLocation] = useState<SavedLocation | null>(() => loadSavedLocation());
   const [locationMode, setLocationMode] = useState<LocationMode>(location?.mode ?? 'none');
   const [requestingGps, setRequestingGps] = useState(false);
@@ -150,17 +158,17 @@ export function MarketplaceScreen({ highlightProduct }: MarketplaceScreenProps) 
     } catch (err: unknown) {
       const geoErr = err as { code?: string; message?: string };
       if (geoErr?.code === 'PERMISSION_DENIED') {
-        setGpsError('Location permission denied. You can select your state and district manually.');
+        setGpsError(t.mpGpsDenied);
       } else if (geoErr?.code === 'NOT_SUPPORTED') {
-        setGpsError('Geolocation is not supported on this device. Please select manually.');
+        setGpsError(t.mpGpsNotSupported);
       } else {
-        setGpsError('Could not detect your location. You can select your state and district manually.');
+        setGpsError(t.mpGpsFailed);
       }
     } finally {
       setRequestingGps(false);
       setAutoDetecting(false);
     }
-  }, []);
+  }, [t.mpGpsDenied, t.mpGpsNotSupported, t.mpGpsFailed]);
 
   // ── Manual location ──────────────────────────────────────────
 
@@ -201,14 +209,14 @@ export function MarketplaceScreen({ highlightProduct }: MarketplaceScreenProps) 
         if (error) throw error;
         if (!cancelled) setDealers((data as Dealer[]) ?? []);
       } catch {
-        if (!cancelled) setDealerError('Could not load dealers. Please try again.');
+        if (!cancelled) setDealerError(t.mpDealerError);
       } finally {
         if (!cancelled) setLoadingDealers(false);
       }
     }
     fetchDealers();
     return () => { cancelled = true; };
-  }, [location]);
+  }, [location, t.mpDealerError]);
 
   // ── Fetch products for selected dealer ───────────────────────
 
@@ -276,17 +284,17 @@ export function MarketplaceScreen({ highlightProduct }: MarketplaceScreenProps) 
     return (
       <section className="screen-container animate-fade-in px-4">
         <div className="pt-6">
-          <p className="text-sm font-medium text-forest-500">Connect with local dealers</p>
-          <h1 className="mt-1 text-2xl font-bold tracking-tight text-forest-900">Local Marketplace</h1>
+          <p className="text-sm font-medium text-forest-500">{t.mpConnectDealers}</p>
+          <h1 className="mt-1 text-2xl font-bold tracking-tight text-forest-900">{t.mpTitle}</h1>
           <p className="mt-1.5 text-sm leading-6 text-forest-500">
-            Find verified dealers near you for seeds, fertilizer, pesticides, and equipment.
+            {t.mpSubtitle}
           </p>
         </div>
 
         <div className="mt-8">
-          <h2 className="text-lg font-bold text-forest-900">Allow location to find dealers near you</h2>
+          <h2 className="text-lg font-bold text-forest-900">{t.mpAllowLocation}</h2>
           <p className="mt-0.5 text-sm leading-5 text-forest-500">
-            We use your location to detect your state and district automatically. It stays on your device.
+            {t.mpLocationExplain}
           </p>
           <button
             onClick={requestGps}
@@ -294,9 +302,9 @@ export function MarketplaceScreen({ highlightProduct }: MarketplaceScreenProps) 
             className="btn-primary mt-4 flex w-full items-center justify-center gap-2 disabled:opacity-70"
           >
             {requestingGps ? (
-              <><Loader2 size={19} className="animate-spin" /> Detecting location...</>
+              <><Loader2 size={19} className="animate-spin" /> {t.mpDetecting}</>
             ) : (
-              <><MapPin size={19} /> Auto-detect my location</>
+              <><MapPin size={19} /> {t.mpAutoDetect}</>
             )}
           </button>
           {gpsError && (
@@ -310,8 +318,8 @@ export function MarketplaceScreen({ highlightProduct }: MarketplaceScreenProps) 
         <div className="my-8 border-t border-forest-100" />
 
         <div>
-          <h2 className="text-base font-bold text-forest-900">Or select your state and district</h2>
-          <p className="mt-0.5 text-sm text-forest-500">Choose manually to find dealers in your area.</p>
+          <h2 className="text-base font-bold text-forest-900">{t.mpOrSelect}</h2>
+          <p className="mt-0.5 text-sm text-forest-500">{t.mpManualSubtitle}</p>
           <div className="mt-4">
             <LocationSelector
               value={manualSelection}
@@ -324,7 +332,7 @@ export function MarketplaceScreen({ highlightProduct }: MarketplaceScreenProps) 
             disabled={!manualSelection?.stateCode || !manualSelection?.district}
             className="btn-secondary mt-4 flex w-full items-center justify-center gap-2 disabled:opacity-50"
           >
-            <ChevronRight size={17} /> Continue with selected location
+            <ChevronRight size={17} /> {t.mpContinue}
           </button>
         </div>
       </section>
@@ -335,24 +343,24 @@ export function MarketplaceScreen({ highlightProduct }: MarketplaceScreenProps) 
 
   const locationLabel = location?.district
     ? `${location.district}, ${location.stateName ?? ''}`
-    : location?.stateName ?? 'Your location';
+    : location?.stateName ?? t.mpNearbyDealers;
 
   return (
     <section className="screen-container animate-fade-in px-4">
       <div className="pt-6">
-        <p className="text-sm font-medium text-forest-500">Local Marketplace</p>
-        <h1 className="mt-1 text-2xl font-bold tracking-tight text-forest-900">Nearby Dealers</h1>
+        <p className="text-sm font-medium text-forest-500">{t.mpTitle}</p>
+        <h1 className="mt-1 text-2xl font-bold tracking-tight text-forest-900">{t.mpNearbyDealers}</h1>
         <div className="mt-2 flex items-center gap-2 text-sm text-forest-500">
           <MapPin size={14} className="text-forest-400" />
-          <span>Showing results near: <span className="font-semibold text-forest-800">{locationLabel}</span></span>
+          <span>{t.mpShowingNear} <span className="font-semibold text-forest-800">{locationLabel}</span></span>
           <button onClick={changeLocation} className="ml-1 text-sm font-semibold text-forest-600 underline hover:text-forest-700">
-            Change
+            {t.mpChange}
           </button>
         </div>
         {highlightProduct && (
           <div className="mt-2 flex items-center gap-2 rounded-lg bg-amber-50 px-3 py-2 text-sm text-amber-900">
             <ShoppingCart size={14} />
-            <span>Looking for: <span className="font-bold">{highlightProduct}</span></span>
+            <span>{t.mpLookingFor} <span className="font-bold">{highlightProduct}</span></span>
           </div>
         )}
       </div>
@@ -365,7 +373,7 @@ export function MarketplaceScreen({ highlightProduct }: MarketplaceScreenProps) 
             role === 'buyer' ? 'border-forest-500 bg-forest-50 text-forest-800' : 'border-forest-200 bg-white text-forest-500 hover:bg-forest-50'
           }`}
         >
-          <ShoppingCart size={17} /> Buyer
+          <ShoppingCart size={17} /> {t.mpBuyer}
         </button>
         <button
           onClick={() => { setRole('seller'); setShowSellerForm(false); setSelectedDealer(null); }}
@@ -373,7 +381,7 @@ export function MarketplaceScreen({ highlightProduct }: MarketplaceScreenProps) 
             role === 'seller' ? 'border-forest-500 bg-forest-50 text-forest-800' : 'border-forest-200 bg-white text-forest-500 hover:bg-forest-50'
           }`}
         >
-          <Store size={17} /> Seller / Dealer
+          <Store size={17} /> {t.mpSeller}
         </button>
       </div>
 
@@ -392,8 +400,8 @@ export function MarketplaceScreen({ highlightProduct }: MarketplaceScreenProps) 
           ) : sortedDealers.length === 0 ? (
             <div className="mt-6 py-10 text-center">
               <Store className="mx-auto text-forest-300" size={32} />
-              <p className="mt-3 font-semibold text-forest-800">No dealers found in your area</p>
-              <p className="mt-1 text-sm text-forest-500">Try selecting a different district or state.</p>
+              <p className="mt-3 font-semibold text-forest-800">{t.mpNoDealers}</p>
+              <p className="mt-1 text-sm text-forest-500">{t.mpNoDealersHint}</p>
             </div>
           ) : (
             <div className="mt-6 divide-y divide-forest-100">
@@ -416,9 +424,9 @@ export function MarketplaceScreen({ highlightProduct }: MarketplaceScreenProps) 
                       </div>
                       <p className="mt-0.5 truncate text-xs text-forest-500">{dealer.address}, {dealer.district}</p>
                       <p className="mt-1 text-xs text-forest-400">
-                        {distance != null && <span className="font-medium text-forest-600">{distance < 1 ? '<1 km' : `${distance.toFixed(1)} km`} away</span>}
+                        {distance != null && <span className="font-medium text-forest-600">{distance < 1 ? t.mpLessThan1Km : `${distance.toFixed(1)} km`} {t.mpAway}</span>}
                         {distance != null && dealer.categories.length > 0 && ' · '}
-                        {dealer.categories.map((cat) => CATEGORY_LABELS[cat] ?? cat).join(' · ')}
+                        {dealer.categories.map((cat) => categoryLabel(cat, t)).join(' · ')}
                       </p>
                     </div>
                     <ChevronRight size={17} className="mt-1 shrink-0 text-forest-300" />
@@ -445,15 +453,15 @@ export function MarketplaceScreen({ highlightProduct }: MarketplaceScreenProps) 
       {role === 'seller' && !showSellerForm && (
         <div className="mt-6 py-8 text-center">
           <Store className="mx-auto text-forest-300" size={36} />
-          <p className="mt-4 font-semibold text-forest-800">List your business as a dealer</p>
+          <p className="mt-4 font-semibold text-forest-800">{t.mpListBusiness}</p>
           <p className="mt-1 text-sm leading-5 text-forest-500">
-            Add your business name, contact, area, and products so farmers near you can find you.
+            {t.mpListBusinessDesc}
           </p>
           <button
             onClick={() => setShowSellerForm(true)}
             className="btn-primary mt-5 flex w-full items-center justify-center gap-2"
           >
-            <Plus size={17} /> Add your dealership
+            <Plus size={17} /> {t.mpAddDealership}
           </button>
         </div>
       )}
@@ -476,6 +484,8 @@ function DealerDetail({
   highlightProduct?: string;
   onBack: () => void;
 }) {
+  const t = useMarketplaceLang();
+
   const grouped = products.reduce<Record<string, DealerProduct[]>>((acc, p) => {
     (acc[p.category] ??= []).push(p);
     return acc;
@@ -487,7 +497,7 @@ function DealerDetail({
         onClick={onBack}
         className="mb-4 mt-1 flex items-center gap-2 text-sm font-bold text-forest-600 hover:text-forest-700 transition-colors"
       >
-        <ArrowLeft size={18} /> Back to dealers
+        <ArrowLeft size={18} /> {t.mpBackToDealers}
       </button>
 
       <div className="mt-6">
@@ -495,22 +505,22 @@ function DealerDetail({
           <h2 className="text-lg font-bold text-forest-900">{dealer.business_name}</h2>
           {dealer.verified && <BadgeCheck size={17} className="shrink-0 text-success-600" />}
         </div>
-        <p className="mt-0.5 text-sm text-forest-500">Owner: {dealer.owner_name}</p>
+        <p className="mt-0.5 text-sm text-forest-500">{t.mpOwner} {dealer.owner_name}</p>
         <p className="mt-1 text-sm text-forest-600">{dealer.address}, {dealer.district}, {dealer.state}</p>
         <p className="mt-2 text-xs font-medium text-forest-400">
-          {dealer.categories.map((cat) => CATEGORY_LABELS[cat] ?? cat).join(' · ')}
+          {dealer.categories.map((cat) => categoryLabel(cat, t)).join(' · ')}
         </p>
         <a
           href={`tel:${dealer.phone}`}
           className="btn-primary mt-4 flex w-full items-center justify-center gap-2"
         >
-          <Phone size={17} /> Call {dealer.phone}
+          <Phone size={17} /> {t.mpCall} {dealer.phone}
         </a>
       </div>
 
       <div className="my-8 border-t border-forest-100" />
 
-      <h3 className="text-base font-bold text-forest-900">Products available</h3>
+      <h3 className="text-base font-bold text-forest-900">{t.mpProductsAvailable}</h3>
 
       {loading ? (
         <div className="flex items-center justify-center py-8 text-forest-400">
@@ -519,7 +529,7 @@ function DealerDetail({
       ) : products.length === 0 ? (
         <div className="mt-4 py-8 text-center">
           <Package className="mx-auto text-forest-300" size={28} />
-          <p className="mt-2 text-sm text-forest-500">No products listed yet.</p>
+          <p className="mt-2 text-sm text-forest-500">{t.mpNoProducts}</p>
         </div>
       ) : (
         <div className="mt-4 space-y-4">
@@ -529,7 +539,7 @@ function DealerDetail({
               <div key={cat}>
                 <div className="mb-2 flex items-center gap-2">
                   <Icon size={15} className="text-forest-500" />
-                  <h4 className="text-sm font-semibold text-forest-700">{CATEGORY_LABELS[cat] ?? cat}</h4>
+                  <h4 className="text-sm font-semibold text-forest-700">{categoryLabel(cat, t)}</h4>
                 </div>
                 <div className="space-y-2">
                   {items.map((p) => {
@@ -545,14 +555,14 @@ function DealerDetail({
                           <p className="mt-0.5 text-xs text-forest-500">
                             ₹{Number(p.price).toLocaleString('en-IN')} {p.unit}
                           </p>
-                          {!p.in_stock && <span className="mt-1 inline-block text-xs font-semibold text-error-600">Out of stock</span>}
-                          {isHighlighted && <span className="ml-2 text-xs font-semibold text-amber-700">Recommended</span>}
+                          {!p.in_stock && <span className="mt-1 inline-block text-xs font-semibold text-error-600">{t.mpOutOfStock}</span>}
+                          {isHighlighted && <span className="ml-2 text-xs font-semibold text-amber-700">{t.mpRecommended}</span>}
                         </div>
                         <a
                           href={`tel:${dealer.phone}`}
                           className="flex shrink-0 items-center gap-1.5 rounded-lg bg-forest-600 px-3 py-1.5 text-sm font-semibold text-white hover:bg-forest-700 transition-colors"
                         >
-                          <Phone size={14} /> Contact
+                          <Phone size={14} /> {t.mpContact}
                         </a>
                       </div>
                     );
@@ -570,6 +580,7 @@ function DealerDetail({
 // ── Seller Form sub-component ───────────────────────────────────
 
 function SellerForm({ onBack }: { onBack: () => void }) {
+  const t = useMarketplaceLang();
   const [businessName, setBusinessName] = useState('');
   const [ownerName, setOwnerName] = useState('');
   const [phone, setPhone] = useState('');
@@ -600,7 +611,7 @@ function SellerForm({ onBack }: { onBack: () => void }) {
   async function handleSubmit() {
     setError('');
     if (!businessName || !ownerName || !phone || !address || !locationSelection?.stateCode || !locationSelection?.district || cats.length === 0) {
-      setError('Please fill all fields, select your state and district, and choose at least one product category.');
+      setError(t.mpFormError);
       return;
     }
     setSaving(true);
@@ -620,7 +631,7 @@ function SellerForm({ onBack }: { onBack: () => void }) {
         .select('id')
         .single();
 
-      if (dealerErr) throw new Error('Could not save your dealership.');
+      if (dealerErr) throw new Error(t.mpDealerSaveError);
 
       const validProducts = productRows.filter((r) => r.name && r.price);
       if (validProducts.length > 0) {
@@ -634,12 +645,12 @@ function SellerForm({ onBack }: { onBack: () => void }) {
             in_stock: true,
           }))
         );
-        if (prodErr) throw new Error('Dealership saved, but products could not be added.');
+        if (prodErr) throw new Error(t.mpProductSaveError);
       }
 
       setSuccess(true);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Something went wrong. Please try again.');
+      setError(err instanceof Error ? err.message : t.mpSubmitError);
     } finally {
       setSaving(false);
     }
@@ -651,9 +662,9 @@ function SellerForm({ onBack }: { onBack: () => void }) {
         <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-lg bg-success-100 text-success-700">
           <Check size={26} />
         </div>
-        <p className="mt-4 text-lg font-bold text-forest-900">Dealership listed!</p>
-        <p className="mt-1 text-sm text-forest-500">Farmers near you can now find your business.</p>
-        <button onClick={onBack} className="btn-primary mt-5">Back to marketplace</button>
+        <p className="mt-4 text-lg font-bold text-forest-900">{t.mpDealershipListed}</p>
+        <p className="mt-1 text-sm text-forest-500">{t.mpDealershipListedDesc}</p>
+        <button onClick={onBack} className="btn-primary mt-5">{t.mpBackToMarketplace}</button>
       </div>
     );
   }
@@ -664,26 +675,26 @@ function SellerForm({ onBack }: { onBack: () => void }) {
         onClick={onBack}
         className="mb-4 mt-1 flex items-center gap-2 text-sm font-bold text-forest-600 hover:text-forest-700 transition-colors"
       >
-        <ArrowLeft size={18} /> Back
+        <ArrowLeft size={18} /> {t.mpBack}
       </button>
 
       <div className="mt-6">
-        <h2 className="text-lg font-bold text-forest-900">Business details</h2>
-        <label className="mt-4 mb-1.5 block text-sm font-semibold text-forest-800">Business name</label>
-        <input value={businessName} onChange={(e) => setBusinessName(e.target.value)} className="input-field mb-4" placeholder="e.g. Shri Krishna Krishi Kendra" />
-        <label className="mb-1.5 block text-sm font-semibold text-forest-800">Owner name</label>
-        <input value={ownerName} onChange={(e) => setOwnerName(e.target.value)} className="input-field mb-4" placeholder="Your name" />
-        <label className="mb-1.5 block text-sm font-semibold text-forest-800">Phone number</label>
-        <input value={phone} onChange={(e) => setPhone(e.target.value)} className="input-field mb-4" placeholder="10-digit mobile number" inputMode="tel" />
-        <label className="mb-1.5 block text-sm font-semibold text-forest-800">Address</label>
-        <input value={address} onChange={(e) => setAddress(e.target.value)} className="input-field mb-4" placeholder="Shop address" />
+        <h2 className="text-lg font-bold text-forest-900">{t.mpBusinessDetails}</h2>
+        <label className="mt-4 mb-1.5 block text-sm font-semibold text-forest-800">{t.mpBusinessName}</label>
+        <input value={businessName} onChange={(e) => setBusinessName(e.target.value)} className="input-field mb-4" placeholder={t.mpBusinessNamePlaceholder} />
+        <label className="mb-1.5 block text-sm font-semibold text-forest-800">{t.mpOwnerName}</label>
+        <input value={ownerName} onChange={(e) => setOwnerName(e.target.value)} className="input-field mb-4" placeholder={t.mpOwnerNamePlaceholder} />
+        <label className="mb-1.5 block text-sm font-semibold text-forest-800">{t.mpPhoneLabel}</label>
+        <input value={phone} onChange={(e) => setPhone(e.target.value)} className="input-field mb-4" placeholder={t.mpPhonePlaceholder} inputMode="tel" />
+        <label className="mb-1.5 block text-sm font-semibold text-forest-800">{t.mpAddressLabel}</label>
+        <input value={address} onChange={(e) => setAddress(e.target.value)} className="input-field mb-4" placeholder={t.mpAddressPlaceholder} />
       </div>
 
       <div className="my-8 border-t border-forest-100" />
 
       <div>
-        <h2 className="text-base font-bold text-forest-900">Select your state and district</h2>
-        <p className="mt-0.5 text-sm text-forest-500">This helps farmers find your dealership by location.</p>
+        <h2 className="text-base font-bold text-forest-900">{t.mpSelectLocation}</h2>
+        <p className="mt-0.5 text-sm text-forest-500">{t.mpSelectLocationHint}</p>
         <div className="mt-4">
           <LocationSelector
             value={locationSelection}
@@ -695,9 +706,9 @@ function SellerForm({ onBack }: { onBack: () => void }) {
       <div className="my-8 border-t border-forest-100" />
 
       <div>
-        <h2 className="text-base font-bold text-forest-900">Product categories you carry</h2>
+        <h2 className="text-base font-bold text-forest-900">{t.mpCategories}</h2>
         <div className="mt-3 grid grid-cols-2 gap-2">
-          {Object.entries(CATEGORY_LABELS).map(([id, label]) => (
+          {CATEGORY_IDS.map((id) => (
             <button
               key={id}
               onClick={() => toggleCat(id)}
@@ -706,20 +717,20 @@ function SellerForm({ onBack }: { onBack: () => void }) {
               }`}
             >
               {cats.includes(id) && <Check size={14} />}
-              {label}
+              {categoryLabel(id, t)}
             </button>
           ))}
         </div>
         <label className="mt-4 flex items-center gap-2 text-sm text-forest-700">
           <input type="checkbox" checked={verified} onChange={(e) => setVerified(e.target.checked)} className="h-4 w-4 rounded border-forest-300" />
-          Mark as verified dealer (KYC placeholder)
+          {t.mpVerifiedLabel}
         </label>
       </div>
 
       <div className="my-8 border-t border-forest-100" />
 
       <div>
-        <h2 className="text-base font-bold text-forest-900">Product listings ({productRows.length}/5)</h2>
+        <h2 className="text-base font-bold text-forest-900">{t.mpProductListings} ({productRows.length}/5)</h2>
         <div className="mt-3 space-y-3">
           {productRows.map((row, i) => (
             <div key={i} className="rounded-lg border border-forest-100 p-3">
@@ -727,29 +738,29 @@ function SellerForm({ onBack }: { onBack: () => void }) {
                 value={row.name}
                 onChange={(e) => updateRow(i, 'name', e.target.value)}
                 className="input-field mb-2"
-                placeholder="Product name"
+                placeholder={t.mpProductName}
               />
               <div className="grid grid-cols-3 gap-2">
                 <input
                   value={row.price}
                   onChange={(e) => updateRow(i, 'price', e.target.value)}
                   className="input-field"
-                  placeholder="Price"
+                  placeholder={t.mpPrice}
                   inputMode="numeric"
                 />
                 <input
                   value={row.unit}
                   onChange={(e) => updateRow(i, 'unit', e.target.value)}
                   className="input-field"
-                  placeholder="per kg"
+                  placeholder={t.mpUnit}
                 />
                 <select
                   value={row.category}
                   onChange={(e) => updateRow(i, 'category', e.target.value)}
                   className="select-field"
                 >
-                  {Object.entries(CATEGORY_LABELS).map(([id, label]) => (
-                    <option key={id} value={id}>{label}</option>
+                  {CATEGORY_IDS.map((id) => (
+                    <option key={id} value={id}>{categoryLabel(id, t)}</option>
                   ))}
                 </select>
               </div>
@@ -758,7 +769,7 @@ function SellerForm({ onBack }: { onBack: () => void }) {
         </div>
         {productRows.length < 5 && (
           <button onClick={addRow} className="mt-3 flex w-full items-center justify-center gap-1.5 rounded-lg border border-forest-200 py-2.5 text-sm font-semibold text-forest-600 hover:bg-forest-50 transition-colors">
-            <Plus size={15} /> Add another product
+            <Plus size={15} /> {t.mpAddProduct}
           </button>
         )}
       </div>
@@ -775,7 +786,7 @@ function SellerForm({ onBack }: { onBack: () => void }) {
         disabled={saving}
         className="btn-primary mt-6 flex w-full items-center justify-center gap-2 disabled:opacity-70"
       >
-        {saving ? <><Loader2 size={19} className="animate-spin" /> Saving...</> : <><Check size={17} /> Submit dealership</>}
+        {saving ? <><Loader2 size={19} className="animate-spin" /> {t.mpSaving}</> : <><Check size={17} /> {t.mpSubmit}</>}
       </button>
     </div>
   );

@@ -1,6 +1,7 @@
 import { useMemo, useState } from 'react';
 import { Globe, MapPin, ChevronDown } from 'lucide-react';
 import { getAllStates, getDistricts } from 'india-state-district';
+import { useMarketplaceLang } from '@/data/i18n-marketplace';
 
 export interface LocationSelection {
   country: string;
@@ -18,6 +19,7 @@ interface LocationSelectorProps {
 const COUNTRY = 'India';
 
 export function LocationSelector({ value, onChange, autoDetecting }: LocationSelectorProps) {
+  const t = useMarketplaceLang();
   const states = useMemo(() => getAllStates().sort((a, b) => a.name.localeCompare(b.name)), []);
   const [selectedStateCode, setSelectedStateCode] = useState(value?.stateCode ?? '');
   const [selectedDistrict, setSelectedDistrict] = useState(value?.district ?? '');
@@ -61,7 +63,7 @@ export function LocationSelector({ value, onChange, autoDetecting }: LocationSel
       {/* Country (hardcoded India) */}
       <div>
         <label className="mb-1.5 flex items-center gap-1.5 text-sm font-semibold text-forest-800">
-          <Globe size={15} className="text-forest-500" /> Country
+          <Globe size={15} className="text-forest-500" /> {t.lsCountry}
         </label>
         <div className="flex items-center gap-2 rounded-lg border border-forest-200 bg-forest-50 px-4 py-2.5 text-sm font-medium text-forest-800">
           <span className="text-lg leading-none">🇮🇳</span> {COUNTRY}
@@ -71,7 +73,7 @@ export function LocationSelector({ value, onChange, autoDetecting }: LocationSel
       {/* State */}
       <div>
         <label className="mb-1.5 flex items-center gap-1.5 text-sm font-semibold text-forest-800">
-          <MapPin size={15} className="text-forest-500" /> State / Union Territory
+          <MapPin size={15} className="text-forest-500" /> {t.lsState}
         </label>
         <div className="relative">
           <select
@@ -80,7 +82,7 @@ export function LocationSelector({ value, onChange, autoDetecting }: LocationSel
             className="select-field"
             disabled={autoDetecting}
           >
-            <option value="">{autoDetecting ? 'Detecting...' : 'Select state...'}</option>
+            <option value="">{autoDetecting ? t.lsDetecting : t.lsSelectState}</option>
             {states.map((s) => (
               <option key={s.code} value={s.code}>{s.name}</option>
             ))}
@@ -91,7 +93,7 @@ export function LocationSelector({ value, onChange, autoDetecting }: LocationSel
       {/* District */}
       <div>
         <label className="mb-1.5 flex items-center gap-1.5 text-sm font-semibold text-forest-800">
-          <ChevronDown size={15} className="text-forest-500" /> District
+          <ChevronDown size={15} className="text-forest-500" /> {t.lsDistrict}
         </label>
         <select
           value={selectedDistrict}
@@ -99,7 +101,7 @@ export function LocationSelector({ value, onChange, autoDetecting }: LocationSel
           className="select-field"
           disabled={!selectedStateCode || autoDetecting}
         >
-          <option value="">{selectedStateCode ? 'Select district...' : 'Select state first'}</option>
+          <option value="">{selectedStateCode ? t.lsSelectDistrict : t.lsSelectStateFirst}</option>
           {districts.map((d) => (
             <option key={d} value={d}>{d}</option>
           ))}
