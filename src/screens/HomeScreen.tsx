@@ -10,6 +10,7 @@ import { useHomeLang } from '@/data/i18n-home';
 import type { View } from '@/components/AppShell';
 import { ScanIcon } from '@/components/BrandIcons';
 import { getWeatherByLocation, getUserLocation, type WeatherResult, type WeatherHourlyEntry } from '@/lib/weatherService';
+import { translateWeatherCondition } from '@/data/weatherConditionTranslations';
 
 interface HomeScreenProps {
   onResult: (scan: ScanRecord) => void;
@@ -271,15 +272,16 @@ export function HomeScreen({ onResult, onNavigate }: HomeScreenProps) {
         setWeather(fallbackWeather);
         requestAnimationFrame(() => setWeatherVisible(true));
       } else {
+        const cond = translateWeatherCondition(result.condition, lang);
         const w: WeatherData = {
           temp: `${result.temp}°`,
-          condition: `${result.condition} · ${result.windDescription}`,
+          condition: `${cond} · ${result.windDescription}`,
           location: result.location,
           forecast: result.forecast.map((f) => ({
             day: f.label,
             icon: pickWeatherIcon(f.condition),
             temp: `${f.maxTemp}°C`,
-            condition: f.condition,
+            condition: translateWeatherCondition(f.condition, lang),
           })),
           updatedAt: Date.now(),
           windKph: result.windKph,
