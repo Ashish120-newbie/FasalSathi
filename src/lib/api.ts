@@ -383,6 +383,15 @@ export async function fetchTreatmentDetail(
   const { data: sessionData } = await supabase.auth.getSession();
   const accessToken = sessionData.session?.access_token;
 
+  console.log('[treatment-detail] Frontend request:', {
+    diseaseName,
+    cropName,
+    confidenceScore,
+    confidenceLevel,
+    hasAccessToken: Boolean(accessToken),
+    endpoint: `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/treatment-detail`,
+  });
+
   const response = await fetch(
     `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/treatment-detail`,
     {
@@ -396,13 +405,17 @@ export async function fetchTreatmentDetail(
     }
   );
 
+  console.log('[treatment-detail] Response status:', response.status, response.statusText);
+
   if (!response.ok) {
     const body = await response.json().catch(() => ({}));
+    console.error('[treatment-detail] Error response body:', body);
     throw new Error(body.error || 'Could not fetch treatment details.');
   }
 
-  const { treatment } = await response.json();
-  const result = treatment as TreatmentDetail;
+  const json = await response.json();
+  console.log('[treatment-detail] Success response:', json);
+  const result = json.treatment as TreatmentDetail;
   treatmentCache.set(cacheKey, result);
   return result;
 }
