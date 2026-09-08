@@ -14,10 +14,6 @@ interface TreatmentRequest {
   diagnosisData?: unknown;
 }
 
-interface TreatmentBullet {
-  text: string;
-}
-
 interface TreatmentResponse {
   isConfident: boolean;
   bullets: string[];
@@ -68,25 +64,36 @@ Return ONLY this JSON, no extra text:
 }`;
 };
 
+function jsonResponse(body: unknown, status: number) {
+  return new Response(JSON.stringify(body), {
+    status,
+    headers: { ...corsHeaders, "Content-Type": "application/json" },
+  });
+}
+
 Deno.serve(async (req: Request) => {
   if (req.method === "OPTIONS") {
     return new Response(null, { status: 200, headers: corsHeaders });
   }
 
   try {
-    const {
-      diseaseName,
-      cropName,
-      confidenceScore,
-      confidenceLevel,
-      diagnosisData,
-    }: TreatmentRequest = await req.json();
+    const rawBody = await req.text();
+    console.log("[treatment-detail] Raw request body length:", rawBody.length);
+
+    let body: TreatmentRequest;
+    try {
+      body = JSON.parse(rawBody);
+    } catch (parseErr) {
+      console.error("[treatment-detail] Failed to parse request JSON:", (parseErr as Error).message, "| raw:", rawBody.slice(0, 300));
+      return jsonResponse({ error: "Invalid JSON in request body." }, 400);
+    }
+
+    const { diseaseName, cropName, confidenceScore, confidenceLevel, diagnosisData } = body;
+    console.log("[treatment-detail] Parsed request:", { diseaseName, cropName, confidenceScore, confidenceLevel });
 
     if (!diseaseName || !cropName) {
-      return new Response(
-        JSON.stringify({ error: "diseaseName and cropName are required." }),
-        { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } },
-      );
+      console.error("[treatment-detail] Missing required fields:", { diseaseName: !!diseaseName, cropName: !!cropName });
+      return jsonResponse({ error: "diseaseName and cropName are required." }, 400);
     }
 
     const isConfident =
@@ -94,17 +101,22 @@ Deno.serve(async (req: Request) => {
       (typeof confidenceScore === 'number' && confidenceScore >= HIGH_CONFIDENCE_THRESHOLD);
 
     const geminiApiKey = Deno.env.get("GEMINI_API_KEY");
+    console.log("[treatment-detail] GEMINI_API_KEY found:", Boolean(geminiApiKey), geminiApiKey ? `starts with: ${geminiApiKey.slice(0, 4)}...` : "(not set)");
+
     if (!geminiApiKey) {
-      return new Response(
-        JSON.stringify({ error: "Treatment detail service is not configured." }),
-        { status: 503, headers: { ...corsHeaders, "Content-Type": "application/json" } },
-      );
+      console.error("[treatment-detail] GEMINI_API_KEY is not set in environment variables.");
+      return jsonResponse({ error: "Treatment detail service is not configured (missing API key)." }, 503);
     }
 
-    const geminiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent?key=${geminiApiKey}`;
+    const geminiModel = "gemini-flash-latest";
+    const geminiUrl = `https://generativelanguage.googleapis.com/v1beta/models/${geminiModel}:generateContent?key=${geminiApiKey}`;
+    console.log("[treatment-detail] Calling Gemini API:", geminiUrl.replace(geminiApiKey, "***"));
 
     const controller = new AbortController();
-    const timeout = setTimeout(() => controller.abort(), 15000);
+    const timeout = setTimeout(() => {
+      console.error("[treatment-detail] Gemini fetch timed out after 15s");
+      controller.abort();
+    }, 15000);
 
     let geminiResp: Response;
     try {
@@ -119,32 +131,58 @@ Deno.serve(async (req: Request) => {
       });
     } catch (fetchErr) {
       clearTimeout(timeout);
-      console.error("[treatment-detail] Gemini fetch failed:", (fetchErr as Error)?.message);
-      return new Response(
-        JSON.stringify({ error: "Could not reach the treatment service." }),
-        { status: 502, headers: { ...corsHeaders, "Content-Type": "application/json" } },
+      const errMsg = (fetchErr as Error)?.message ?? String(fetchErr);
+      const isAbort = (fetchErr as Error)?.name === "AbortError";
+      console.error("[treatment-detail] Gemini fetch failed:", {
+        error: errMsg,
+        isAbort,
+        stack: (fetchErr as Error)?.stack?.slice(0, 500),
+      });
+      return jsonResponse(
+        { error: isAbort ? "Gemini API timed out after 15 seconds." : `Gemini fetch failed: ${errMsg}` },
+        502,
       );
     }
     clearTimeout(timeout);
 
+    console.log("[treatment-detail] Gemini response status:", geminiResp.status, geminiResp.statusText);
+
     if (!geminiResp.ok) {
       const errorBody = await geminiResp.text().catch(() => "<unreadable>");
-      console.error("[treatment-detail] Gemini API error:", geminiResp.status, errorBody.slice(0, 500));
-      return new Response(
-        JSON.stringify({ error: "The treatment service returned an error." }),
-        { status: 502, headers: { ...corsHeaders, "Content-Type": "application/json" } },
+      console.error("[treatment-detail] Gemini API returned error:", {
+        status: geminiResp.status,
+        statusText: geminiResp.statusText,
+        body: errorBody.slice(0, 1000),
+      });
+      return jsonResponse(
+        { error: `Gemini API error (${geminiResp.status}): ${errorBody.slice(0, 500)}` },
+        502,
       );
     }
 
-    const geminiData = await geminiResp.json();
-    const rawText: string =
-      geminiData?.candidates?.[0]?.content?.parts?.[0]?.text?.trim() ?? "";
+    const rawGeminiBody = await geminiResp.text().catch(() => "<unreadable>");
+    let geminiData: unknown;
+    try {
+      geminiData = JSON.parse(rawGeminiBody);
+    } catch (jsonErr) {
+      console.error("[treatment-detail] Failed to parse Gemini response JSON:", {
+        error: (jsonErr as Error).message,
+        status: geminiResp.status,
+        rawBody: rawGeminiBody.slice(0, 1000),
+      });
+      return jsonResponse({ error: "Gemini response was not valid JSON." }, 502);
+    }
+
+    const geminiResponse = geminiData as {
+      candidates?: Array<{ content?: { parts?: Array<{ text?: string }> } }>;
+    };
+    const rawText: string = geminiResponse.candidates?.[0]?.content?.parts?.[0]?.text?.trim() ?? "";
+
+    console.log("[treatment-detail] Gemini generated text length:", rawText.length, "| preview:", rawText.slice(0, 200));
 
     if (!rawText) {
-      return new Response(
-        JSON.stringify({ error: "No treatment details were generated." }),
-        { status: 502, headers: { ...corsHeaders, "Content-Type": "application/json" } },
-      );
+      console.error("[treatment-detail] Gemini returned empty text. Full response:", JSON.stringify(geminiData).slice(0, 800));
+      return jsonResponse({ error: "No treatment details were generated (empty Gemini response)." }, 502);
     }
 
     let jsonStr = rawText;
@@ -162,34 +200,28 @@ Deno.serve(async (req: Request) => {
     let parsed: { bullets?: string[] };
     try {
       parsed = JSON.parse(jsonStr);
-    } catch {
-      console.error("[treatment-detail] Failed to parse Gemini JSON:", jsonStr.slice(0, 200));
-      return new Response(
-        JSON.stringify({ error: "Could not parse the treatment response." }),
-        { status: 502, headers: { ...corsHeaders, "Content-Type": "application/json" } },
-      );
+    } catch (parseErr) {
+      console.error("[treatment-detail] Failed to parse extracted JSON:", (parseErr as Error).message, "| extracted:", jsonStr.slice(0, 300), "| raw:", rawText.slice(0, 300));
+      return jsonResponse({ error: "Could not parse the treatment response from Gemini." }, 502);
     }
 
     const bullets = Array.isArray(parsed.bullets) ? parsed.bullets.filter((b) => typeof b === 'string' && b.trim()) : [];
 
     if (bullets.length === 0) {
-      return new Response(
-        JSON.stringify({ error: "No treatment details were generated." }),
-        { status: 502, headers: { ...corsHeaders, "Content-Type": "application/json" } },
-      );
+      console.error("[treatment-detail] No valid bullets found. Parsed:", JSON.stringify(parsed).slice(0, 500));
+      return jsonResponse({ error: "No treatment details were generated (no valid bullets)." }, 502);
     }
 
     const result: TreatmentResponse = { isConfident, bullets };
+    console.log("[treatment-detail] Success! Returning", bullets.length, "bullets.");
 
-    return new Response(
-      JSON.stringify({ treatment: result }),
-      { headers: { ...corsHeaders, "Content-Type": "application/json" } },
-    );
+    return jsonResponse({ treatment: result }, 200);
   } catch (err) {
-    console.error("treatment-detail error:", err);
-    return new Response(
-      JSON.stringify({ error: "Something went wrong." }),
-      { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } },
-    );
+    console.error("[treatment-detail] Unhandled error:", {
+      message: (err as Error)?.message,
+      name: (err as Error)?.name,
+      stack: (err as Error)?.stack?.slice(0, 800),
+    });
+    return jsonResponse({ error: `Internal error: ${(err as Error)?.message ?? "unknown"}` }, 500);
   }
 });
