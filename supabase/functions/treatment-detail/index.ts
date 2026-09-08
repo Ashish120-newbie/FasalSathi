@@ -112,42 +112,56 @@ Deno.serve(async (req: Request) => {
 
     const geminiModel = "gemini-flash-latest";
     const geminiUrl = `https://generativelanguage.googleapis.com/v1beta/models/${geminiModel}:generateContent?key=${geminiApiKey}`;
-    console.log("[treatment-detail] Calling Gemini API:", geminiUrl.replace(geminiApiKey, "***"));
+    const geminiBody = JSON.stringify({
+      contents: [{ role: "user", parts: [{ text: PROMPT(diseaseName, cropName, isConfident, diagnosisData) }] }],
+      generationConfig: { temperature: 0.4, maxOutputTokens: 600 },
+    });
 
-    const controller = new AbortController();
-    const timeout = setTimeout(() => {
-      console.error("[treatment-detail] Gemini fetch timed out after 15s");
-      controller.abort();
-    }, 15000);
+    const GEMINI_TIMEOUT_MS = 25000;
+    const MAX_ATTEMPTS = 2;
 
-    let geminiResp: Response;
-    try {
-      geminiResp = await fetch(geminiUrl, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          contents: [{ role: "user", parts: [{ text: PROMPT(diseaseName, cropName, isConfident, diagnosisData) }] }],
-          generationConfig: { temperature: 0.4, maxOutputTokens: 600 },
-        }),
-        signal: controller.signal,
-      });
-    } catch (fetchErr) {
-      clearTimeout(timeout);
-      const errMsg = (fetchErr as Error)?.message ?? String(fetchErr);
-      const isAbort = (fetchErr as Error)?.name === "AbortError";
-      console.error("[treatment-detail] Gemini fetch failed:", {
-        error: errMsg,
-        isAbort,
-        stack: (fetchErr as Error)?.stack?.slice(0, 500),
-      });
-      return jsonResponse(
-        { error: isAbort ? "Gemini API timed out after 15 seconds." : `Gemini fetch failed: ${errMsg}` },
-        502,
-      );
+    let geminiResp: Response | null = null;
+    let lastError: string | null = null;
+
+    for (let attempt = 1; attempt <= MAX_ATTEMPTS; attempt++) {
+      const controller = new AbortController();
+      const timeout = setTimeout(() => {
+        console.error(`[treatment-detail] Gemini fetch timed out after ${GEMINI_TIMEOUT_MS / 1000}s (attempt ${attempt}/${MAX_ATTEMPTS})`);
+        controller.abort();
+      }, GEMINI_TIMEOUT_MS);
+
+      try {
+        console.log(`[treatment-detail] Calling Gemini API (attempt ${attempt}/${MAX_ATTEMPTS}):`, geminiUrl.replace(geminiApiKey, "***"));
+        geminiResp = await fetch(geminiUrl, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: geminiBody,
+          signal: controller.signal,
+        });
+        clearTimeout(timeout);
+        console.log(`[treatment-detail] Gemini response status (attempt ${attempt}):`, geminiResp.status, geminiResp.statusText);
+        break;
+      } catch (fetchErr) {
+        clearTimeout(timeout);
+        const errMsg = (fetchErr as Error)?.message ?? String(fetchErr);
+        const isAbort = (fetchErr as Error)?.name === "AbortError";
+        console.error(`[treatment-detail] Gemini fetch failed (attempt ${attempt}/${MAX_ATTEMPTS}):`, {
+          error: errMsg,
+          isAbort,
+          stack: (fetchErr as Error)?.stack?.slice(0, 500),
+        });
+        lastError = isAbort ? `Gemini API timed out after ${GEMINI_TIMEOUT_MS / 1000} seconds.` : `Gemini fetch failed: ${errMsg}`;
+
+        if (attempt < MAX_ATTEMPTS) {
+          console.log("[treatment-detail] Waiting 1s before retry...");
+          await new Promise((resolve) => setTimeout(resolve, 1000));
+        }
+      }
     }
-    clearTimeout(timeout);
 
-    console.log("[treatment-detail] Gemini response status:", geminiResp.status, geminiResp.statusText);
+    if (!geminiResp) {
+      return jsonResponse({ error: lastError ?? "Gemini fetch failed after retries." }, 502);
+    }
 
     if (!geminiResp.ok) {
       const errorBody = await geminiResp.text().catch(() => "<unreadable>");
