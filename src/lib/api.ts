@@ -364,7 +364,11 @@ export async function removeBookmark(schemeId: string): Promise<void> {
 
 export interface TreatmentDetail {
   isConfident: boolean;
+  type?: 'pest_disease' | 'nutrient_deficiency';
   bullets: string[];
+  deficientNutrient?: string;
+  correctiveAction?: string;
+  applicationGuidance?: string;
 }
 
 const treatmentCache = new Map<string, TreatmentDetail>();

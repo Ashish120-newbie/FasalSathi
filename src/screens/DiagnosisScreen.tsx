@@ -24,6 +24,36 @@ function BulletList({ items }: { items: string[] }) {
 }
 
 function TreatmentDetailSection({ detail }: { detail: TreatmentDetail }) {
+  const isNutrientDeficiency = detail.type === 'nutrient_deficiency' || Boolean(
+    detail.deficientNutrient || detail.correctiveAction || detail.applicationGuidance,
+  );
+
+  if (isNutrientDeficiency) {
+    return (
+      <div className="mt-3 space-y-3">
+        {detail.deficientNutrient && (
+          <div className="rounded-lg border border-amber-200 bg-amber-50 px-3 py-3">
+            <p className="text-xs font-semibold uppercase tracking-wide text-amber-800">Likely deficient nutrient</p>
+            <p className="mt-1 text-sm font-semibold text-amber-950">{detail.deficientNutrient}</p>
+          </div>
+        )}
+        {detail.correctiveAction && (
+          <div className="rounded-lg border border-forest-100 bg-forest-50 px-3 py-3">
+            <p className="text-xs font-semibold uppercase tracking-wide text-forest-600">Corrective action</p>
+            <p className="mt-1 text-sm leading-6 text-forest-800">{detail.correctiveAction}</p>
+          </div>
+        )}
+        {detail.applicationGuidance && (
+          <div className="rounded-lg border border-sky-100 bg-sky-50 px-3 py-3">
+            <p className="text-xs font-semibold uppercase tracking-wide text-sky-700">Application guidance</p>
+            <p className="mt-1 text-sm leading-6 text-sky-900">{detail.applicationGuidance}</p>
+          </div>
+        )}
+        {detail.bullets.length > 0 && <BulletList items={detail.bullets} />}
+      </div>
+    );
+  }
+
   return (
     <div className="mt-2">
       <BulletList items={detail.bullets} />

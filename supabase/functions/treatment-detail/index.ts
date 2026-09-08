@@ -1,6 +1,6 @@
 import "jsr:@supabase/functions-js/edge-runtime.d.ts";
 
-// treatment-detail: redeployed to pick up refreshed GEMINI_API_KEY secret
+// treatment-detail: diagnosis-type-aware prompt for pests/diseases and nutrient deficiencies
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -18,23 +18,33 @@ interface TreatmentRequest {
 
 interface TreatmentResponse {
   isConfident: boolean;
+  type: 'pest_disease' | 'nutrient_deficiency';
   bullets: string[];
+  deficientNutrient?: string;
+  correctiveAction?: string;
+  applicationGuidance?: string;
 }
 
 const HIGH_CONFIDENCE_THRESHOLD = 70;
 
-const PROMPT = (
-  diseaseName: string,
-  cropName: string,
-  isConfident: boolean,
-  diagnosisData?: unknown,
-) => {
-  const dataContext = diagnosisData
-    ? `\nAdditional diagnosis data (for context, may be incomplete):\n${JSON.stringify(diagnosisData).slice(0, 800)}\n`
-    : '';
+function isNutrientDeficiency(diseaseName: string): boolean {
+  const lower = diseaseName.toLowerCase();
+  return lower.includes('deficiency') ||
+    lower.includes('nutrient') ||
+    lower.includes('nitrogen deficiency') ||
+    lower.includes('phosphorus deficiency') ||
+    lower.includes('potassium deficiency') ||
+    lower.includes('iron deficiency') ||
+    lower.includes('zinc deficiency') ||
+    lower.includes('magnesium deficiency') ||
+    lower.includes('calcium deficiency') ||
+    lower.includes('sulfur deficiency') ||
+    lower.includes('boron deficiency') ||
+    lower.includes('manganese deficiency');
+}
 
-  if (!isConfident) {
-    return `You are an agricultural advisor helping a farmer in India. A crop scan was attempted for ${cropName} but the result for "${diseaseName}" has LOW confidence.${dataContext}
+function buildLowConfidencePrompt(diseaseName: string, cropName: string, dataContext: string): string {
+  return `You are an agricultural advisor helping a farmer in India. A crop scan was attempted for ${cropName} but the result for "${diseaseName}" has LOW confidence.${dataContext}
 The identification is NOT confident enough to recommend a specific treatment. Do NOT guess any treatment or name any chemical.
 
 Write 4–6 short bullet points in plain, simple language for a farmer with no technical background. The bullets should:
@@ -47,8 +57,9 @@ Return ONLY this JSON, no extra text:
 {
   "bullets": ["bullet 1 text", "bullet 2 text", ...]
 }`;
-  }
+}
 
+function buildPestDiseasePrompt(diseaseName: string, cropName: string, dataContext: string): string {
   return `You are an agricultural expert helping a farmer in India. A crop scan for ${cropName} identified "${diseaseName}" with HIGH confidence.${dataContext}
 Provide REAL, SPECIFIC treatment options as 4–6 bullet points in plain, simple language for a farmer with no technical background.
 
@@ -64,7 +75,54 @@ Return ONLY this JSON, no extra text:
 {
   "bullets": ["bullet 1 text", "bullet 2 text", ...]
 }`;
-};
+}
+
+function buildNutrientDeficiencyPrompt(diseaseName: string, cropName: string, dataContext: string): string {
+  return `You are an agricultural expert helping a farmer in India. A crop scan for ${cropName} identified "${diseaseName}" with HIGH confidence.${dataContext}
+This is a NUTRIENT or MINERAL DEFICIENCY, not a pest or fungal disease. Do NOT recommend pesticides, fungicides, insecticides, or biological pest control. Instead, focus on correcting the nutrient deficiency.
+
+Provide practical, specific guidance for a farmer with no technical background. Your response must include:
+
+1. "deficientNutrient": Name the likely deficient nutrient (e.g., "Nitrogen", "Iron", "Zinc", "Potassium").
+2. "correctiveAction": The specific fertilizer or amendment to correct it (e.g., "Apply urea at 25 kg per acre", "Apply zinc sulfate at 10 kg per acre as a soil application", "Spray 0.5% ferrous sulfate solution on leaves"). Name a real product or amendment the farmer can buy.
+3. "applicationGuidance": How and when to apply it (e.g., "Apply in two split doses 15 days apart", "Spray on leaves in the early morning or evening, repeat after 10 days if symptoms persist").
+4. "bullets": 3–5 additional practical bullet points covering:
+   - How to confirm the deficiency (e.g., soil testing, leaf symptoms to watch for)
+   - Preventive measures for future crops (e.g., crop rotation, organic matter addition)
+   - A note on avoiding over-application, which can cause toxicity or lockout of other nutrients
+   - When to consult a soil testing lab or agriculture officer for precise dosage
+
+Each bullet should be a single sentence, practical and directly actionable. Do NOT hedge or add disclaimers — the diagnosis is confident.
+
+Return ONLY this JSON, no extra text:
+{
+  "deficientNutrient": "nutrient name",
+  "correctiveAction": "specific fertilizer/amendment and dose",
+  "applicationGuidance": "how and when to apply",
+  "bullets": ["bullet 1 text", "bullet 2 text", ...]
+}`;
+}
+
+function buildPrompt(
+  diseaseName: string,
+  cropName: string,
+  isConfident: boolean,
+  diagnosisData?: unknown,
+): { prompt: string; type: 'pest_disease' | 'nutrient_deficiency' } {
+  const dataContext = diagnosisData
+    ? `\nAdditional diagnosis data (for context, may be incomplete):\n${JSON.stringify(diagnosisData).slice(0, 800)}\n`
+    : '';
+
+  if (!isConfident) {
+    return { prompt: buildLowConfidencePrompt(diseaseName, cropName, dataContext), type: 'pest_disease' };
+  }
+
+  if (isNutrientDeficiency(diseaseName)) {
+    return { prompt: buildNutrientDeficiencyPrompt(diseaseName, cropName, dataContext), type: 'nutrient_deficiency' };
+  }
+
+  return { prompt: buildPestDiseasePrompt(diseaseName, cropName, dataContext), type: 'pest_disease' };
+}
 
 function jsonResponse(body: unknown, status: number) {
   return new Response(JSON.stringify(body), {
@@ -110,10 +168,13 @@ Deno.serve(async (req: Request) => {
       return jsonResponse({ error: "Treatment detail service is not configured (missing API key)." }, 503);
     }
 
+    const { prompt, type: diagnosisType } = buildPrompt(diseaseName, cropName, isConfident, diagnosisData);
+    console.log("[treatment-detail] Diagnosis type:", diagnosisType, "| isConfident:", isConfident);
+
     const geminiModel = "gemini-flash-latest";
     const geminiUrl = `https://generativelanguage.googleapis.com/v1beta/models/${geminiModel}:generateContent?key=${geminiApiKey}`;
     const geminiBody = JSON.stringify({
-      contents: [{ role: "user", parts: [{ text: PROMPT(diseaseName, cropName, isConfident, diagnosisData) }] }],
+      contents: [{ role: "user", parts: [{ text: prompt }] }],
       generationConfig: { temperature: 0.4, maxOutputTokens: 600 },
     });
 
@@ -213,7 +274,12 @@ Deno.serve(async (req: Request) => {
       }
     }
 
-    let parsed: { bullets?: string[] };
+    let parsed: {
+      bullets?: string[];
+      deficientNutrient?: string;
+      correctiveAction?: string;
+      applicationGuidance?: string;
+    };
     try {
       parsed = JSON.parse(jsonStr);
     } catch (parseErr) {
@@ -223,13 +289,26 @@ Deno.serve(async (req: Request) => {
 
     const bullets = Array.isArray(parsed.bullets) ? parsed.bullets.filter((b) => typeof b === 'string' && b.trim()) : [];
 
-    if (bullets.length === 0) {
+    const result: TreatmentResponse = {
+      isConfident,
+      type: diagnosisType,
+      bullets,
+      ...(parsed.deficientNutrient ? { deficientNutrient: parsed.deficientNutrient } : {}),
+      ...(parsed.correctiveAction ? { correctiveAction: parsed.correctiveAction } : {}),
+      ...(parsed.applicationGuidance ? { applicationGuidance: parsed.applicationGuidance } : {}),
+    };
+
+    if (diagnosisType === 'nutrient_deficiency' && !result.deficientNutrient && bullets.length === 0) {
+      console.error("[treatment-detail] Nutrient deficiency response missing all fields. Parsed:", JSON.stringify(parsed).slice(0, 500));
+      return jsonResponse({ error: "No treatment details were generated (empty nutrient deficiency response)." }, 502);
+    }
+
+    if (diagnosisType === 'pest_disease' && bullets.length === 0) {
       console.error("[treatment-detail] No valid bullets found. Parsed:", JSON.stringify(parsed).slice(0, 500));
       return jsonResponse({ error: "No treatment details were generated (no valid bullets)." }, 502);
     }
 
-    const result: TreatmentResponse = { isConfident, bullets };
-    console.log("[treatment-detail] Success! Returning", bullets.length, "bullets.");
+    console.log("[treatment-detail] Success! Returning", bullets.length, "bullets, type:", diagnosisType);
 
     return jsonResponse({ treatment: result }, 200);
   } catch (err) {
