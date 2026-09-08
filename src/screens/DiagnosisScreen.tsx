@@ -42,10 +42,23 @@ export function DiagnosisScreen({ scan, onBack, onEscalate, onAskAI }: Diagnosis
 
   const hasAIData = Boolean(scan.result.preventionSteps?.length || scan.result.treatmentSteps?.length);
   const preventionSteps = scan.result.preventionSteps ?? (hasAIData ? [] : disease.treatment);
-  const treatmentSteps = scan.result.treatmentSteps ?? [];
+  const kindwiseTreatmentSteps = scan.result.treatmentSteps ?? [];
   const aboutDescription = scan.result.description || (!hasAIData ? disease.description : '');
 
-  const needsTreatmentLookup = !isHealthy && treatmentSteps.length === 0;
+  const needsTreatmentLookup = !isHealthy;
+
+  console.log('[treatment-detail] Decision point:', {
+    diseaseName: scan.result.diseaseName,
+    cropName: displayCropName,
+    isHealthy,
+    kindwisePreventionSteps: scan.result.preventionSteps ?? [],
+    kindwiseTreatmentSteps,
+    needsTreatmentLookup,
+    reason: needsTreatmentLookup
+      ? 'Non-healthy diagnosis — will call treatment-detail for specific treatment options'
+      : 'Healthy diagnosis — treatment-detail not needed',
+  });
+
   const [treatmentDetail, setTreatmentDetail] = useState<TreatmentDetail | null>(null);
   const [treatmentLoading, setTreatmentLoading] = useState(false);
   const [treatmentError, setTreatmentError] = useState(false);
@@ -166,9 +179,10 @@ export function DiagnosisScreen({ scan, onBack, onEscalate, onAskAI }: Diagnosis
                 <div className="mt-5">
                   <h3 className="text-[15px] font-semibold text-forest-800">{t.diagTreatment}</h3>
                   <p className="text-[12px] text-forest-400">{t.diagTreatmentDesc}</p>
-                  {treatmentSteps.length > 0 ? (
-                    <BulletList items={treatmentSteps} />
-                  ) : treatmentLoading ? (
+                  {kindwiseTreatmentSteps.length > 0 && (
+                    <BulletList items={kindwiseTreatmentSteps} />
+                  )}
+                  {treatmentLoading ? (
                     <div className="mt-2 flex items-center gap-2 rounded-lg bg-forest-50 px-3 py-2.5 text-sm text-forest-600">
                       <Loader2 size={16} className="animate-spin" />
                       <span>{t.diagTreatmentLoading}</span>
